@@ -153,6 +153,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 
 /* Confirmation */
 .confirm{max-width:560px;margin:0 auto;text-align:center}
+.confirm.paywide{max-width:760px}
 .confirm .code{font:600 clamp(34px,9vw,52px) var(--f-mono);letter-spacing:.04em;color:var(--red);margin:6px 0 4px}
 .paybox{display:grid;gap:10px;text-align:left;margin-top:18px}
 .payrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
@@ -184,7 +185,7 @@ details.demo-only summary{cursor:pointer;font-size:14px;font-weight:600;color:va
 .pinform{display:grid;gap:10px;width:100%;max-width:320px;text-align:left}
 .payamt{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:14px;background:var(--gold-soft)}
 .payamt b{font:600 28px var(--f-mono)}
-.zeffy{width:100%;height:430px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.zeffy{width:100%;height:900px;border:1px solid var(--line);border-radius:14px;background:#fff}
 .paysoon{padding:16px;border-radius:14px;border:1px dashed var(--green-2);background:var(--surface-2);text-align:left}
 .proof{font-size:12px;font-weight:700;color:var(--green-2)}
 .del{appearance:none;border:0;background:none;color:var(--muted);font:600 12px var(--f-body);cursor:pointer;padding:4px 6px;border-radius:6px;white-space:nowrap}
@@ -1041,18 +1042,22 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
       <h3>How to pay</h3>
       <ol class="paysteps">
         <li>Tap <b>Copy amount</b> above.</li>
-        <li>Paste it in the white amount box below. Tap <b>Continue</b>.</li>
-        <li class="tipline">Zeffy adds a tip. To remove it, click the box that says 15% and choose “Other.”</li>
-        <li>Check that the <b>Total</b> is <b class="num">${money(t)}</b>. Enter your card and tap <b>Donate</b>.</li>
+        <li>Paste it in the box that says <b>Choose your donation amount</b>.</li>
+        <li>Can’t pay it all today? Type a smaller amount in that box instead. You can pay the rest later.</li>
+        <li>Tap <b>Continue</b>.</li>
       </ol>
-      <p class="sub">Can’t pay it all today? Type a smaller amount. You can pay the rest later.</p>
+      <h3 style="margin-top:14px">After you tap Continue</h3>
+      <ol class="paysteps" start="5">
+        <li class="tipline">Click the box that says 15% and choose “Other.” This removes Zeffy’s tip.</li>
+        <li>Check that the <b>Total</b> is right. Enter your card and tap <b>Donate</b>.</li>
+      </ol>
     </div>
-    <p class="formhelp">Don’t see the payment form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
+    <p class="formhelp"><b>It says Donate, but this is your reunion payment.</b> Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
     <iframe class="zeffy" src="${esc(zeffyEmbed(u))}" title="Secure payment form" loading="lazy" allow="payment"></iframe>`}
 function showConfirm(r,emailed){
   const L=regLines(r),t=regTotal(r);
   $('regWrap').hidden=true;const c=$('confirm');c.hidden=false;
-  c.innerHTML=`<div class="panel confirm">
+  c.innerHTML=`<div class="panel confirm paywide">
     <h2 class="reghead">You’re registered!</h2>
     <p class="regsub">Thank you, ${esc(r.first)}.</p>
     <div class="lines" style="text-align:left">${L.map(l=>`<div class="line"><span>${esc(l.label)} ${l.don?'':`<span class="q">× ${l.q}</span>`}</span><span class="num">${l.a?money(l.a):'Free'}</span></div>`).join('')}</div>
@@ -1061,10 +1066,8 @@ function showConfirm(r,emailed){
       ${payBlock(t)}
     </div>
     <p style="margin-top:18px">${isTest()?`<b>Test mode:</b> saved to the Test tabs only. `:''}${emailed===false?`We couldn't send the confirmation email right now. Your registration is saved.`:`We've emailed your confirmation to <b>${esc(r.email)}</b>.`} You'll get a receipt once your payment arrives.</p>
-    <div class="choices">
-      <button class="btn choice" type="button" id="done">${/^https:\/\/(www\.)?zeffy\.com\//i.test(D.S.zeffyUrl||'')?'I’ve paid · Next':'Next'}</button>
-      ${/^https:\/\/(www\.)?zeffy\.com\//i.test(D.S.zeffyUrl||'')?`<button class="btn choice" type="button" id="payLater">I’ll pay later</button>`:''}
-    </div>
+    ${S_hotelBlock()?`<div style="text-align:left;margin-top:18px">${S_hotelBlock()}</div>`:''}
+    <p style="margin-top:14px"><button class="linkbtn" type="button" id="another2">Register another household</button></p>
     ${isAdmin()?`<p style="margin-top:12px"><button class="linkbtn" type="button" id="recPay">Committee: record a payment for this household now</button></p>`:''}
     <p class="muted small" style="margin-top:16px">Confirmation # <span class="mono">${esc(r.code)}</span></p>
     ${LIVE?'':`<details class="demo-only"><summary>Demo only: preview the emails and the committee view</summary>
@@ -1076,8 +1079,7 @@ function showConfirm(r,emailed){
     </details>`}</div>`;
   c.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.copy,b)));
   const rp=$('recPay');if(rp)rp.addEventListener('click',()=>{const code=r.code;resetForm();openTab('payments');openManual(code);window.scrollTo({top:0})});
-  if($('payLater'))$('payLater').addEventListener('click',()=>showThanks(r,true,emailed));
-  $('done').addEventListener('click',()=>showThanks(r,false,emailed));
+  $('another2').addEventListener('click',resetForm);wireBook(c);
   if($('seePay'))$('seePay').addEventListener('click',()=>{resetForm();openTab('payments');window.scrollTo({top:0})});
   window.scrollTo({top:0});
 }
