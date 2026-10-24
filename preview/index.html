@@ -185,7 +185,8 @@ details.demo-only summary{cursor:pointer;font-size:14px;font-weight:600;color:va
 .pinform{display:grid;gap:10px;width:100%;max-width:320px;text-align:left}
 .payamt{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:14px;background:var(--gold-soft)}
 .payamt b{font:600 28px var(--f-mono)}
-.zeffy{width:100%;height:900px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.zeffy.tall{height:1150px}
+.zeffy{transition:height .35s ease;width:100%;height:440px;border:1px solid var(--line);border-radius:14px;background:#fff}
 .paysoon{padding:16px;border-radius:14px;border:1px dashed var(--green-2);background:var(--surface-2);text-align:left}
 .proof{font-size:12px;font-weight:700;color:var(--green-2)}
 .del{appearance:none;border:0;background:none;color:var(--muted);font:600 12px var(--f-body);cursor:pointer;padding:4px 6px;border-radius:6px;white-space:nowrap}
@@ -1066,7 +1067,7 @@ function showConfirm(r,emailed){
       ${payBlock(t)}
     </div>
     <p style="margin-top:18px">${isTest()?`<b>Test mode:</b> saved to the Test tabs only. `:''}${emailed===false?`We couldn't send the confirmation email right now. Your registration is saved.`:`We've emailed your confirmation to <b>${esc(r.email)}</b>.`} You'll get a receipt once your payment arrives.</p>
-    ${S_hotelBlock()?`<div style="text-align:left;margin-top:18px">${S_hotelBlock()}</div>`:''}
+    ${S_hotelBlock()?`<div id="payHotel" style="text-align:left;margin-top:18px"${/^https:\/\/(www\.)?zeffy\.com\//i.test(D.S.zeffyUrl||'')?' hidden':''}>${S_hotelBlock()}</div>`:''}
     <p style="margin-top:14px"><button class="linkbtn" type="button" id="another2">Register another household</button></p>
     ${isAdmin()?`<p style="margin-top:12px"><button class="linkbtn" type="button" id="recPay">Committee: record a payment for this household now</button></p>`:''}
     <p class="muted small" style="margin-top:16px">Confirmation # <span class="mono">${esc(r.code)}</span></p>
@@ -1080,6 +1081,16 @@ function showConfirm(r,emailed){
   c.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.copy,b)));
   const rp=$('recPay');if(rp)rp.addEventListener('click',()=>{const code=r.code;resetForm();openTab('payments');openManual(code);window.scrollTo({top:0})});
   $('another2').addEventListener('click',resetForm);wireBook(c);
+  const ifr=c.querySelector('.zeffy');
+  if(ifr){
+    // The page can't see inside Zeffy's box, but it can tell when someone clicks into it.
+    // Then: grow the box for Zeffy's longer checkout screen and show the hotel info below it.
+    const reveal=()=>{ifr.classList.add('tall');const h=$('payHotel');if(h)h.hidden=false};
+    const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
+    window.addEventListener('blur',onBlur);
+    ifr.addEventListener('mouseenter',()=>{const h=$('payHotel');if(h&&h.hidden)setTimeout(()=>{if(document.activeElement===ifr)reveal()},1500)});
+    setTimeout(()=>{const h=$('payHotel');if(h&&h.hidden&&document.body.contains(ifr))h.hidden=false},120000);
+  }
   if($('seePay'))$('seePay').addEventListener('click',()=>{resetForm();openTab('payments');window.scrollTo({top:0})});
   window.scrollTo({top:0});
 }
