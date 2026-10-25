@@ -112,7 +112,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 .btn.testing{background:#a3252b;border-color:#a3252b;color:#fff}
 .paycard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;text-align:left}
 .paycard h3{margin:0 0 10px;font:700 15px var(--f-body);letter-spacing:.02em}
-.paycard .tipline{font-weight:700}
+.paycard .tipline,.note-red{color:var(--red);font-weight:600}
 .paycard .sub{margin:12px 0 0;color:var(--muted);font-size:14px}
 .formhelp{text-align:left;font-size:14px;color:var(--muted);margin:2px 0 6px}
 .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:18px}
@@ -1049,10 +1049,11 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
       <h3 id="payStepsHead2" style="margin-top:14px">After you tap Continue</h3>
       <ol class="paysteps" start="5">
         <li class="tipline">Click the box that says 15% and choose “Other.” This removes Zeffy’s tip.</li>
-        <li>Check that the <b>Total</b> matches the amount you typed. Enter your card and tap <b>Donate</b>.</li>
+        <li class="tipline">Leave the corporate/organization box unchecked.</li>
+        <li>Check that the <b>Total</b> matches the amount you typed, then choose how to pay and finish.</li>
       </ol>
     </div>
-    <p class="formhelp"><b>It says Donate, but this is your reunion payment.</b> Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
+    <p class="formhelp"><span class="note-red">It says Donate, but this is your reunion payment.</span> Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
     <iframe class="zeffy" src="${esc(zeffyEmbed(u))}" title="Secure payment form" loading="lazy" allow="payment"></iframe>`}
 function showConfirm(r,emailed){
   const L=regLines(r),t=regTotal(r);
@@ -1090,7 +1091,7 @@ function showConfirm(r,emailed){
     const showHotel=()=>{const h=$('payHotel');if(h&&document.body.contains(ifr))h.hidden=false};
     const reveal=()=>{if(started)return;started=true;
       ['paySteps1','payAmtBox'].forEach(id=>{const e=$(id);if(e)e.hidden=true});
-      const h2=$('payStepsHead2');if(h2){h2.style.marginTop='0';h2.textContent='Next, after you tap Continue'}
+      const h2=$('payStepsHead2');if(h2){h2.style.marginTop='0';h2.textContent='Finish paying'}
       setTimeout(showHotel,60000)};
     const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
     window.addEventListener('blur',onBlur);
