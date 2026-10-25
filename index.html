@@ -514,7 +514,10 @@ ul.feed{margin:0;padding:0}
           <label class="f">Store<input id="rcVendor" placeholder="e.g. Costco"></label>
           <label class="f">Total ($)<input id="rcAmount" type="number" min="0" step="0.01" inputmode="decimal"></label>
         </div>
-        <label class="f">What was it for?<select id="rcCat"></select></label>
+        <div class="fields">
+          <label class="f">What was it for?<select id="rcCat"></select></label>
+          <label class="f">Date on the receipt (optional)<input id="rcDate" type="date"></label>
+        </div>
         <label class="f">Note (optional)<input id="rcNote" placeholder="e.g. snacks for the meet and greet"></label>
         <span class="err" id="rcErr" hidden></span>
         <button class="btn primary" type="submit" id="rcSave">Add to the ledger</button>
@@ -1338,9 +1341,9 @@ $('rcVendor').addEventListener('change',()=>{const v=$('rcVendor').value;if(v)$(
 $('rcptForm').addEventListener('submit',e=>{e.preventDefault();
   const v=$('rcVendor').value.trim(),a=parseFloat($('rcAmount').value),er=$('rcErr');
   if(!v||!(a>0)){er.textContent='Add the store and the total from the receipt.';er.hidden=false;return}er.hidden=true;
-  const ex={id:uid(),date:TODAY,vendor:v,category:$('rcCat').value,amount:Math.round(a*100)/100,source:rcImg?(rcImg.kind==='pdf'?'Invoice upload':'Receipt photo'):'Typed in',note:$('rcNote').value.trim()};
+  const ex={id:uid(),date:$('rcDate').value||TODAY,vendor:v,category:$('rcCat').value,amount:Math.round(a*100)/100,source:rcImg?(rcImg.kind==='pdf'?'Invoice upload':'Receipt photo'):'Typed in',note:$('rcNote').value.trim()};
   const logx={k:'info',x:`Logged a ${money(a)} expense from ${v} under ${ex.category}${rcImg?' with the receipt attached':''}.`};
-  const clear=()=>{['rcVendor','rcAmount','rcNote'].forEach(i=>$(i).value='');rcImg=null;$('rcptFile').value='';
+  const clear=()=>{['rcVendor','rcAmount','rcNote','rcDate'].forEach(i=>$(i).value='');rcImg=null;$('rcptFile').value='';
     $('dropTxt').innerHTML='<b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span>'};
   if(LIVE){busy($('rcSave'),'Saving…',async()=>{await api('addExpense',{...ex,receipt:rcImg?rcImg.dataUrl:'',receiptName:rcImg?rcImg.name:''},logx);await refreshLive();clear();renderAll();toast('Receipt added to the ledger.')}).catch(()=>{});return}
   if(rcImg){if(rcImg.kind==='image')ex.img=rcImg.dataUrl;else ex.proofName=rcImg.name}
