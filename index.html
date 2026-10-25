@@ -618,7 +618,8 @@ ul.feed{margin:0;padding:0}
     <div class="fields" style="margin-bottom:12px">
       <label class="f">Catering minimum ($)<input id="sCater" data-k="caterMin" type="number" step="1"></label>
       <label class="f">Food money per paying person ($)<input id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
-      <label class="f">Hotel deposit ($)<input id="sDep" data-k="deposit" type="number" step="1"></label>
+      <label class="f">PSR reunion deposit ($)<input id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
+      <label class="f">Faison reunion deposit ($)<input id="sDepFaison" data-k="depFaison" type="number" step="1"></label>
       <label class="f">Service charge (%)<input id="sSvc" data-k="serviceCharge" type="number" step="0.01"></label>
       <label class="f">Sales tax (%)<input id="sTax" data-k="salesTax" type="number" step="0.01"></label>
     </div>
@@ -662,7 +663,7 @@ function defaults(){return{
   edition:'101st',family:'Porter-Sanford-Reid Family Reunion',
   theme:'The Next Hundred Starts With Us',subtitle:'Three Families, One Tree, Growing Together',verse:'Tell ye your children of it, and let your children tell their children, and their children another generation.',verseRef:'Joel 1:3',
   when:'Summer 2027 · dates to be set',hotelName:'DoubleTree by Hilton Greensboro Airport',hotelStreet:'6426 Burnt Poplar Road',hotelCity:'Greensboro, NC 27409',hotelPhone:'',roomRate:'$129 per night (group rate)',hotelNote:'Breakfast included · Free airport shuttle and parking · Pet-free rooms · Reunion events are inside the hotel. Book at least 30 days before the reunion to get the group rate.',bookUrl:'',
-  caterMin:6000,foodPer:40,deposit:1500,depositCounts:false,serviceCharge:23,salesTax:6.75,host:'Hosted by the Greensboro family',capacity:120,
+  caterMin:6000,foodPer:40,depPSR:1500,depFaison:500,deposit:1500,depositCounts:false,serviceCharge:23,salesTax:6.75,host:'Hosted by the Greensboro family',capacity:120,
   earlyBird:'2027-06-30',
   groups:[
     {id:'adult',label:'Adult',ages:'13 & up',early:125,late:150},
@@ -891,9 +892,9 @@ function renderHotel(){const S=D.S,c=$('hotelCard');
   <p class="small">Book your room after you register. We'll give you the link on the next screen.</p></div>`;
 }
 function caterSpent(){return D.exps.filter(e=>e.category==='Hotel catering & bar').reduce((s,e)=>s+(+e.amount),0)}
-function renderCommit(){const S=D.S,min=+S.caterMin||0,dep=+S.deposit||0;
+function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=+S.depFaison||0,dep=depPSR+depF;
   const f=(1+(+S.serviceCharge||0)/100)*(1+(+S.salesTax||0)/100);
-  const billed=caterSpent(),counted=billed/f+(S.depositCounts?dep:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
+  const billed=caterSpent(),counted=billed/f+(S.depositCounts?depPSR:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
   const heads=D.regs.reduce((s,r)=>s+r.people.length,0);
   const depPaid=D.exps.filter(e=>e.category==='Venue & deposits').reduce((s,e)=>s+(+e.amount),0);
   const steps=[75,100,125,150,200];
@@ -903,9 +904,9 @@ function renderCommit(){const S=D.S,min=+S.caterMin||0,dep=+S.deposit||0;
     <span class="chip ${still<=0?'ok':'warn'}">${still<=0?'Covered by registrations':money0(still)+' still needed'}</span></div>
   <div class="kpis" style="margin-bottom:16px">
     <div class="kpi"><div class="l">Counted toward ${money0(min)}</div><div class="v">${money(counted)}</div><div class="h">Hotel food and bar billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
-    <div class="kpi"><div class="l">Still needed from registrations</div><div class="v">${money(still)}</div><div class="h">${paying} paying ${paying===1?'person':'people'} × ${money0(foodPer)} = ${money0(foodIn)} of about ${money0(need)} with charges.${still>0&&foodPer?` About ${more} more paying ${more===1?'person':'people'} needed.`:''}</div></div>
+    <div class="kpi"><div class="l">Still needed from registrations</div><div class="v">${money(still)}</div><div class="h">${paying} ${paying===1?'person':'people'} registered${still>0&&foodPer?` · about ${more} more needed`:' · covered ✓'}</div></div>
     <div class="kpi"><div class="l">Hotel bills paid</div><div class="v">${money(billed)}</div><div class="h">Catering and bar, charges included</div></div>
-    <div class="kpi"><div class="l">Deposit</div><div class="v">${money(dep)}</div><div class="h">${depPaid>=dep&&dep?'Paid':'Not yet logged'} · ${S.depositCounts?'counts toward minimum':'separate from minimum'}</div></div>
+    <div class="kpi"><div class="l">Deposit</div><div class="v">${money(dep)}</div><div class="h">${money0(depPSR)} PSR · ${money0(depF)} Faison<br>${(()=>{const raised=D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0),gap=dep-raised;return gap>0?`<b style="color:var(--red)">−${money0(gap)} to go</b>`:'<b style="color:var(--ok)">Raised ✓</b>'})()}<br>${dep&&depPaid>=dep?'<b style="color:var(--ok)">Paid ✓</b>':depPaid>0?`${money0(depPaid)} of ${money0(dep)} paid`:'Not yet paid'}</div></div>
   </div>
   <div class="track" style="margin-bottom:16px"><i class="${left<=0?'':'g2'}" style="width:${pct}%"></i></div>
   <div class="tw"><table class="ctable"><thead><tr><th>If this many come</th><th class="r">Food per person</th><th class="r">With service + tax</th></tr></thead><tbody>
@@ -1144,7 +1145,7 @@ function renderOverview(){
   const schFund=startSchol()+Lg.schol;
   $('kpis').innerHTML=[
     ['hl','Reunion balance',money(Lg.end),'Money on hand right now'],
-    ['','Collected',money(Lg.gross),`${D.pays.length} payments · ${money(Lg.contrib)} from the committee`],
+    ['','Collected',money(Lg.gross),`${money(D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0))} from committee`],
     ['','Spent',money(Lg.out),`${D.exps.length} expenses logged`],
     ['','Still owed',money(Lg.owed),`${D.regs.filter(r=>statusOf(r)!=='paid').length} households with a balance`],
     ['','Scholarship fund',money(schFund),`${money(Lg.schol)} donated this year`]
