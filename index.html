@@ -221,6 +221,7 @@ tr:last-child td{border-bottom:0}
 th.r,td.r{text-align:right}
 td.num{white-space:nowrap;text-align:right}
 td .sub{display:block;font-size:12px;color:var(--muted)}
+#rcCatHint{display:block;font-size:13px;margin-top:4px}#rcCatHint[hidden]{display:none}
 .in{color:var(--ok)} .out{color:var(--bad)}
 tr.start td{background:var(--surface-2);font-weight:600}
 td select{padding:5px 8px;font-size:13px}
@@ -282,6 +283,11 @@ ul.feed{margin:0;padding:0}
 .lines{font-size:16px}
 .hero .sub{font-size:18px}
 .hero-meta .mi{font-size:15px}
+.hero-meta .mi-hotel{align-items:flex-start}.hero-meta .mi-hotel svg{margin-top:3px;flex-shrink:0}
+.maplink{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.bookbtn{margin:10px auto 0;width:fit-content;display:flex;justify-content:center;min-width:170px;text-decoration:none;font-size:15px;padding:11px 24px}
+@media (min-width:700px){.hero-meta{flex-wrap:nowrap;align-items:stretch}}
+.hero-meta .mi{align-items:flex-start;line-height:1.4}.hero-meta .mi svg{margin-top:2px}
 .review{border:1px solid var(--warn);background:var(--warn-bg);border-radius:14px;padding:16px;display:grid;gap:10px}
 .review-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,220px) auto;gap:10px;align-items:center;background:var(--surface);border-radius:10px;padding:10px 12px}
 @media (max-width:560px){.review-item{grid-template-columns:1fr}}
@@ -515,7 +521,7 @@ ul.feed{margin:0;padding:0}
           <label class="f">Total ($)<input id="rcAmount" type="number" min="0" step="0.01" inputmode="decimal"></label>
         </div>
         <div class="fields">
-          <label class="f">What was it for?<select id="rcCat"></select></label>
+          <label class="f">What was it for?<select id="rcCat"></select><span class="sub note-red" id="rcCatHint" hidden>Bar &amp; restaurant · counts toward $6,000</span></label>
           <label class="f">Date on the receipt (optional)<input id="rcDate" type="date"></label>
         </div>
         <label class="f">Note (optional)<input id="rcNote" placeholder="e.g. snacks for the meet and greet"></label>
@@ -645,6 +651,8 @@ ul.feed{margin:0;padding:0}
 
 <script>
 (function(){
+const GUEST='Guest spending at hotel';
+const realExps=()=>D.exps.filter(e=>e.category!==GUEST);
 const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
 const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
 const KEY='psr-hub-demo-v6';
@@ -790,7 +798,9 @@ const priceFor=(g,date)=>date<=D.S.earlyBird?(+g.early||0):(+g.late||0);
 function regLines(r){
   const L=[];
   D.S.groups.forEach(g=>{const n=r.people.filter(p=>p.group===g.id).length;if(n){const u=priceFor(g,r.date);L.push({label:g.label,q:n,u,a:n*u})}});
-  D.S.addons.forEach(a=>{let n=a.sized?SIZES.reduce((s,k)=>s+(+r.shirts?.[k]||0),0):(+r.addons?.[a.id]||0);if(n>0)L.push({label:a.label,q:n,u:+a.price||0,a:n*(+a.price||0)})});
+  D.S.addons.forEach(a=>{let n=a.sized?SIZES.reduce((s,k)=>s+(+r.shirts?.[k]||0),0):(+r.addons?.[a.id]||0);
+    const sz=a.sized?SIZES.filter(k=>+r.shirts?.[k]>0).map(k=>`${+r.shirts[k]} ${k}`).join(', '):'';
+    if(n>0)L.push({label:a.label+(sz?` (${sz})`:''),q:n,u:+a.price||0,a:n*(+a.price||0)})});
   if(+r.donation>0)L.push({label:'Scholarship donation',q:1,u:+r.donation,a:+r.donation,don:true});
   return L;
 }
@@ -805,7 +815,7 @@ const findReg=c=>D.regs.find(r=>r.code===c);
 function ledger(){
   const opPaid={};let bal=startBal(),op=0,schol=0,out=0;
   let contrib=0;
-  const ev=D.pays.map(p=>({...p,t:'in'})).concat((D.contribs||[]).map(c=>({...c,t:'cin'}))).concat(D.exps.map(e=>({...e,t:'out'})))
+  const ev=D.pays.map(p=>({...p,t:'in'})).concat((D.contribs||[]).map(c=>({...c,t:'cin'}))).concat(realExps().map(e=>({...e,t:'out'})))
     .sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.t===b.t?a.id-b.id:(a.t==='out'?1:b.t==='out'?-1:0)));
   const rows=[];
   ev.forEach(e=>{
@@ -873,9 +883,11 @@ function renderHero(){
   const S=D.S;$('hEyebrow').textContent=`The ${S.edition} ${S.family}`;$('hTheme').textContent=S.theme;$('hSub').textContent=S.subtitle;$('hVerse').innerHTML=S.verse?`“${esc(S.verse)}” <span>${esc(S.verseRef||'')}</span>`:'';$('hVerse').hidden=!S.verse;
   const IC={cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>'};
   const ico=k=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
-  $('hMeta').innerHTML=[['cal',S.when],['pin',S.hotelName||'Location to be announced'],['home',S.host]].filter(x=>x[1]).map(([k,x])=>`<span class="mi">${ico(k)}${esc(x)}</span>`).join('');
+  const maps='https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent([S.hotelName,S.hotelStreet,S.hotelCity].filter(Boolean).join(', '));
+  const hotelMi=S.hotelName?`<span class="mi mi-hotel">${ico('pin')}<span><a class="maplink" href="${esc(maps)}" target="_blank" rel="noopener">${esc(S.hotelName)}</a>${S.roomRate?`<br><span class="rateln">${esc(S.roomRate)}</span>`:''}<br><a class="btn gold sm bookbtn" data-book href="${/^https?:\/\//i.test(S.bookUrl||'')?esc(S.bookUrl):'#'}" target="_blank" rel="noopener">Book your room</a></span></span>`:`<span class="mi">${ico('pin')}Location to be announced</span>`;
+  $('hMeta').innerHTML=[S.when?`<span class="mi">${ico('cal')}${esc(S.when)}</span>`:'',hotelMi,S.host?`<span class="mi">${ico('home')}${esc(S.host)}</span>`:''].join('');wireBook($('hMeta'));
   const people=LIVE?D.pub.people:D.regs.reduce((s,r)=>s+r.people.length,0),hh=LIVE?D.pub.households:D.regs.length,cap=Math.max(1,+S.capacity||1);
-  $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family members registered · ${hh} households`;
+  $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family ${people===1?'member':'members'} registered · ${hh} ${hh===1?'household':'households'}`;
   const days=Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5);
   $('hEarly').textContent=days>=0?`Early-bird pricing ends in ${days} days`:'Early-bird pricing has ended';
   $('hBar').style.width=Math.min(100,people/cap*100)+'%';
@@ -892,12 +904,13 @@ function renderHotel(){const S=D.S,c=$('hotelCard');
   <div class="addr">${esc(S.hotelStreet)}${S.hotelStreet&&S.hotelCity?'<br>':''}${esc(S.hotelCity)}${S.hotelPhone?`<br><span class="mono">${esc(S.hotelPhone)}</span>`:''}</div>
   ${S.roomRate?`<div class="rate">${esc(S.roomRate)}</div>`:''}${S.hotelNote?`<p class="small">${esc(S.hotelNote)}</p>`:''}
   <p style="font-weight:700">Rooms are booked directly with the hotel and are not part of your registration total.</p>
-  <p class="small">Book your room after you register. We'll give you the link on the next screen.</p></div>`;
+  <p class="small">Use the <b>Book your room</b> button at the top of the page.</p></div>`;
 }
 function caterSpent(){return D.exps.filter(e=>e.category==='Hotel catering & bar').reduce((s,e)=>s+(+e.amount),0)}
+function guestSpent(){return D.exps.filter(e=>e.category===GUEST).reduce((s,e)=>s+(+e.amount),0)}
 function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=+S.depFaison||0,dep=depPSR+depF;
   const f=(1+(+S.serviceCharge||0)/100)*(1+(+S.salesTax||0)/100);
-  const billed=caterSpent(),counted=billed/f+(S.depositCounts?depPSR:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
+  const billed=caterSpent(),counted=billed/f+guestSpent()+(S.depositCounts?depPSR:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
   const heads=D.regs.reduce((s,r)=>s+r.people.length,0);
   const depPaid=D.exps.filter(e=>e.category==='Venue & deposits').reduce((s,e)=>s+(+e.amount),0);
   const steps=[75,100,125,150,200];
@@ -1048,16 +1061,19 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
         <li>Tap <b>Copy amount</b> above.</li>
         <li>Paste it in the box that says <b>Choose your donation amount</b>.</li>
         <li>Can’t pay it all today? Type a smaller amount in that box instead. You can pay the rest later.</li>
-        <li>Tap <b>Continue</b>.</li>
       </ol></div>
-      <h3 id="payStepsHead2" style="margin-top:14px">After you tap Continue</h3>
-      <ol class="paysteps" start="5">
-        <li class="tipline">Click the box that says 15% and choose “Other.” This removes Zeffy’s tip.</li>
-        <li class="tipline">Leave the corporate/organization box unchecked.</li>
-        <li>Check that the <b>Total</b> matches the amount you typed, then choose how to pay and finish.</li>
+      <h3 id="payStepsHead2" style="margin-top:14px">Then</h3>
+      <ol class="paysteps" start="4">
+        <li>Click <b>Continue</b>.</li>
+        <li>Paying for someone else? Type their name.</li>
+        <li>Click the box that says 15% and choose “Other.” <span class="note-red">This removes Zeffy’s tip.</span></li>
+        <li>Check that the <b>Total</b> is right.</li>
+        <li>Choose how to pay and fill in your information.</li>
+        <li>Corporate/organization box: <span class="note-red">Leave it unchecked.</span></li>
+        <li>Click <b>Donate</b> (this finishes your reunion payment).<br><span class="note-red">It says Donate, but this is your reunion payment.</span></li>
       </ol>
     </div>
-    <p class="formhelp"><span class="note-red">It says Donate, but this is your reunion payment.</span> Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
+    <p class="formhelp">Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
     <iframe class="zeffy" src="${esc(zeffyEmbed(u))}" title="Secure payment form" loading="lazy" allow="payment"></iframe>`}
 function showConfirm(r,emailed){
   const L=regLines(r),t=regTotal(r);
@@ -1071,7 +1087,6 @@ function showConfirm(r,emailed){
       ${payBlock(t)}
     </div>
     <p style="margin-top:18px">${isTest()?`<b>Test mode:</b> saved to the Test tabs only. `:''}${emailed===false?`We couldn't send the confirmation email right now. Your registration is saved.`:`We've emailed your confirmation to <b>${esc(r.email)}</b>.`} You'll get a receipt once your payment arrives.</p>
-    ${S_hotelBlock()?`<div id="payHotel" style="text-align:left;margin-top:18px"${/^https:\/\/(www\.)?zeffy\.com\//i.test(D.S.zeffyUrl||'')?' hidden':''}>${S_hotelBlock()}</div>`:''}
     <p style="margin-top:14px"><button class="linkbtn" type="button" id="another2">Register another household</button></p>
     ${isAdmin()?`<p style="margin-top:12px"><button class="linkbtn" type="button" id="recPay">Committee: record a payment for this household now</button></p>`:''}
     <p class="muted small" style="margin-top:16px">Confirmation # <span class="mono">${esc(r.code)}</span></p>
@@ -1092,14 +1107,11 @@ function showConfirm(r,emailed){
     // On the first click into the form: the amount is already copied, so hide Copy amount and steps 1-4.
     // One minute later (they should be on Zeffy's card screen by then), show the hotel box.
     let started=false;
-    const showHotel=()=>{const h=$('payHotel');if(h&&document.body.contains(ifr))h.hidden=false};
     const reveal=()=>{if(started)return;started=true;
       ['paySteps1','payAmtBox'].forEach(id=>{const e=$(id);if(e)e.hidden=true});
-      const h2=$('payStepsHead2');if(h2){h2.style.marginTop='0';h2.textContent='Finish paying'}
-      setTimeout(showHotel,60000)};
+      const h2=$('payStepsHead2');if(h2){h2.style.marginTop='0';h2.textContent='Finish paying'}};
     const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
     window.addEventListener('blur',onBlur);
-    setTimeout(()=>{if(!started)showHotel()},120000);
   }
   if($('seePay'))$('seePay').addEventListener('click',()=>{resetForm();openTab('payments');window.scrollTo({top:0})});
   window.scrollTo({top:0});
@@ -1110,7 +1122,7 @@ function S_hotelBlock(){const S=D.S;if(!S.hotelName)return'';
     <p style="margin:4px 0 10px"><b>${esc(S.hotelName)}</b>${S.roomRate?` · ${esc(S.roomRate)}`:''}</p>
     <a class="btn gold block" data-book href="${ok?esc(S.bookUrl):'#'}" target="_blank" rel="noopener">Book your room</a>
     <p class="muted small" style="margin-top:8px">Opens in a new tab, so this page stays open. Rooms are paid to the hotel, not the reunion. Staying home each night? You can skip this.</p></div>`}
-function wireBook(c){c.querySelectorAll('[data-book]').forEach(a=>a.addEventListener('click',e=>{if(!/^https?:\/\//i.test(D.S.bookUrl||'')){e.preventDefault();toast('Booking link coming soon. Paste the hotel link in Setup once Brandi sends it.')}}))}
+function wireBook(c){c.querySelectorAll('[data-book]').forEach(a=>a.addEventListener('click',e=>{if(!/^https?:\/\//i.test(D.S.bookUrl||'')){e.preventDefault();toast(isAdmin()?'Booking link coming soon. Paste the hotel link in Setup once Brandi sends it.':'Booking link coming soon.')}}))}
 function showThanks(r,later,emailed){const S=D.S,c=$('confirm');
   c.innerHTML=`<div class="panel confirm thanks">
     <div class="eyebrow" style="color:var(--green-2)">${esc(S.theme)}</div>
@@ -1149,7 +1161,7 @@ function renderOverview(){
   $('kpis').innerHTML=[
     ['hl','Reunion balance',money(Lg.end),'Money on hand right now'],
     ['','Collected',money(Lg.gross),`${money(D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0))} from committee`],
-    ['','Spent',money(Lg.out),`${D.exps.length} expenses logged`],
+    ['','Spent',money(Lg.out),`${realExps().length} expenses logged`],
     ['','Still owed',money(Lg.owed),`${D.regs.filter(r=>statusOf(r)!=='paid').length} households with a balance`],
     ['','Scholarship fund',money(schFund),`${money(Lg.schol)} donated this year`]
   ].map(([c,l,v,h])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v">${v}</div><div class="h">${h}</div></div>`).join('');
@@ -1323,28 +1335,30 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-del]');
 
 /* ---------- Expenses ---------- */
 let rcImg=null;
-function catOptions(sel){return CATS.map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('')}
+function catOptions(sel){return [...CATS,GUEST].map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('')}
 function renderExpenses(){
-  const tot=D.exps.reduce((s,e)=>s+(+e.amount),0);
-  $('expSub').textContent=`${D.exps.length} expenses · ${money(tot)} total. Change a category any time.`;
+  const tot=realExps().reduce((s,e)=>s+(+e.amount),0);
+  $('expSub').textContent=`${realExps().length} expenses · ${money(tot)} total. Change a category any time.`;
   $('expRows').innerHTML=D.exps.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(e=>`<tr>
     <td>${nice(e.date)}</td><td>${e.img?`<img class="thumb" src="${e.img}" alt="Receipt"> `:''}${esc(e.vendor)}${e.note?`<span class="sub">${esc(e.note)}</span>`:''}${proofCell(e)}</td>
     <td><select data-ecat="${e.id}" aria-label="Category">${catOptions(e.category)}</select></td>
-    <td><span class="chip ${e.source==='Card alert'||e.source==='Automatic'?'info':'plain'}">${esc(e.source)}</span></td><td class="num out">${money(e.amount)}</td><td>${delBtn('exps',e.id)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No expenses yet.</td></tr>';
+    <td><span class="chip ${e.source==='Card alert'||e.source==='Automatic'?'info':'plain'}">${esc(e.source)}</span></td><td class="num${e.category===GUEST?'':' out'}">${money(e.amount)}${e.category===GUEST?'<span class="sub">Toward $6,000 only</span>':''}</td><td>${delBtn('exps',e.id)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No expenses yet.</td></tr>';
 }
 $('rcCat').innerHTML=catOptions(CATS[4]);
+const rcHint=()=>{$('rcCatHint').hidden=$('rcCat').value!==GUEST};
+$('rcCat').addEventListener('change',rcHint);
 $('expRows').addEventListener('change',e=>{const s=e.target.closest('[data-ecat]');if(!s)return;const x=D.exps.find(v=>v.id===+s.dataset.ecat);
   if(LIVE){api('updateExpense',{id:x.id,category:s.value}).then(()=>{x.category=s.value;renderAll();toast('Category updated.')}).catch(err=>{toast(err.message);renderAll()});return}
   x.category=s.value;save();renderAll();toast('Category updated.')});
 $('rcptFile').addEventListener('change',e=>pickFile(e.target,'dropTxt',u=>rcImg=u));
-$('rcVendor').addEventListener('change',()=>{const v=$('rcVendor').value;if(v)$('rcCat').value=guessCat(v)});
+$('rcVendor').addEventListener('change',()=>{const v=$('rcVendor').value;if(v)$('rcCat').value=guessCat(v);rcHint()});
 $('rcptForm').addEventListener('submit',e=>{e.preventDefault();
   const v=$('rcVendor').value.trim(),a=parseFloat($('rcAmount').value),er=$('rcErr');
   if(!v||!(a>0)){er.textContent='Add the store and the total from the receipt.';er.hidden=false;return}er.hidden=true;
   const ex={id:uid(),date:$('rcDate').value||TODAY,vendor:v,category:$('rcCat').value,amount:Math.round(a*100)/100,source:rcImg?(rcImg.kind==='pdf'?'Invoice upload':'Receipt photo'):'Typed in',note:$('rcNote').value.trim()};
   const logx={k:'info',x:`Logged a ${money(a)} expense from ${v} under ${ex.category}${rcImg?' with the receipt attached':''}.`};
   const clear=()=>{['rcVendor','rcAmount','rcNote','rcDate'].forEach(i=>$(i).value='');rcImg=null;$('rcptFile').value='';
-    $('dropTxt').innerHTML='<b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span>'};
+    $('dropTxt').innerHTML='<b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span>';$('rcCat').value=CATS[4];rcHint()};
   if(LIVE){busy($('rcSave'),'Saving…',async()=>{await api('addExpense',{...ex,receipt:rcImg?rcImg.dataUrl:'',receiptName:rcImg?rcImg.name:''},logx);await refreshLive();clear();renderAll();toast('Receipt added to the ledger.')}).catch(()=>{});return}
   if(rcImg){if(rcImg.kind==='image')ex.img=rcImg.dataUrl;else ex.proofName=rcImg.name}
   D.exps.push(ex);addFeed(logx.k,logx.x);clear();save();renderAll();toast('Receipt added to the ledger.')});
