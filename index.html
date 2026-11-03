@@ -330,8 +330,10 @@ ul.feed{margin:0;padding:0}
 .ci-go:disabled{background:var(--surface-2);border-color:var(--line);color:var(--muted)}
 .ci-bal{margin:8px 0 0;padding:8px 12px;border-radius:8px;background:#fdf3c4;font-size:14px}
 .ci-welcome{text-align:center;padding:40px 10px}.ci-wbig{font-family:var(--f-display);font-size:clamp(34px,7vw,56px);color:#1d6b37}.ci-welcome p{font-size:20px;margin-top:8px}
+@media (max-width:640px){.ci-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ci-alldone{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#e9f5ec;color:#1d6b37;font-weight:700;font-size:17px}
 .ci-none{margin-top:14px;display:grid;gap:12px;justify-items:start}
-.ci-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;text-align:center}.ci-kpis div{border:1px solid var(--line);border-radius:12px;padding:12px 4px}
+.ci-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;text-align:center}.ci-kpis div{border:1px solid var(--line);border-radius:12px;padding:12px 4px}
 .ci-kpis b{display:block;font:600 26px var(--f-mono)}.ci-kpis span{font-size:13px;color:var(--muted)}
 .alertbox{border-color:#e7b4b4;background:#fdf1f1}.alertbox h2{color:#8f1f27}.alertbox ul{margin:8px 0;padding-left:20px;display:grid;gap:6px}
 body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #hEarly,body.ci-only .foot{display:none}
@@ -1117,12 +1119,11 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
       <div id="paySteps1"><h3>How to pay</h3>
       <ol class="paysteps">
         <li>Tap <b>Copy amount</b> above.</li>
-        <li>Paste it in the box that says <b>Choose your donation amount</b>. Can’t pay it all today? Type a smaller amount instead. You can pay the rest later.</li>
+        <li>Paste it in the box that says <b>Choose your donation amount</b>. Can’t pay it all today? Type a smaller amount instead. You can pay the rest later. Then click <b>Continue</b>.</li>
       </ol></div>
       <h3 id="payStepsHead2" style="margin-top:14px">Then</h3>
       <ol class="paysteps" start="3">
-        <li>Click <b>Continue</b>.</li>
-        <li>Paying for someone else? Type their name.</li>
+        <li><b>Who is this payment for?</b> Type the name on the registration.</li>
         <li>Click the tip box (it shows a %, like 15%) and choose “Other.” <span class="note-red">This removes Zeffy’s tip.</span></li>
         <li>Check that the <b>Total</b> is right.</li>
         <li>Choose how to pay and fill in your information.</li>
@@ -1303,7 +1304,7 @@ $('regRows').addEventListener('click',e=>{const b=e.target.closest('[data-resend
 $('regFilters').addEventListener('click',e=>{const b=e.target.closest('.filter');if(!b)return;regFilter=b.dataset.f;$('regFilters').querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderPayments()});
 $('reviewBox').addEventListener('click',e=>{const b=e.target.closest('[data-assign-btn]');if(!b)return;const id=+b.dataset.assignBtn,sel=$('reviewBox').querySelector(`[data-assign="${id}"]`);
   if(!sel.value){toast('Pick a household first.');return}const p=D.pays.find(x=>x.id===id);
-  if(LIVE){busy(b,'Saving…',async()=>{await api('updatePayment',{id,code:sel.value,method:'Matched by treasurer'},{k:'ok',x:`Treasurer matched ${money(p.amount)} from ${p.from} to ${regName(findReg(sel.value))} (${sel.value}).`});await refreshLive();renderAll();toast('Payment matched.')}).catch(()=>{});return}
+  if(LIVE){busy(b,'Saving…',async()=>{await api('updatePayment',{id,code:sel.value,method:'Matched by treasurer',total:regTotal(findReg(sel.value))},{k:'ok',x:`Treasurer matched ${money(p.amount)} from ${p.from} to ${regName(findReg(sel.value))} (${sel.value}).`});await refreshLive();renderAll();toast('Payment matched.')}).catch(()=>{});return}
   p.code=sel.value;p.method='Matched by treasurer';
   addFeed('ok',`Treasurer matched ${money(p.amount)} from ${p.from} to ${regName(findReg(p.code))} (${p.code}).`);save();renderAll();toast('Payment matched.')});
 $('runPay').addEventListener('click',()=>{
@@ -1353,7 +1354,7 @@ $('mpForm').addEventListener('submit',e=>{e.preventDefault();
   const via=$('mpVia').value,p={id:uid(),date:$('mpDate').value||TODAY,from:$('mpFrom').value.trim()||regName(r),via,memo:'',amount:a,code,method:'Manual entry',note:$('mpNote').value.trim()};
   const mail=$('mpEmail').checked,logx={k:'ok',x:`Recorded a ${money(a)} ${via} payment for ${regName(r)} (${code}) by hand${mpUp?' with a screenshot':''}.`};
   if(LIVE){busy($('mpSave'),'Saving…',async()=>{
-      await api('addPayment',{...p,proof:mpUp?mpUp.dataUrl:'',proofName:mpUp?mpUp.name:''},logx);
+      await api('addPayment',{...p,total:regTotal(r),takenBy:'Committee',proof:mpUp?mpUp.dataUrl:'',proofName:mpUp?mpUp.name:''},logx);
       await refreshLive();const rr=findReg(code);let note='';
       if(mail&&rr){try{await sendReceipt(rr);await refreshLive();note=' Receipt emailed.'}catch(err){note=' The receipt email did not send.'}}
       closeManual();renderAll();toast('Payment saved.'+note)}).catch(()=>{});return}
@@ -1497,22 +1498,22 @@ async function ciApi(action,data){
 const liveSync=()=>{if(LIVE&&isAdmin())refreshLive().then(()=>renderAll()).catch(()=>{})};
 const ciRegObj=r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}});
 const ciLines=r=>regLines(r).map(l=>({label:l.label,q:l.q,a:l.a,don:!!l.don}));
-function ciLocalStats(){const s={Friday:0,Saturday:0};(D.checkins||[]).forEach(c=>{if(s[c.day]!=null)s[c.day]++});return s}
+function ciLocalStats(){const s={total:0,Friday:0,Saturday:0,walkins:0};(D.checkins||[]).forEach(c=>{s.total++;if(s[c.day]!=null)s[c.day]++;if(c.walkin)s.walkins++});return s}
 function ciHH(r){return{code:r.code,household:regName(r),people:r.people.map(p=>p.name).filter(Boolean),reg:ciRegObj(r),paid:paidFor(r.code),
-  done:(D.checkins||[]).filter(c=>c.code===r.code&&c.day===ciDay).map(c=>c.name)}}
+  done:(D.checkins||[]).filter(c=>c.code===r.code).map(c=>c.name),doneDay:Object.fromEntries((D.checkins||[]).filter(c=>c.code===r.code).map(c=>[c.name,c.day]))}}
 function ciLocalFind(q){const toks=norm(q).split(' ').filter(Boolean);if(!toks.length)return[];
   return D.regs.map(r=>{const names=r.people.map(p=>p.name).filter(Boolean),hay=norm([r.first,r.last,...names].join(' '));
     if(!toks.every(t=>hay.includes(t)))return null;return{...ciHH(r),exact:names.some(n=>toks.every(t=>norm(n).includes(t)))}})
     .filter(Boolean).sort((a,b)=>(b.exact-a.exact)||a.household.localeCompare(b.household)).slice(0,12)}
 function ciReset(keepWelcome){ciView='start';ciRes=null;ciOpen=null;ciPick={};ciQ='';ciNew=null;if(!keepWelcome)ciWelcome=null}
 function ciStatLine(){const st=ciStats||(isAdmin()||!LIVE?ciLocalStats():null);if(!st)return'';
-  return`<p class="ci-stats"><b>Friday:</b> ${st.Friday} checked in · <b>Saturday:</b> ${st.Saturday} checked in</p>`}
+  return`<p class="ci-stats"><b>${st.total??(st.Friday+st.Saturday)}</b> checked in so far · ${st.Friday} on Friday · ${st.Saturday} on Saturday${st.walkins?` · ${st.walkins} walk-in${st.walkins===1?'':'s'}`:''}</p>`}
 const ciGroupOpts=sel=>D.S.groups.map(g=>`<option value="${esc(g.id)}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)})</option>`).join('');
 function ciOpenH(h){ciOpen={...h,reg:ciRegObj(h.reg||{people:[]}),emailOK:false,editEmail:false,adding:false,paying:false,via:'Cash'};ciPick={};}
 const ciBal=h=>Math.max(0,regTotal(h.reg)-(+h.paid||0));
 function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i]).length,bal=ciBal(h),em=h.reg.email||'';
   const rows=h.people.map((n,i)=>h.done.includes(n)
-      ?`<div class="ci-row done"><span class="ci-box" aria-hidden="true">✓</span><span class="ci-name">${esc(n)}</span><span class="ci-tag">Checked in</span></div>`
+      ?`<div class="ci-row done"><span class="ci-box" aria-hidden="true">✓</span><span class="ci-name">${esc(n)}</span><span class="ci-tag">Checked in${(h.doneDay||{})[n]?' '+esc(h.doneDay[n]):''}</span></div>`
       :`<button type="button" class="ci-row${ciPick[i]?' on':''}" data-ci-p="${i}" aria-pressed="${!!ciPick[i]}"><span class="ci-box" aria-hidden="true">${ciPick[i]?'✓':''}</span><span class="ci-name">${esc(n)}</span></button>`).join('');
   const allDone=h.people.length&&h.people.every(n=>h.done.includes(n));
   const emailBox=h.editEmail
@@ -1536,9 +1537,9 @@ function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i
     :(+h.paid>0?`<div class="ci-pay paid">✓ Paid in full</div>`:'');
   return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">${esc(h.household)} household</h3><button class="linkbtn" type="button" id="ciBack">← Start over</button></div>
     ${emailBox}
-    ${allDone?`<p class="muted" style="margin:10px 0 0">Everyone here is checked in for ${ciDay}.</p>`:''}
+    ${allDone?`<p class="ci-alldone">Everyone in this household is already checked in.</p>`:''}
     <div class="ci-list">${rows}</div>${addBox}${payBox}
-    <button class="btn ci-go" type="button" id="ciGo"${picked?'':' disabled'}>${picked?`Check in ${picked} ${picked===1?'person':'people'}`:'Tap the people who are here'}</button>`}
+    ${allDone&&!picked?`<button class="btn ci-go" type="button" id="ciDone">Done</button>`:`<button class="btn ci-go" type="button" id="ciGo"${picked?'':' disabled'}>${picked?`Check in ${picked} ${picked===1?'person':'people'}`:'Tap the people who are here'}</button>`}`}
 function ciNewHTML(){const n=ciNew,st=($('rState')||{}).innerHTML||'';
   return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">Register now</h3><button class="linkbtn" type="button" id="ciBack">← Start over</button></div>
   <form id="ciNewForm" novalidate>
@@ -1595,10 +1596,10 @@ async function ciSave(btn){const h=ciOpen,names=h.people.filter((n,i)=>ciPick[i]
   const first=String(names[0]).split(' ')[0];
   const done=added=>{ciWelcome={first,n:added??n,day:ciDay};ciReset(true);renderCheckin();clearTimeout(ciTimer);
     ciTimer=setTimeout(()=>{ciWelcome=null;renderCheckin()},4000)};
-  if(!LIVE){D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x,by:'Committee'})));
+  if(!LIVE){D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x,walkin:!!h.door,by:'Committee'})));
     addFeed('ok',`Checked in ${n} ${n===1?'person':'people'} from the ${h.household} household for ${ciDay}.`);save();ciStats=null;done();renderCiOverview();return}
-  await busy(btn,'Checking in…',async()=>{const j=await ciApi('ciSave',{code:h.code,household:h.household,day:ciDay,names});ciStats=j.stats;
-    if(isAdmin())D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x})));done(j.added);renderCiOverview()}).catch(()=>{});
+  await busy(btn,'Checking in…',async()=>{const j=await ciApi('ciSave',{code:h.code,household:h.household,day:ciDay,names,walkin:!!h.door});ciStats=j.stats;
+    if(isAdmin())D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x,walkin:!!h.door})));done(j.added);renderCiOverview()}).catch(()=>{});
 }
 async function ciRegister(btn){ciCaptureNew();const n=ciNew,er=$('cnErr');
   const party=n.party.filter(p=>p.name.trim()).map(p=>({name:p.name.trim(),group:p.group}));
@@ -1606,7 +1607,7 @@ async function ciRegister(btn){ciCaptureNew();const n=ciNew,er=$('cnErr');
   const msg=!n.first||!n.last?'Add their first and last name.':!okEmail(n.email)?'Add an email so we can send their confirmation.':!party.length?'Add at least one person who is here.':'';
   if(msg){er.textContent=msg;er.hidden=false;return}
   const reg={date:TODAY,first:n.first,last:n.last,email:n.email,phone:n.phone,city:n.city,state:n.state,payer:'',people:party,shirts:sh({}),addons:{},donation:0};
-  const open=code=>{reg.code=code;const h={code,household:regName(reg),people:party.map(p=>p.name),done:[],reg,paid:0};ciView='start';ciNew=null;ciOpenH(h);ciOpen.emailOK=true;party.forEach((p,i)=>ciPick[i]=true);renderCheckin();toast(`Registered ${regName(reg)} (${code}). Confirmation emailed.`)};
+  const open=code=>{reg.code=code;const h={code,household:regName(reg),people:party.map(p=>p.name),done:[],reg,paid:0};ciView='start';ciNew=null;ciOpenH(h);ciOpen.emailOK=true;ciOpen.door=true;party.forEach((p,i)=>ciPick[i]=true);renderCheckin();toast(`Registered ${regName(reg)} (${code}). Confirmation emailed.`)};
   if(!LIVE){const k=D.regs.reduce((m,r)=>Math.max(m,parseInt(r.code.slice(4))||0),0)+1;const code='PSR-'+String(k).padStart(3,'0');reg.code=code;D.regs.push(reg);
     addFeed('ok',`Registered ${regName(reg)} (${code}) at check-in: ${party.length} ${party.length===1?'person':'people'}, ${money(regTotal(reg))}.`);save();open(code);renderAll();return}
   await busy(btn,'Registering…',async()=>{const j=await api('register',{reg,total:regTotal(reg),lines:ciLines(reg)});open(j.code);liveSync()}).catch(()=>{});
@@ -1629,7 +1630,11 @@ $('tab-checkin').addEventListener('click',e=>{const t=e.target;
   if(t.closest('#ciPayOpen')){ciOpen.paying=true;renderCheckin();return}
   if(t.closest('#ciPayCancel')){ciOpen.paying=false;renderCheckin();return}
   if(t.closest('#ciGo')){ciSave($('ciGo'));return}
+  if(t.closest('#ciDone')){clearTimeout(ciTimer);ciReset();renderCheckin();window.scrollTo({top:0});return}
 });
+$('tab-checkin').addEventListener('input',e=>{const el=e.target;
+  if(['cnFirst','cnLast','cnCity','ciAddName','ciQ'].includes(el.id)||el.dataset.cnName!==undefined){const pos=el.selectionStart,nv=titleCase(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(pos,pos)}catch(_){}}}
+  if(el.id==='cnPhone'){const nv=fmtPhone(el.value);if(nv!==el.value)el.value=nv}});
 $('tab-checkin').addEventListener('submit',e=>{e.preventDefault();const id=e.target.id,h=ciOpen;
   if(id==='ciFindForm'){ciQ=$('ciQ').value.trim();if(ciQ)ciSearch($('ciFindGo'));return}
   if(id==='ciNewForm'){ciRegister($('cnGo'));return}
@@ -1651,7 +1656,7 @@ $('tab-checkin').addEventListener('submit',e=>{e.preventDefault();const id=e.tar
 function renderCiOverview(){const el=$('ciOverview');if(!el)return;const st=ciLocalStats();
   const reg=D.regs.reduce((s,r)=>s+r.people.length,0);
   el.innerHTML=`<div class="panel-head"><div><h2>Check-in</h2><p class="muted small">Who actually came, compared with who registered.</p></div><button class="btn sm" type="button" id="ciOpenTab">Open check-in</button></div>
-    <div class="ci-kpis"><div><b>${reg}</b><span>Registered</span></div><div><b>${st.Friday}</b><span>Checked in Friday</span></div><div><b>${st.Saturday}</b><span>Checked in Saturday</span></div></div>`;
+    <div class="ci-kpis"><div><b>${reg}</b><span>Registered</span></div><div><b>${st.total}</b><span>Checked in</span></div><div><b>${st.Friday}</b><span>Arrived Friday</span></div><div><b>${st.Saturday}</b><span>Arrived Saturday</span></div><div><b>${st.walkins}</b><span>Walk-ins</span></div></div>`;
   $('ciOpenTab').onclick=()=>{openTab('checkin');window.scrollTo({top:0})};
 }
 function renderAlerts(){const el=$('alerts');if(!el)return;const a=D.alerts||[];
