@@ -930,12 +930,13 @@ function copy(txt,btn){const done=()=>{const o=btn.textContent;btn.textContent='
 function sel(btn){const v=btn.parentElement.querySelector('.val');if(!v)return;const r=document.createRange();r.selectNodeContents(v);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from your keyboard menu.')}
 
 /* ---------- Tabs ---------- */
+const PAYQ=(()=>{const m=(location.hash||'').match(/^#pay=([^&]+)(?:&amt=([\d.]+))?/);return m?{code:decodeURIComponent(m[1]),amt:+m[2]||0}:null})();
 const TABS=['register','overview','payments','expenses','ledger','checkin','setup'];
 function openTab(t){if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
   document.body.classList.toggle('ci-only',t==='checkin'&&!isAdmin());
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
   TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='checkin')renderCheckin();
-  try{history.replaceState(null,'','#'+t)}catch(e){}
+  if(!PAYQ)try{history.replaceState(null,'','#'+t)}catch(e){}
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{openTab(b.dataset.tab);window.scrollTo({top:0})}));
 
@@ -1126,16 +1127,43 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
       </ol></div>
       <h3 id="payStepsHead2" style="margin-top:14px">Then</h3>
       <ol class="paysteps" start="3">
+        <li id="payStepAmt" hidden>Type or paste your amount${t>0?` (<b>${money(t)}</b>)`:''} in the <b>Choose your donation amount</b> box, then click <b>Continue</b>.</li>
         <li><b>Who is this payment for?</b> Type the name on the registration.</li>
         <li>Click the tip box (it shows a %, like 15%) and choose “Other.” <span class="note-red">This removes Zeffy’s tip.</span></li>
         <li>Check that the <b>Total</b> is right.</li>
         <li>Choose how to pay and fill in your information.</li>
         <li>Corporate/organization box: <span class="note-red">Leave it unchecked.</span></li>
-        <li>Click <b>Donate</b> (this finishes your reunion payment).<br><span class="note-red">It says Donate, but this is your reunion payment.</span></li>
+        <li>Click <b>Donate</b> (this finishes your reunion payment). <span class="note-red">It says Donate, but this is your reunion payment.</span></li>
       </ol>
     </div>
     <p class="formhelp">Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
     <iframe class="zeffy" src="${esc(zeffyEmbed(u))}" title="Secure payment form" loading="lazy" allow="payment"></iframe>`}
+// Copy button + the step change on the first click into Zeffy's box.
+// The page can't see inside Zeffy's box, only that someone clicked into it. Then the
+// Copy amount box, steps 1-2 and "Then" go away, and the "type your amount" step shows.
+function wirePay(c){
+  c.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.copy,b)));
+  const ifr=c.querySelector('.zeffy');if(!ifr)return;
+  let started=false;
+  const reveal=()=>{if(started)return;started=true;
+    ['paySteps1','payAmtBox','payStepsHead2'].forEach(id=>{const e=$(id);if(e)e.hidden=true});
+    const a=$('payStepAmt');if(a)a.hidden=false};
+  const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
+  window.addEventListener('blur',onBlur);
+}
+// Pay page: reunion-site/#pay=PSR-003&amt=125.00 (from the email's Pay online button and the check-in QR code).
+const payLink=(code,amt)=>location.origin+location.pathname+'#pay='+encodeURIComponent(code)+'&amt='+(+amt||0).toFixed(2);
+function showPayPage(){if(!PAYQ)return;const{code,amt}=PAYQ;
+  $('regWrap').hidden=true;$('regClosed').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm paywide">
+    <h2 class="reghead">Reunion payment</h2>
+    <p class="regsub">Confirmation # <span class="mono">${esc(code)}</span></p>
+    <div class="paybox">
+      ${amt>0?`<div class="payamt" id="payAmtBox"><span>Amount to pay</span><b>${money(amt)}</b><button class="btn sm" type="button" data-copy="${amt.toFixed(2)}">Copy amount</button></div>`:''}
+      ${LIVE&&!D.loaded?'<p class="muted">Loading…</p>':payBlock(amt)}
+    </div></div>`;
+  wirePay(c);wireBook(c);
+}
 function showConfirm(r,emailed){
   const L=regLines(r),t=regTotal(r);
   $('regWrap').hidden=true;const c=$('confirm');c.hidden=false;
@@ -1158,22 +1186,9 @@ function showConfirm(r,emailed){
         <div class="eb"><b>Payment received, thank you!</b><span class="small">We received ${money(t)}. You're paid in full. See you at the reunion!</span><span class="muted small">Confirmation # ${esc(r.code)}</span></div></div>
       <button class="btn sm" type="button" id="seePay" style="margin-top:12px">See it on the payments page</button>
     </details>`}</div>`;
-  c.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.copy,b)));
+  wirePay(c);
   const rp=$('recPay');if(rp)rp.addEventListener('click',()=>{const code=r.code;resetForm();openTab('payments');openManual(code);window.scrollTo({top:0})});
   $('another2').addEventListener('click',resetForm);wireBook(c);
-  const ifr=c.querySelector('.zeffy');
-  if(ifr){
-    // The page can't see inside Zeffy's box, but it can tell when someone clicks into it.
-    // Then: grow the box for Zeffy's longer checkout screen and show the hotel info below it.
-    // On the first click into the form: the amount is already copied, so hide Copy amount and steps 1-4.
-    // One minute later (they should be on Zeffy's card screen by then), show the hotel box.
-    let started=false;
-    const reveal=()=>{if(started)return;started=true;
-      ['paySteps1','payAmtBox'].forEach(id=>{const e=$(id);if(e)e.hidden=true});
-      const h2=$('payStepsHead2');if(h2){h2.style.marginTop='0';h2.textContent='Click Continue in the box below, then:'}};
-    const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
-    window.addEventListener('blur',onBlur);
-  }
   if($('seePay'))$('seePay').addEventListener('click',()=>{resetForm();openTab('payments');window.scrollTo({top:0})});
   window.scrollTo({top:0});
 }
@@ -1532,7 +1547,7 @@ function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i
       ?`<div class="ci-pay open"><div class="spread"><b>Pay now</b><button class="linkbtn" type="button" id="ciPayCancel">Cancel</button></div>
         <div class="ci-via" role="group" aria-label="How they're paying">${['Cash','Cash App','Zelle','Card'].map(v=>`<button type="button" class="ci-day" data-ci-via="${v}" aria-pressed="${h.via===v}">${v}</button>`).join('')}</div>
         ${h.via==='Card'
-          ?(zok?`<div class="ci-qr"><div id="ciQR" aria-label="QR code for the Zeffy payment page"></div><p>Have them scan this with their phone camera to pay by card on Zeffy. They type <b>${money(bal)}</b> (or what they’re paying), then pick <b>Other</b> in the tip box.</p><p class="muted small">Card payments go straight to Zeffy, so there’s nothing to record here.</p></div>`
+          ?(zok?`<div class="ci-qr"><div id="ciQR" aria-label="QR code for the Zeffy payment page"></div><p>Have them scan this with their phone camera. It opens the payment page with the amount (<b>${money(bal)}</b>) and the steps to pay by card.</p><p class="muted small">Card payments go straight to Zeffy, so there’s nothing to record here.</p></div>`
               :`<p class="muted" style="margin-top:10px">Card payments open once the Zeffy link is added in Setup.</p>`)
           :`<form class="ci-inline" id="ciPayForm" novalidate><label class="f">Amount ($)<input id="ciPayAmt" type="number" step="0.01" min="0" inputmode="decimal" value="${bal.toFixed(2)}"></label><button class="btn primary" type="submit" id="ciPayGo">Record payment</button></form><p class="muted small" style="margin-top:6px">They get a receipt email right away.</p>`}
         </div>`
@@ -1584,7 +1599,7 @@ function renderCheckin(){const box=$('ciBox');if(!box||$('tab-checkin').hidden&&
   else body=`<div class="ci-start"><button type="button" class="ci-big" data-ci-go="find">Already registered<span>Find your name and check in</span></button><button type="button" class="ci-big alt" data-ci-go="new">Not registered yet<span>Sign up here and check in</span></button></div>`;
   box.innerHTML=`<div class="spread"><h2>Check-in</h2><div class="ci-days" role="group" aria-label="Day">${days}</div></div>${ciStatLine()}${body}`;
   if(ciView==='new'&&$('cnState'))$('cnState').value=ciNew.state||'';
-  if(ciOpen&&ciOpen.paying&&ciOpen.via==='Card'&&$('ciQR'))ciQR($('ciQR'),D.S.zeffyUrl);
+  if(ciOpen&&ciOpen.paying&&ciOpen.via==='Card'&&$('ciQR'))ciQR($('ciQR'),payLink(ciOpen.code,ciBal(ciOpen)));
 }
 let qrLib=null;
 function ciQR(el,url){const draw=()=>{el.innerHTML='';new QRCode(el,{text:url,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})};
@@ -1714,10 +1729,10 @@ $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn
     $('pinIn').value='';$('pinForm').hidden=true;$('adminLink').hidden=false;renderSetup();renderPeople();renderAddonFields();renderAll();openTab('overview');window.scrollTo({top:0});toast('Signed in.')}).catch(()=>{});
 });
 loadDraft();renderSetup();renderPeople();renderAddonFields();renderAll();
-openTab((location.hash||'').slice(1));
+openTab(PAYQ?'register':(location.hash||'').slice(1));showPayPage();
 if(LIVE){
   if(location.hash==='#committee'&&!isAdmin())$('adminLink').click();
-  refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();openTab((location.hash||'').slice(1))})
+  refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();if(PAYQ){openTab('register');showPayPage()}else openTab((location.hash||'').slice(1))})
     .catch(()=>{D.loadErr=true;if(PIN){signOut(true)}renderAll()});
 }
 })();
