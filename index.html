@@ -996,7 +996,7 @@ function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=
 }
 
 /* ---------- Register ---------- */
-let F={people:[{name:'',group:'adult'}],shirts:sh({}),addons:{},donation:0};
+let F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
 const DRAFT='psr-reg-draft',DRAFT_DAYS=7,DF=['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer','rDonation'];
 let draftT;
 function saveDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{try{
@@ -1006,9 +1006,9 @@ function saveDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{try{
 function clearDraft(){clearTimeout(draftT);try{localStorage.removeItem(DRAFT)}catch(e){}$('draftNote').hidden=true}
 function loadDraft(){try{const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d)return;
   if(Date.now()-d.ts>DRAFT_DAYS*864e5){localStorage.removeItem(DRAFT);return}
-  F=d.F;F.shirts=sh(F.shirts||{});F.addons=F.addons||{};if(!F.people||!F.people.length)F.people=[{name:'',group:'adult'}];
+  F=d.F;F.shirts=sh(F.shirts||{});F.addons=F.addons||{};if(!F.people||!F.people.length)F.people=[{name:'',group:''}];
   DF.forEach(i=>{if(d.v[i]!=null)$(i).value=d.v[i]});markDon();$('draftNote').hidden=false}catch(e){}}
-const groupOptions=sel=>D.S.groups.map(g=>{const p=priceFor(g,TODAY);return`<option value="${g.id}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)}) · ${p?money0(p):'Free'}</option>`}).join('');
+const groupOptions=sel=>`<option value="" disabled${sel&&grp(sel)?'':' selected'}>Pick an age group</option>`+D.S.groups.map(g=>{const p=priceFor(g,TODAY);return`<option value="${g.id}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)}) · ${p?money0(p):'Free'}</option>`}).join('');
 function renderPeople(){
   $('peopleList').innerHTML=F.people.map((p,i)=>`<div class="person">
     <input aria-label="Full name, person ${i+1}" placeholder="Full name" data-pi="${i}" data-pf="name" value="${esc(p.name)}">
@@ -1054,7 +1054,7 @@ $('regForm').addEventListener('input',saveDraft);
 $('regForm').addEventListener('change',saveDraft);
 $('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
 $('peopleList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b||F.people.length<2)return;F.people.splice(+b.dataset.rm,1);renderPeople();renderSummary()});
-$('addPerson').addEventListener('click',()=>{F.people.push({name:'',group:'adult'});renderPeople();renderSummary();const ins=$('peopleList').querySelectorAll('input');ins[ins.length-1].focus()});
+$('addPerson').addEventListener('click',()=>{F.people.push({name:'',group:''});renderPeople();renderSummary();const ins=$('peopleList').querySelectorAll('input');ins[ins.length-1].focus()});
 function markDon(){const v=String(+$('rDonation').value||'');document.querySelectorAll('[data-don]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.don===v)))}
 document.querySelectorAll('[data-don]').forEach(b=>b.addEventListener('click',()=>{const on=b.getAttribute('aria-pressed')==='true';$('rDonation').value=on?'':b.dataset.don;markDon();renderSummary();saveDraft()}));
 $('rFirst').addEventListener('change',()=>{if(F.people.length===1&&!F.people[0].name){F.people[0].name=`${$('rFirst').value} ${$('rLast').value}`.trim();renderPeople()}});
@@ -1068,9 +1068,11 @@ $('regForm').addEventListener('submit',e=>{
   if(!first||!last)msg='Add the first and last name of the household contact.';
   else if(!/^\S+@\S+\.\S+$/.test(email))msg='Add an email so we can send your receipt.';
   else if(!people.length)msg='Add at least one person who is coming.';
+  const noGrp=F.people.findIndex(p=>p.name.trim()&&!grp(p.group));
+  if(!msg&&noGrp>=0)msg='Pick an age group for '+F.people[noGrp].name.trim()+'.';
   const er=$('regErr');document.querySelectorAll('.bad-field').forEach(x=>x.classList.remove('bad-field'));
   if(msg){er.textContent=msg;er.hidden=false;
-    const bad=(!first?$('rFirst'):!last?$('rLast'):!/^\S+@\S+\.\S+$/.test(email)?$('rEmail'):$('peopleList').querySelector('input'));
+    const bad=(!first?$('rFirst'):!last?$('rLast'):!/^\S+@\S+\.\S+$/.test(email)?$('rEmail'):(people.length&&noGrp>=0)?$('peopleList').querySelector(`select[data-pi="${noGrp}"]`):$('peopleList').querySelector('input'));
     if(bad){bad.classList.add('bad-field');bad.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>bad.focus({preventScroll:true}),350)}
     return}
   const reg={date:TODAY,first,last,email,phone:$('rPhone').value.trim(),city:$('rCity').value.trim(),state:$('rState').value,payer:$('rPayer').value.trim(),
@@ -1217,7 +1219,7 @@ function showThanks(r,later,emailed){const S=D.S,c=$('confirm');
   $('allDone').addEventListener('click',()=>{c.innerHTML=`<div class="panel confirm thanks"><h2 style="font-size:28px">See you in Greensboro!</h2><p style="margin-top:10px">You can close this page now.</p><button class="btn ghost sm" type="button" id="restart2" style="margin-top:16px">Register another household</button></div>`;$('restart2').addEventListener('click',resetForm);window.scrollTo({top:0})});
   wireBook(c);if($('restart'))$('restart').addEventListener('click',resetForm);window.scrollTo({top:0});
 }
-function resetForm(){F={people:[{name:'',group:'adult'}],shirts:sh({}),addons:{},donation:0};
+function resetForm(){F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
   ['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer'].forEach(i=>$(i).value='');$('rDonation').value='';markDon();
   $('confirm').hidden=true;$('regWrap').hidden=false;$('draftNote').hidden=true;renderPeople();renderAddonFields();renderSummary();gateReg();}
 function gateReg(){const closed=LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||!D.S.regOpen),box=$('regClosed');
@@ -1697,7 +1699,7 @@ $('ciLinkCopy').addEventListener('click',e=>copy(helperLink(),e.target));
 function renderAll(settingsChanged){
   renderHero();
   if(settingsChanged){
-    F.people.forEach(p=>{if(!grp(p.group))p.group=D.S.groups[0].id});
+    F.people.forEach(p=>{if(p.group&&!grp(p.group))p.group=''});
     renderPeople();renderAddonFields();
   }
   renderHotel();renderCommit();renderSummary();renderOverview();renderPayments();renderExpenses();renderLedger();renderCheckin();renderCiOverview();renderAlerts();renderRemind();
