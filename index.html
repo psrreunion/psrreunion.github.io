@@ -358,6 +358,7 @@ body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #h
 @media (min-width:1000px){.homebtn{position:absolute;top:18px;right:24px;margin:0}}
 @media (max-width:520px){.homebtn{width:auto;margin:14px 16px 0;text-align:center}}
 body.ci-only .homebtn{display:none}
+body.viewer #tab-setup .savebar{display:none}
 </style>
 
 <header class="hero">
@@ -618,6 +619,7 @@ body.ci-only .homebtn{display:none}
 </section>
 
 <section role="tabpanel" id="tab-setup" hidden>
+  <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="muted">Change anything here, then click <b>Save changes</b>. The registration page, totals and reports update right away.</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="grid2">
@@ -939,7 +941,7 @@ function sel(btn){const v=btn.parentElement.querySelector('.val');if(!v)return;c
 /* ---------- Tabs ---------- */
 const PAYQ=(()=>{const m=(location.hash||'').match(/^#pay=([^&]+)(?:&amt=([\d.]+))?/);return m?{code:decodeURIComponent(m[1]),amt:+m[2]||0}:null})();
 const TABS=['register','overview','payments','expenses','ledger','checkin','setup'];
-function openTab(t){if(t==='setup'&&isViewer())t='overview';if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
+function openTab(t){if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
   document.body.classList.toggle('ci-only',t==='checkin'&&!isAdmin());
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
   TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='checkin')renderCheckin();
@@ -1132,11 +1134,11 @@ function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.
       <div id="paySteps1"><h3>How to pay</h3>
       <ol class="paysteps">
         <li>Tap <b>Copy amount</b> above.</li>
-        <li>Paste it in the box that says <b>Choose your donation amount</b>. Can’t pay it all today? Type a smaller amount instead. You can pay the rest later. Then click <b>Continue</b>.</li>
+        <li>In the <b>Choose your donation amount</b> box, paste your amount, or type a smaller amount if you’re making a partial payment. Then click <b>Continue</b>. If the amount is wrong after you click Continue, click <b>Back</b> to fix it.</li>
       </ol></div>
       <h3 id="payStepsHead2" style="margin-top:14px">Then</h3>
       <ol class="paysteps" start="3">
-        <li id="payStepAmt" hidden>Type or paste your amount${t>0?` (<b>${money(t)}</b>)`:''} in the <b>Choose your donation amount</b> box, then click <b>Continue</b>.</li>
+        <li id="payStepAmt" hidden>In the <b>Choose your donation amount</b> box, paste your amount${t>0?` (<b>${money(t)}</b>)`:''}, or type a smaller amount if you’re making a partial payment. Then click <b>Continue</b>. If the amount is wrong after you click Continue, click <b>Back</b> to fix it.</li>
         <li><b>Who is this payment for?</b> Type the name on the registration.</li>
         <li>Click the tip box (it shows a %, like 15%) and choose “Other.” <span class="note-red">This removes Zeffy’s tip.</span></li>
         <li>Check that the <b>Total</b> is right.</li>
@@ -1719,9 +1721,11 @@ function applyMode(){const adm=isAdmin();
   const t=isTest(),tb=$('testBtn');$('testStrip').hidden=!t;$('testClear').hidden=!(t&&adm);
   tb.hidden=!LIVE||D.S.showTest===false;tb.textContent='Test mode: '+(t?'On':'Off');tb.classList.toggle('testing',t);
   // Test PIN: Test mode only, no Setup, no committee contributions.
-  const v=isViewer();if(v){tb.hidden=true;$('testClear').hidden=true;sl.hidden=true}
-  $('testOff').hidden=v;$('contribPanel').hidden=v;
-  const st=document.querySelector('.tab[data-tab="setup"]');if(st)st.hidden=v;
+  const v=isViewer();if(v){tb.hidden=true;$('testClear').hidden=true}
+  $('testOff').hidden=v;$('contribPanel').hidden=v;document.body.classList.toggle('viewer',v);
+  document.querySelectorAll('#tab-setup input,#tab-setup select,#tab-setup textarea,#tab-setup button').forEach(el=>{if(v&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!v&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
+  ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
+  const vn=$('setupViewNote');if(vn)vn.hidden=!v;
 }
 $('testBtn').addEventListener('click',()=>setTest(!isTest()));
 $('testOff').addEventListener('click',()=>setTest(false));
