@@ -353,9 +353,15 @@ body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #h
 @media (max-width:560px){.ci-find{flex-direction:column;align-items:stretch}.ci-start{grid-template-columns:1fr}.ci-prow{grid-template-columns:1fr 1fr 36px}}
 .empty{padding:18px;text-align:center;color:var(--muted);font-size:14px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.homebtn{display:block;width:max-content;margin:16px 16px 0 auto;background:#fff;color:var(--green);font-weight:700;font-size:17px;text-decoration:none;padding:12px 22px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.18);position:relative;z-index:2}
+.homebtn:hover{background:#f3f7f2}
+@media (min-width:1000px){.homebtn{position:absolute;top:18px;right:24px;margin:0}}
+@media (max-width:520px){.homebtn{width:auto;margin:14px 16px 0;text-align:center}}
+body.ci-only .homebtn{display:none}
 </style>
 
 <header class="hero">
+  <a class="homebtn" href="https://www.portersanfordreid.com/">← Back to portersanfordreid.com</a>
   <div class="wrap hero-in">
     <svg class="crest" viewBox="0 0 100 118" aria-label="Porter-Sanford-Reid crest" role="img">
       <defs><clipPath id="sh"><path d="M5 4H95V58C95 88 72 106 50 114C28 106 5 88 5 58Z"/></clipPath></defs>
@@ -796,7 +802,8 @@ const save=()=>{if(LIVE)return;try{localStorage.setItem(KEY,JSON.stringify(D))}c
 let PIN='';try{PIN=sessionStorage.getItem('psr-pin')||''}catch(e){}
 const isAdmin=()=>!LIVE||!!PIN;
 let testOn=false;try{testOn=localStorage.getItem('psr-test-mode')==='1'}catch(e){}
-const isTest=()=>LIVE&&testOn&&D.S.showTest!==false;
+const isViewer=()=>LIVE&&D.role==='viewer';
+const isTest=()=>LIVE&&(isViewer()||(testOn&&D.S.showTest!==false));
 const startBal=()=>isTest()?0:(+D.S.begin||0),startSchol=()=>isTest()?0:(+D.S.scholStart||0);
 function setTest(on){testOn=!!on;try{on?localStorage.setItem('psr-test-mode','1'):localStorage.removeItem('psr-test-mode')}catch(e){}
   if(!$('confirm').hidden){$('confirm').hidden=true;$('regWrap').hidden=false}
@@ -820,7 +827,7 @@ async function loadAll(){
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
-  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));
+  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';
   D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
   D.checkins=j.checkins||[];D.alerts=j.alerts||[];ciStats=null;
   D.pub={people:D.regs.reduce((s,r)=>s+r.people.length,0),households:D.regs.length};D.loaded=true;
@@ -932,7 +939,7 @@ function sel(btn){const v=btn.parentElement.querySelector('.val');if(!v)return;c
 /* ---------- Tabs ---------- */
 const PAYQ=(()=>{const m=(location.hash||'').match(/^#pay=([^&]+)(?:&amt=([\d.]+))?/);return m?{code:decodeURIComponent(m[1]),amt:+m[2]||0}:null})();
 const TABS=['register','overview','payments','expenses','ledger','checkin','setup'];
-function openTab(t){if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
+function openTab(t){if(t==='setup'&&isViewer())t='overview';if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
   document.body.classList.toggle('ci-only',t==='checkin'&&!isAdmin());
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
   TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='checkin')renderCheckin();
@@ -1711,13 +1718,17 @@ function applyMode(){const adm=isAdmin();
   const sl=$('sheetLink');sl.hidden=!(LIVE&&adm&&D.sheetUrl);if(D.sheetUrl)sl.href=D.sheetUrl;
   const t=isTest(),tb=$('testBtn');$('testStrip').hidden=!t;$('testClear').hidden=!(t&&adm);
   tb.hidden=!LIVE||D.S.showTest===false;tb.textContent='Test mode: '+(t?'On':'Off');tb.classList.toggle('testing',t);
+  // Test PIN: Test mode only, no Setup, no committee contributions.
+  const v=isViewer();if(v){tb.hidden=true;$('testClear').hidden=true;sl.hidden=true}
+  $('testOff').hidden=v;$('contribPanel').hidden=v;
+  const st=document.querySelector('.tab[data-tab="setup"]');if(st)st.hidden=v;
 }
 $('testBtn').addEventListener('click',()=>setTest(!isTest()));
 $('testOff').addEventListener('click',()=>setTest(false));
 let clearArm=0;$('testClear').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-clearArm>4000){clearArm=Date.now();b.textContent='Tap again to clear';setTimeout(()=>{if(b.textContent==='Tap again to clear')b.textContent='Clear test data'},4000);return}
   clearArm=0;busy(b,'Clearing…',async()=>{await api('clearTest');await refreshLive();renderAll();toast('Test data cleared.')}).then(()=>b.textContent='Clear test data').catch(()=>{b.textContent='Clear test data'})});
-function signOut(silent){PIN='';try{sessionStorage.removeItem('psr-pin')}catch(e){}
+function signOut(silent){PIN='';D.role='';try{sessionStorage.removeItem('psr-pin')}catch(e){}
   D.regs=[];D.pays=[];D.exps=[];D.contribs=[];D.feed=[];D.checkins=[];D.alerts=[];openTab('register');renderAll();if(!silent)toast('Signed out.')}
 $('signOut').addEventListener('click',()=>signOut());
 $('refreshBtn').addEventListener('click',e=>busy(e.target,'Refreshing…',async()=>{await refreshLive();renderSetup();renderAll(true);toast('Up to date.')}).catch(()=>{}));
