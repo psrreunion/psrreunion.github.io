@@ -130,9 +130,17 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 /* Register */
 .reg-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 @media (max-width:860px){.reg-grid{grid-template-columns:1fr}}
-.summary{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px)}
+.summary{position:static}
 .person{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px) auto;gap:8px;align-items:center}
-@media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}}
+.person .food{grid-column:1/3;font-size:15px;color:var(--ink-2)}
+.eb-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,#f7d774,#e8b923);color:#3a2c00;border-radius:14px;padding:14px 18px;margin:0 0 18px;box-shadow:0 4px 14px rgba(160,120,0,.25)}
+.eb-banner b{font-size:19px}.eb-banner .btn{background:#1c5a34;color:#fff;border-color:#1c5a34}
+.side-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);align-self:start;display:flex;flex-direction:column;gap:18px;min-width:0}
+.wk-card{border-top:4px solid var(--gold,#e0b22a)}.wk-card h2{margin-bottom:10px}
+.wk-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}.wk-row:first-of-type{border-top:0}
+.wk-day{background:var(--green);color:#fff;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
+.firsts li{padding:6px 0;border-top:1px solid var(--line);list-style:none}.firsts li:first-child{border-top:0}.firsts ol{padding:0;margin:0}
+@media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}.person .food{grid-column:1/2}}
 .x{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:18px;line-height:1}
 .x:hover{color:var(--bad);border-color:var(--bad)}
 .sizes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -422,6 +430,7 @@ body.viewer #tab-setup .savebar{display:none}
 <!-- REGISTER -->
 <section role="tabpanel" id="tab-register">
   <div class="panel confirm" id="regClosed" hidden></div>
+  <div id="ebBanner"></div>
   <div class="reg-grid" id="regWrap">
     <form id="regForm" class="stack" novalidate>
       <div class="draftnote" id="draftNote" hidden><span>Welcome back! We saved what you started.</span><button class="btn sm" type="button" id="startOver">Start over</button></div>
@@ -463,7 +472,7 @@ body.viewer #tab-setup .savebar{display:none}
         </div>
       </div>
     </form>
-    <aside class="panel summary" id="summary" aria-live="polite"></aside>
+    <div class="side-col"><aside class="panel summary" id="summary" aria-live="polite"></aside><div class="panel wk-card" id="weekendCard" hidden></div></div>
   </div>
   <div id="confirm" hidden></div>
 </section>
@@ -475,6 +484,7 @@ body.viewer #tab-setup .savebar{display:none}
   <div class="kpis" id="kpis"></div>
   <div class="panel" id="commit"></div>
   <div class="panel" id="ciOverview"></div>
+  <div class="panel firsts" id="firsts" hidden></div>
   <div class="grid2">
     <div class="panel"><div class="panel-head"><div><h2>Who's coming</h2><p class="muted small" id="attSub"></p></div></div><div class="bars" id="attBars"></div></div>
     <div class="panel"><div class="panel-head"><div><h2>Households</h2><p class="muted small">Payment status, updated as payments are matched.</p></div></div><div class="bars" id="statusBars"></div></div>
@@ -623,7 +633,7 @@ body.viewer #tab-setup .savebar{display:none}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="muted">Change anything here, then click <b>Save changes</b>. The registration page, totals and reports update right away.</p>
-  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn primary" type="button" data-savenow>Save changes</button></div>
+  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><a class="btn" id="previewReg" href="./" target="_blank" rel="noopener">Preview registration page</a><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="grid2">
     <div class="panel">
       <div class="panel-head"><h2>Reunion details</h2></div>
@@ -638,6 +648,10 @@ body.viewer #tab-setup .savebar{display:none}
         <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
         <label class="f">When<input id="sWhen" data-k="when"></label>
         <label class="f">Hosted by<input id="sHost" data-k="host"></label>
+        <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
+        <p class="muted small" style="margin-top:-6px">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
+        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
+        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
       </div>
     </div>
     <div class="panel">
@@ -659,6 +673,13 @@ body.viewer #tab-setup .savebar{display:none}
       <div class="stack" style="gap:12px">
         <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
         <p class="muted small" style="margin-top:-6px">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
+        <div class="fields">
+          <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
+          <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
+        </div>
+        <p class="muted small" style="margin-top:-6px">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
+        <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
+        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
         <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
         <p class="muted small" style="margin-top:-6px">Until this is filled in, families see "Online payment opens soon" after they register.</p>
         <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
@@ -679,6 +700,8 @@ body.viewer #tab-setup .savebar{display:none}
       <div class="panel-head"><div><h2>Emails</h2><p class="muted small">How the confirmation email looks. The reunion name, theme, dates and hotel come from the boxes above.</p></div></div>
       <div class="stack" style="gap:12px">
         <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
+        <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+        <p class="muted small" style="margin-top:-6px">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
         <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
       </div>
     </div>
@@ -731,6 +754,7 @@ const GUEST='Guest spending at hotel';
 const realExps=()=>D.exps.filter(e=>e.category!==GUEST);
 const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
 const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
+const FOODS=['','Vegetarian','Vegan','No pork','Diabetic','Gluten-free','Food allergy'];
 const KEY='psr-hub-demo-v6';
 /* Paste the Google Apps Script web app URL between the quotes to turn on live mode. Empty = demo mode. */
 const API_URL='https://script.google.com/macros/s/AKfycbzTASef4ORM_agnhpPL8pmICfaLBE_KUrqY11McfRjPnM-sxNQzsdcGfDjd5DkTMPbd/exec';
@@ -761,7 +785,7 @@ function defaults(){return{
     {id:'tshirt',label:'Reunion T-shirt',price:10,on:true,sized:true},
     {id:'lunch',label:'Saturday boxed lunch',price:36,on:true},
     {id:'outing',label:'Family outing pass',price:25,on:true}],
-  regOpen:false,showTest:true,emailStyle:'ticket',senderName:'PSR Host Family Committee',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
+  regOpen:false,regOpensOn:'',regClosesOn:'',lastDay:'',capStop:false,replyTo:'',schedule:'',askFood:true,earlyBanner:true,showTest:true,emailStyle:'ticket',senderName:'PSR Host Family Committee',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
   begin:0,scholStart:0,
   budgets:{'Hotel catering & bar':6000,'Venue & deposits':1500,'Activities':800,'T-shirts & merchandise':600,'Printing & postage':350,'Food & hospitality':250,'Supplies & decor':200,'Card processing fees':200}
 }}
@@ -1031,7 +1055,8 @@ function renderPeople(){
   $('peopleList').innerHTML=F.people.map((p,i)=>`<div class="person">
     <input aria-label="Full name, person ${i+1}" placeholder="Full name" data-pi="${i}" data-pf="name" value="${esc(p.name)}">
     <select aria-label="Age group, person ${i+1}" data-pi="${i}" data-pf="group">${groupOptions(p.group)}</select>
-    <button type="button" class="x" data-rm="${i}" aria-label="Remove person ${i+1}"${F.people.length<2?' disabled style="opacity:.35;cursor:default"':''}>×</button></div>`).join('');
+    <button type="button" class="x" data-rm="${i}" aria-label="Remove person ${i+1}"${F.people.length<2?' disabled style="opacity:.35;cursor:default"':''}>×</button>
+    ${D.S.askFood!==false?`<select class="food" aria-label="Food needs, person ${i+1}" data-pi="${i}" data-pf="food">${FOODS.map(f=>`<option value="${f}"${(p.food||'')===f?' selected':''}>${f||'Food needs: none'}</option>`).join('')}</select>`:''}</div>`).join('');
 }
 function renderAddonFields(){
   const on=D.S.addons.filter(a=>a.on);$('addonPanel').hidden=!on.length;
@@ -1070,7 +1095,7 @@ $('regForm').addEventListener('input',e=>{
 });
 $('regForm').addEventListener('input',saveDraft);
 $('regForm').addEventListener('change',saveDraft);
-$('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
+$('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='food'){F.people[+e.target.dataset.pi].food=e.target.value;saveDraft&&saveDraft();return}if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
 $('peopleList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b||F.people.length<2)return;F.people.splice(+b.dataset.rm,1);renderPeople();renderSummary()});
 $('addPerson').addEventListener('click',()=>{F.people.push({name:'',group:''});renderPeople();renderSummary();const ins=$('peopleList').querySelectorAll('input');ins[ins.length-1].focus()});
 function markDon(){const v=String(+$('rDonation').value||'');document.querySelectorAll('[data-don]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.don===v)))}
@@ -1240,12 +1265,31 @@ function showThanks(r,later,emailed){const S=D.S,c=$('confirm');
 function resetForm(){F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
   ['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer'].forEach(i=>$(i).value='');$('rDonation').value='';markDon();
   $('confirm').hidden=true;$('regWrap').hidden=false;$('draftNote').hidden=true;renderPeople();renderAddonFields();renderSummary();gateReg();}
-function gateReg(){const closed=LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||!D.S.regOpen),box=$('regClosed');
+// Registration window: opens on its own on the open date, closes after the last reunion day
+// (or the host's own close date), and stops when seats run out if the host turned that on.
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const addDay=iso=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)};
+const niceDate=iso=>new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+function regState(){const S=D.S,t=todayISO();
+  const open=S.regOpen||(S.regOpensOn&&t>=S.regOpensOn);if(!open)return'soon';
+  const close=S.regClosesOn||(S.lastDay?addDay(S.lastDay):'');if(close&&t>=close)return'ended';
+  if(S.capStop&&+S.capacity>0){const n=LIVE?(D.pub.people||0):D.regs.reduce((s,r)=>s+r.people.length,0);if(n>=+S.capacity)return'full'}
+  return'open'}
+function regMsg(st){const S=D.S;
+  if(st==='ended')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration has ended</h2><p style="margin-top:8px">Thank you, family. ${S.lastDay&&todayISO()>S.lastDay?'We hope to see you at the next reunion!':'We’ll see you at the reunion!'}</p>`;
+  if(st==='full')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration is full</h2><p style="margin-top:8px">Every seat has been taken. If you have questions, reply to any reunion email and the host will get back to you.</p>`;
+  return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration opens ${S.regOpensOn&&todayISO()<S.regOpensOn?niceDate(S.regOpensOn):'soon'}</h2><p style="margin-top:8px">Check back soon. The committee will email the family as soon as you can sign up.</p>`}
+function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
+  let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
+  eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&regState()==='open'&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
+  const rows=String(S.schedule||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf(':');return i>0&&i<16?[l.slice(0,i).trim(),l.slice(i+1).trim()]:['',l]});
+  wk.hidden=!rows.length;wk.innerHTML=rows.length?`<h2>Reunion weekend</h2>${rows.map(([d,t])=>`<div class="wk-row">${d?`<span class="wk-day">${esc(d)}</span>`:'<span></span>'}<span>${esc(t)}</span></div>`).join('')}`:''}
+function gateReg(){renderExtrasReg();const st=regState(),closed=LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;return}
   box.hidden=!closed;$('regWrap').hidden=closed;
   if(closed)box.innerHTML=D.loadErr?`<h2>We can't reach the registration system</h2><p class="muted" style="margin-top:8px">Please refresh this page in a minute. If it keeps happening, reply to the email you got from the committee.</p>`
     :!D.loaded?`<p class="muted">Loading…</p>`
-    :`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration opens soon</h2><p style="margin-top:8px">Check back soon. The committee will email the family as soon as you can sign up.</p>`;
+    :regMsg(st);
 }
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
 
@@ -1260,6 +1304,7 @@ function summaryHTML(){
   const groups=S.groups.map(g=>[g.label,all.filter(p=>p.group===g.id).length]);
   const shirts=SIZES.map(z=>[z,sum(D.regs,r=>(r.shirts||{})[z])]).filter(x=>x[1]>0);
   const extras=(S.addons||[]).filter(a=>!a.sized).map(a=>[a.label,sum(D.regs,r=>(r.addons||{})[a.id])]).filter(x=>x[1]>0);
+  const foods=FOODS.filter(Boolean).map(f=>[f,all.filter(p=>p.food===f).length]).filter(x=>x[1]>0);
   const byVia={};D.pays.forEach(p=>{const k=p.via||p.method||'Other';byVia[k]=(byVia[k]||0)+(+p.amount||0)});
   const contrib=isViewer()?0:sum(D.contribs||[],c=>c.amount);
   const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[c,b,sp]}).filter(x=>x[1]||x[2]);
@@ -1279,17 +1324,39 @@ function summaryHTML(){
   <h2>At a glance</h2><div class="ks">${kpi('Households',D.regs.length)}${kpi('People coming',all.length)}${kpi('Collected',money(Lg.gross))}${kpi('Spent',money(Lg.out))}</div>
   <div class="ks" style="margin-top:10px">${kpi('Balance on hand',money(Lg.end))}${kpi('Still owed',money(Lg.owed))}${kpi('Paid in full',D.regs.filter(r=>statusOf(r)==='paid').length+' of '+D.regs.length)}${contrib?kpi('Committee contributions',money(contrib)):kpi('Scholarship donations',money(Lg.schol))}</div>
   <h2>Registrations</h2><div class="two"><div>${tbl(['Age group','People'],groups,['Total',all.length])}</div>
-  <div>${shirts.length?tbl(['T-shirt size','Count'],shirts,['Total',sum(shirts,x=>x[1])]):'<p style="color:#5b6660">No t-shirts ordered yet.</p>'}${extras.length?'<div style="height:12px"></div>'+tbl(['Extras','Count'],extras):''}</div></div>
+  <div>${shirts.length?tbl(['T-shirt size','Count'],shirts,['Total',sum(shirts,x=>x[1])]):'<p style="color:#5b6660">No t-shirts ordered yet.</p>'}${extras.length?'<div style="height:12px"></div>'+tbl(['Extras','Count'],extras):''}${foods.length?'<div style="height:12px"></div>'+tbl(['Food needs (for the caterer)','People'],foods):''}</div></div>
   <h2>Money in</h2>${tbl(['Paid through','Amount'],Object.keys(byVia).map(k=>[e(k),money(byVia[k])]).concat(contrib?[['Committee contributions',money(contrib)]]:[]),['Total',money(sum(D.pays,p=>p.amount)+contrib)])}
   <h2>Expenses by category</h2>${tbl(['Category','Budget','Spent','Left'],cats.map(([c,b,sp])=>[e(c),money(b),money(sp),`<span class="${sp>b&&b?'over':''}">${money(b-sp)}</span>`]),['Total',money(sum(cats,x=>x[1])),money(sum(cats,x=>x[2])),money(sum(cats,x=>x[1]-x[2]))])}
   ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(x.category||''),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
   <div class="ft">Prepared by the ${e(S.senderName||'PSR Host Family Committee')} · ${today}</div></body></html>`}
+// Paper backup for check-in: every household A–Z with a box for each person and what they owe.
+function checkinListHTML(){const S=D.S,e=esc;const title=[S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
+  const regs=D.regs.slice().sort((a,b)=>(a.last+a.first).localeCompare(b.last+b.first));
+  return`<!doctype html><html><head><meta charset="utf-8"><title>Check-in list</title><style>@page{size:letter;margin:.5in}body{font:12.5px/1.4 Arial,sans-serif;color:#1f2a24;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h1{font:22px Georgia,serif;margin:0}.sub{color:#5b6660;margin:2px 0 12px}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#5b6660;border-bottom:2px solid #1c5a34;padding:5px 4px}
+  td{padding:7px 4px;border-bottom:1px solid #dfe3de;vertical-align:top}tr{break-inside:avoid}.p{display:block}.p:before{content:"☐ ";font-size:15px}.n{text-align:right;white-space:nowrap}.owe{color:#a3252b;font-weight:bold}</style></head><body>
+  <h1>Check-in list</h1><div class="sub">${e(title)} · ${regs.length} households · ${regs.reduce((s,r)=>s+r.people.length,0)} people · printed ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+  <table><thead><tr><th>Household</th><th>Confirmation #</th><th>Who's coming (check off)</th><th class="n">Still owes</th></tr></thead><tbody>
+  ${regs.map(r=>{const b=balOf(r);return`<tr><td><b>${e(r.last)}, ${e(r.first)}</b>${r.phone?'<br><span style="color:#5b6660">'+e(r.phone)+'</span>':''}</td><td>${e(r.code)}</td><td>${r.people.map(p=>`<span class="p">${e(p.name)}${p.food?' <i style="color:#5b6660">('+e(p.food)+')</i>':''}</span>`).join('')}</td><td class="n ${b>0?'owe':''}">${b>0?money(b):'Paid'}</td></tr>`}).join('')}
+  </tbody></table></body></html>`}
+function printHTML(html){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const d=f.contentWindow.document;d.open();d.write(html);d.close();
+  setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(_){}setTimeout(()=>f.remove(),60000)},300)}
+document.addEventListener('click',e=>{if(e.target.closest('#ciPrintList'))printHTML(checkinListHTML())});
+// Thank-you landing for families coming back from Zeffy (set Zeffy's "Redirect to your own thank-you page" to the site address + #paid).
+const PAIDQ=/^#paid/.test(location.hash||'');
+function showPaidPage(){if(!PAIDQ)return;$('regWrap').hidden=true;$('regClosed').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm" style="text-align:center"><div style="font-size:44px;line-height:1">✓</div><h2 class="reghead" style="margin-top:8px">Thank you! Your payment went through.</h2>
+  <p class="regsub" style="margin-top:8px">Zeffy is emailing your receipt now. Your reunion balance updates within a few minutes, and we’ll email you an updated balance too.</p>
+  ${D.S.hotelUrl?`<p style="margin-top:16px"><a class="btn gold" href="${esc(D.S.hotelUrl)}" target="_blank" rel="noopener">Book your hotel room</a></p>`:''}</div>`}
 function printSummary(){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
   const d=f.contentWindow.document;d.open();d.write(summaryHTML());d.close();
   setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(_){}setTimeout(()=>f.remove(),60000)},300)}
 document.addEventListener('click',e=>{if(e.target.closest('#printSum'))printSummary()});
 function renderOverview(){
   const Lg=ledger(),S=D.S;
+  {const f=$('firsts'),num=r=>parseInt(String(r.code).replace(/\D/g,''),10)||0,top=D.regs.slice().sort((a,b)=>num(a)-num(b)).slice(0,3);
+   f.hidden=!top.length;f.innerHTML=top.length?`<div class="panel-head"><div><h2>First to register</h2><p class="muted small">For a shout-out at the reunion. Only the committee sees this.</p></div></div><ol>${top.map((r,i)=>`<li><b>${i+1}. The ${esc(r.last)} family</b> <span class="muted small">· ${esc(r.code)}${r.created?' · '+esc(r.created):r.date?' · '+esc(r.date):''}${r.city?' · '+esc(r.city)+(r.state?', '+esc(r.state):''):''}</span></li>`).join('')}</ol>`:''}
   const schFund=startSchol()+Lg.schol;
   $('kpis').innerHTML=[
     ['hl','Reunion balance',money(Lg.end),'Money on hand right now'],
@@ -1653,7 +1720,8 @@ function renderCheckin(){const box=$('ciBox');if(!box||$('tab-checkin').hidden&&
     +(isAdmin()&&!ciRes?`<button class="btn ci-scan" type="button" id="ciScan">Scan a ticket</button><div id="ciCam"></div>`:'')
     +`<div id="ciResBox">${ciResHTML()}</div>`
     +`<p style="margin-top:14px"><button class="linkbtn" type="button" id="ciBack">← Start over</button></p>`}
-  else body=`<div class="ci-start"><button type="button" class="ci-big" data-ci-go="find">Already registered<span>Find your name and check in</span></button><button type="button" class="ci-big alt" data-ci-go="new">Not registered yet<span>Sign up here and check in</span></button></div>`;
+  else body=`<div class="ci-start"><button type="button" class="ci-big" data-ci-go="find">Already registered<span>Find your name and check in</span></button><button type="button" class="ci-big alt" data-ci-go="new">Not registered yet<span>Sign up here and check in</span></button></div>`
+    +(isAdmin()&&D.regs.length?`<p style="margin-top:14px;text-align:center"><button class="linkbtn" type="button" id="ciPrintList">Print a paper check-in list (backup if the Wi-Fi goes down)</button></p>`:'');
   box.innerHTML=`<div class="spread"><h2>Check-in</h2><div class="ci-days" role="group" aria-label="Day">${days}</div></div>${ciStatLine()}${body}`;
   if(ciView==='new'&&$('cnState'))$('cnState').value=ciNew.state||'';
   if(ciOpen&&ciOpen.paying&&ciOpen.via==='Card'&&$('ciQR'))ciQR($('ciQR'),payLink(ciOpen.code,ciBal(ciOpen)));
@@ -1825,10 +1893,10 @@ $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn
     $('pinIn').value='';$('pinForm').hidden=true;$('adminLink').hidden=false;renderSetup();renderPeople();renderAddonFields();renderAll();openTab('overview');window.scrollTo({top:0});toast('Signed in.')}).catch(()=>{});
 });
 loadDraft();renderSetup();renderPeople();renderAddonFields();renderAll();
-openTab(PAYQ?'register':(location.hash||'').slice(1));showPayPage();
+openTab(PAYQ||PAIDQ?'register':(location.hash||'').slice(1));showPayPage();showPaidPage();
 if(LIVE){
   if(location.hash==='#committee'&&!isAdmin())$('adminLink').click();
-  refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();if(PAYQ){openTab('register');showPayPage()}else openTab((location.hash||'').slice(1))})
+  refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();if(PAYQ||PAIDQ){openTab('register');showPayPage();showPaidPage()}else openTab((location.hash||'').slice(1))})
     .catch(()=>{D.loadErr=true;if(PIN){signOut(true)}renderAll()});
 }
 })();
