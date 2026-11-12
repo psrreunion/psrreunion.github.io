@@ -317,7 +317,8 @@ ul.feed{margin:0;padding:0}
 .ci-stats{margin:8px 0 4px;font-size:16px;color:var(--muted)}
 .ci-find,.ci-walk{display:flex;gap:10px;align-items:flex-end;margin-top:14px}.ci-find .f,.ci-walk .f{flex:1;font-size:16px}
 .ci-find input{font-size:22px;padding:14px 16px}.ci-find .btn{min-height:58px;font-size:18px;padding:0 26px}.ci-walk .btn{min-height:46px}
-.ci-results{display:grid;gap:10px}.ci-res{appearance:none;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;cursor:pointer;display:grid;gap:4px;font:inherit;color:var(--ink)}
+.ci-results{display:grid;gap:10px;max-height:55vh;overflow-y:auto;padding:2px}
+.ci-undo{margin-left:auto;font-size:14px}.ci-scan{width:100%;margin-top:12px}.ci-cam{position:relative;margin-top:12px;border-radius:12px;overflow:hidden;background:#000}.ci-cam video{width:100%;display:block}.ci-cam p{position:absolute;left:0;right:0;bottom:0;margin:0;padding:8px;background:rgba(0,0,0,.55);color:#fff;text-align:center}.ci-res{appearance:none;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;cursor:pointer;display:grid;gap:4px;font:inherit;color:var(--ink)}
 .ci-res b{font-size:19px}.ci-res span{color:var(--muted);font-size:15px}.ci-res:hover,.ci-res:focus-visible{border-color:var(--gold)}
 .ci-hh{font-size:22px;font-family:var(--f-display);font-weight:400}
 .ci-list{display:grid;gap:10px;margin-top:12px}
@@ -673,6 +674,13 @@ body.viewer #tab-setup .savebar{display:none}
         <p class="muted small" style="margin-top:-6px">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
       </div>
     </div>
+    <div class="panel">
+      <div class="panel-head"><div><h2>Emails</h2><p class="muted small">How the confirmation email looks. The reunion name, theme, dates and hotel come from the boxes above.</p></div></div>
+      <div class="stack" style="gap:12px">
+        <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
+        <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
+      </div>
+    </div>
   </div>
   <div class="panel">
     <div class="panel-head"><div><h2>Ages and prices</h2><p class="muted small">Set the same way as the 2026 reunion. Change anything once the family decides.</p></div>
@@ -752,7 +760,7 @@ function defaults(){return{
     {id:'tshirt',label:'Reunion T-shirt',price:10,on:true,sized:true},
     {id:'lunch',label:'Saturday boxed lunch',price:36,on:true},
     {id:'outing',label:'Family outing pass',price:25,on:true}],
-  regOpen:false,showTest:true,checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
+  regOpen:false,showTest:true,emailStyle:'ticket',senderName:'PSR Host Family Committee',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
   begin:0,scholStart:0,
   budgets:{'Hotel catering & bar':6000,'Venue & deposits':1500,'Activities':800,'T-shirts & merchandise':600,'Printing & postage':350,'Food & hospitality':250,'Supplies & decor':200,'Card processing fees':200}
 }}
@@ -1512,6 +1520,7 @@ $('resetDemo').addEventListener('click',()=>{if(LIVE)return;D=seedData();try{loc
 
 /* ---------- Check-in (reunion weekend) ---------- */
 let CI='';try{CI=sessionStorage.getItem('psr-ci')||''}catch(e){}
+let ciStream=null,ciRAF=0;
 let ciDay=new Date().getDay()===6?'Saturday':'Friday',ciView='start',ciRes=null,ciOpen=null,ciPick={},ciStats=null,ciWelcome=null,ciTimer=0,ciQ='',ciNew=null;
 const canCI=()=>isAdmin()||!!CI;
 const helperLink=()=>location.origin+location.pathname+'#checkin';
@@ -1534,7 +1543,7 @@ function ciLocalFind(q){const toks=norm(q).split(' ').filter(Boolean);if(!toks.l
   return D.regs.map(r=>{const names=r.people.map(p=>p.name).filter(Boolean),hay=norm([r.first,r.last,...names].join(' '));
     if(!toks.every(t=>hay.includes(t)))return null;return{...ciHH(r),exact:names.some(n=>toks.every(t=>norm(n).includes(t)))}})
     .filter(Boolean).sort((a,b)=>(b.exact-a.exact)||a.household.localeCompare(b.household)).slice(0,12)}
-function ciReset(keepWelcome){ciView='start';ciRes=null;ciOpen=null;ciPick={};ciQ='';ciNew=null;if(!keepWelcome)ciWelcome=null}
+function ciReset(keepWelcome){ciScanStop();ciView='start';ciRes=null;ciOpen=null;ciPick={};ciQ='';ciNew=null;if(!keepWelcome)ciWelcome=null}
 function ciStatLine(){const st=ciStats||(isAdmin()||!LIVE?ciLocalStats():null);if(!st)return'';
   return`<p class="ci-stats"><b>${st.total??(st.Friday+st.Saturday)}</b> checked in so far · ${st.Friday} on Friday · ${st.Saturday} on Saturday${st.walkins?` · ${st.walkins} walk-in${st.walkins===1?'':'s'}`:''}</p>`}
 const ciGroupOpts=sel=>D.S.groups.map(g=>`<option value="${esc(g.id)}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)})</option>`).join('');
@@ -1542,7 +1551,7 @@ function ciOpenH(h){ciOpen={...h,reg:ciRegObj(h.reg||{people:[]}),emailOK:!!(h.r
 const ciBal=h=>Math.max(0,regTotal(h.reg)-(+h.paid||0));
 function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i]).length,bal=ciBal(h),em=h.reg.email||'';
   const rows=h.people.map((n,i)=>h.done.includes(n)
-      ?`<div class="ci-row done"><span class="ci-box" aria-hidden="true">✓</span><span class="ci-name">${esc(n)}</span><span class="ci-tag">Checked in${(h.doneDay||{})[n]?' '+esc(h.doneDay[n]):''}</span></div>`
+      ?`<div class="ci-row done"><span class="ci-box" aria-hidden="true">✓</span><span class="ci-name">${esc(n)}</span><span class="ci-tag">Checked in${(h.doneDay||{})[n]?' '+esc(h.doneDay[n]):''}</span><button class="linkbtn ci-undo" type="button" data-ci-undo="${i}">Undo</button></div>`
       :`<button type="button" class="ci-row${ciPick[i]?' on':''}" data-ci-p="${i}" aria-pressed="${!!ciPick[i]}"><span class="ci-box" aria-hidden="true">${ciPick[i]?'✓':''}</span><span class="ci-name">${esc(n)}</span></button>`).join('');
   const allDone=h.people.length&&h.people.every(n=>h.done.includes(n));
   const emailBox=h.editEmail
@@ -1564,7 +1573,7 @@ function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i
         </div>`
       :`<div class="ci-pay"><span>Still owes <b>${money(bal)}</b></span><button class="btn sm gold" type="button" id="ciPayOpen">Pay now</button></div>`)
     :(+h.paid>0?`<div class="ci-pay paid">✓ Paid in full</div>`:'');
-  return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">${esc(h.household)} household</h3><button class="linkbtn" type="button" id="ciBack">← Start over</button></div>
+  return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">${esc(h.household)} household</h3><span class="row" style="gap:14px">${ciRes&&ciRes.length>1?'<button class="linkbtn" type="button" id="ciToList">← Back to list</button>':''}<button class="linkbtn" type="button" id="ciBack">Start over</button></span></div>
     ${emailBox}
     ${allDone?`<p class="ci-alldone">Everyone in this household is already checked in.</p>`:''}
     <div class="ci-list">${rows}</div>${addBox}${payBox}
@@ -1602,10 +1611,9 @@ function renderCheckin(){const box=$('ciBox');if(!box||$('tab-checkin').hidden&&
   if(ciWelcome)body=`<div class="ci-welcome"><div class="ci-wbig">Welcome, ${esc(ciWelcome.first)}!</div><p>${ciWelcome.n} ${ciWelcome.n===1?'person':'people'} checked in for ${ciWelcome.day}.</p></div>`;
   else if(ciOpen)body=ciHouseholdHTML();
   else if(ciView==='new')body=ciNewHTML();
-  else if(ciView==='find'){body=`<form class="ci-find" id="ciFindForm" novalidate><label class="f">First and last name<input id="ciQ" value="${esc(ciQ)}" autocomplete="off" autocapitalize="words" enterkeyhint="search"></label><button class="btn gold" type="submit" id="ciFindGo">Find</button></form>`
-    +(ciRes?(ciRes.length
-      ?`<p class="muted" style="margin:10px 0 6px">${ciRes.length===1?'Tap to open:':'Tap your household:'}</p><div class="ci-results">${ciRes.map((h,i)=>`<button type="button" class="ci-res" data-ci-open="${i}"><b>${esc(h.household)}</b><span>${esc(h.people.join(', '))}</span></button>`).join('')}</div>`
-      :`<div class="ci-none"><p><b>We couldn’t find “${esc(ciQ)}.”</b> Check the spelling, or try just the last name.</p><button class="btn" type="button" data-ci-go="new">Not registered? Register now</button></div>`):'')
+  else if(ciView==='find'){body=`<form class="ci-find" id="ciFindForm" novalidate><label class="f">Type a name (3 letters is enough)<input id="ciQ" value="${esc(ciQ)}" autocomplete="off" autocapitalize="words" enterkeyhint="search"></label><button class="btn gold" type="submit" id="ciFindGo">Find</button></form>`
+    +(isAdmin()&&!ciRes?`<button class="btn ci-scan" type="button" id="ciScan">Scan a ticket</button><div id="ciCam"></div>`:'')
+    +`<div id="ciResBox">${ciResHTML()}</div>`
     +`<p style="margin-top:14px"><button class="linkbtn" type="button" id="ciBack">← Start over</button></p>`}
   else body=`<div class="ci-start"><button type="button" class="ci-big" data-ci-go="find">Already registered<span>Find your name and check in</span></button><button type="button" class="ci-big alt" data-ci-go="new">Not registered yet<span>Sign up here and check in</span></button></div>`;
   box.innerHTML=`<div class="spread"><h2>Check-in</h2><div class="ci-days" role="group" aria-label="Day">${days}</div></div>${ciStatLine()}${body}`;
@@ -1617,9 +1625,34 @@ function ciQR(el,url){const draw=()=>{el.innerHTML='';new QRCode(el,{text:url,wi
   if(window.QRCode)return draw();
   qrLib=qrLib||new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
   qrLib.then(draw).catch(()=>{el.innerHTML=`<p class="muted small">Couldn’t draw the QR code. Open this link on their phone: ${esc(url)}</p>`})}
-async function ciSearch(btn){
-  if(!LIVE){ciRes=ciLocalFind(ciQ);if(ciRes.length===1)ciOpenH(ciRes[0]);renderCheckin();return}
-  await busy(btn,'Finding…',async()=>{const j=await ciApi('ciFind',{q:ciQ,day:ciDay});ciStats=j.stats;ciRes=j.results;if(ciRes.length===1)ciOpenH(ciRes[0]);renderCheckin()}).catch(()=>{});
+// Scan a ticket's check-in code with this device's camera.
+function ciScanStop(){cancelAnimationFrame(ciRAF);if(ciStream){ciStream.getTracks().forEach(t=>t.stop());ciStream=null}const b=$('ciCam');if(b)b.innerHTML=''}
+function ciCodeFrom(txt){const m=String(txt||'').match(/#ci=([^&\s]+)/)||String(txt||'').match(/\b([A-Z]{2,5}-\d{2,5})\b/i);return m?decodeURIComponent(m[1]).toUpperCase():''}
+async function ciScanStart(){const box=$('ciCam');if(!box)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('This device can’t open the camera here. Type the name instead.');return}
+  box.innerHTML='<div class="ci-cam"><video playsinline muted></video><p>Point the camera at the ticket’s code. <button class="linkbtn" type="button" id="ciScanStop" style="color:#fff">Stop</button></p></div>';
+  $('ciScanStop').onclick=ciScanStop;
+  try{ciStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){box.innerHTML='';toast('Camera not allowed. Type the name instead.');return}
+  const v=box.querySelector('video');v.srcObject=ciStream;await v.play().catch(()=>{});
+  let detect=null;
+  if('BarcodeDetector' in window){try{const bd=new BarcodeDetector({formats:['qr_code']});detect=async()=>{const r=await bd.detect(v);return r[0]&&r[0].rawValue}}catch(_){}}
+  if(!detect){if(!window.jsQR)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)}).catch(()=>{});
+    if(!window.jsQR){ciScanStop();toast('Scanner couldn’t load. Type the name instead.');return}
+    const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
+    detect=async()=>{if(!v.videoWidth)return null;c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const r=jsQR(x.getImageData(0,0,c.width,c.height).data,c.width,c.height);return r&&r.data}}
+  const tick=async()=>{if(!ciStream)return;let txt=null;try{txt=await detect()}catch(_){}
+    const code=ciCodeFrom(txt);if(code){ciScanStop();ciQ='';await ciSearch(null,false,code);if(!ciOpen)toast('No registration found for '+code+'.');return}
+    ciRAF=requestAnimationFrame(tick)};
+  tick()}
+function ciResHTML(){return (ciRes?(ciRes.length
+      ?`<p class="muted" style="margin:10px 0 6px">${ciRes.length===1?'Tap to open:':'Tap your household ('+ciRes.length+'):'}</p><div class="ci-results">${ciRes.map((h,i)=>`<button type="button" class="ci-res" data-ci-open="${i}"><b>${esc(h.household)}</b><span>${esc(h.people.join(', '))}</span></button>`).join('')}</div>`
+      :`<div class="ci-none"><p><b>We couldn’t find “${esc(ciQ)}.”</b> Check the spelling, or try just the last name.</p><button class="btn" type="button" data-ci-go="new">Not registered? Register now</button></div>`):'')}
+async function ciSearch(btn,live,code){
+  const keep=()=>{const el=$('ciQ');if(live&&el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n)}catch(_){}}};
+  if(!LIVE){ciRes=code?ciLocalFind(code):ciLocalFind(ciQ);if(!live&&ciRes.length===1)ciOpenH(ciRes[0]);if(live&&$('ciResBox')){$('ciResBox').innerHTML=ciResHTML()}else renderCheckin();keep();return}
+  const run=async()=>{const q=ciQ;const j=await ciApi('ciFind',code?{code:code,day:ciDay}:{q:ciQ,day:ciDay});if(!code&&q!==ciQ)return;ciStats=j.stats;ciRes=j.results;if(!live&&ciRes.length===1)ciOpenH(ciRes[0]);if(live&&$('ciResBox')&&!ciOpen){$('ciResBox').innerHTML=ciResHTML();const sc=$('ciScan');if(sc)sc.hidden=true}else renderCheckin();keep()};
+  if(live||!btn){await run().catch(()=>{});return}
+  await busy(btn,'Finding…',run).catch(()=>{});
 }
 async function ciSave(btn){const h=ciOpen,names=h.people.filter((n,i)=>ciPick[i]),n=names.length;if(!n)return;
   const first=String(names[0]).split(' ')[0];
@@ -1645,7 +1678,12 @@ $('tab-checkin').addEventListener('click',e=>{const t=e.target;
   const g=t.closest('[data-ci-go]');if(g){ciView=g.dataset.ciGo;ciRes=null;ciOpen=null;if(ciView==='new'){const w=ciQ.split(' ');ciNew={first:w[0]||'',last:w.slice(1).join(' '),email:'',phone:'',city:'',state:'',party:[{name:ciQ,group:D.S.groups[0].id}]}}
     renderCheckin();const f=ciView==='new'?$('cnFirst'):$('ciQ');if(f)f.focus();return}
   const d=t.closest('[data-ci-day]');if(d){ciDay=d.dataset.ciDay;if(ciOpen){const q=ciQ;ciOpen=null;ciView='find';ciQ=q;if(q)ciSearch();else renderCheckin()}else renderCheckin();return}
-  const o=t.closest('[data-ci-open]');if(o){ciOpenH(ciRes[+o.dataset.ciOpen]);renderCheckin();return}
+  const o=t.closest('[data-ci-open]');if(o){ciScanStop();ciOpenH(ciRes[+o.dataset.ciOpen]);renderCheckin();return}
+  if(t.closest('#ciToList')){ciOpen=null;ciPick={};ciView='find';renderCheckin();return}
+  if(t.closest('#ciScan')){ciScanStart();return}
+  const u=t.closest('[data-ci-undo]');if(u){const h=ciOpen,name=h.people[+u.dataset.ciUndo];
+    if(!LIVE){h.done=h.done.filter(n=>n!==name);renderCheckin();toast('Undid check-in for '+name+'.');return}
+    u.disabled=true;ciApi('ciUndo',{code:h.code,name:name}).then(j=>{if(j.stats)ciStats=j.stats;h.done=h.done.filter(n=>n!==name);if(h.doneDay)delete h.doneDay[name];renderCheckin();toast('Undid check-in for '+name+'.')}).catch(e=>{u.disabled=false;toast(e.message)});return}
   const p=t.closest('[data-ci-p]');if(p){const i=+p.dataset.ciP;ciPick[i]=!ciPick[i];renderCheckin();return}
   const v=t.closest('[data-ci-via]');if(v){ciOpen.via=v.dataset.ciVia;renderCheckin();return}
   if(t.closest('[data-cn-del]')){ciCaptureNew();ciNew.party.splice(+t.closest('[data-cn-del]').dataset.cnDel,1);renderCheckin();return}
@@ -1665,7 +1703,10 @@ $('tab-checkin').addEventListener('click',e=>{const t=e.target;
 });
 $('tab-checkin').addEventListener('input',e=>{const el=e.target;
   if(['cnFirst','cnLast','cnCity','ciAddName','ciQ'].includes(el.id)||el.dataset.cnName!==undefined){const pos=el.selectionStart,nv=titleCase(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(pos,pos)}catch(_){}}}
-  if(el.id==='cnPhone'){const nv=fmtPhone(el.value);if(nv!==el.value)el.value=nv}});
+  if(el.id==='cnPhone'){const nv=fmtPhone(el.value);if(nv!==el.value)el.value=nv}
+  if(el.id==='ciQ'){ciQ=el.value.trim();clearTimeout(ciTimer);
+    if(ciQ.length>=3)ciTimer=setTimeout(()=>ciSearch(null,true),350);
+    else if(ciRes){ciRes=null;$('ciResBox').innerHTML='';const sc=$('ciScan');if(sc)sc.hidden=false}}});
 $('tab-checkin').addEventListener('submit',e=>{e.preventDefault();const id=e.target.id,h=ciOpen;
   if(id==='ciFindForm'){ciQ=$('ciQ').value.trim();if(ciQ)ciSearch($('ciFindGo'));return}
   if(id==='ciNewForm'){ciRegister($('cnGo'));return}
