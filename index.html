@@ -470,6 +470,7 @@ body.viewer #tab-setup .savebar{display:none}
 
 <!-- OVERVIEW -->
 <section role="tabpanel" id="tab-overview" hidden>
+  <div class="row" style="justify-content:flex-end;margin-bottom:12px"><button class="btn sm" type="button" id="printSum">Print summary report</button></div>
   <div id="alerts"></div>
   <div class="kpis" id="kpis"></div>
   <div class="panel" id="commit"></div>
@@ -1250,6 +1251,43 @@ $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cle
 
 /* ---------- Overview ---------- */
 function bar(label,valTxt,pct,cls=''){return`<div class="barrow"><div class="top"><span>${label}</span><span class="num">${valTxt}</span></div><div class="track"><i class="${cls}" style="width:${Math.max(0,Math.min(100,pct))}%"></i></div></div>`}
+// One-page summary report for the reunion committee: print it or save it as a PDF.
+function summaryHTML(){
+  const S=D.S,Lg=ledger(),all=D.regs.flatMap(r=>r.people),e=esc;
+  const title=[S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
+  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const sum=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
+  const groups=S.groups.map(g=>[g.label,all.filter(p=>p.group===g.id).length]);
+  const shirts=SIZES.map(z=>[z,sum(D.regs,r=>(r.shirts||{})[z])]).filter(x=>x[1]>0);
+  const extras=(S.addons||[]).filter(a=>!a.sized).map(a=>[a.label,sum(D.regs,r=>(r.addons||{})[a.id])]).filter(x=>x[1]>0);
+  const byVia={};D.pays.forEach(p=>{const k=p.via||p.method||'Other';byVia[k]=(byVia[k]||0)+(+p.amount||0)});
+  const contrib=isViewer()?0:sum(D.contribs||[],c=>c.amount);
+  const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[c,b,sp]}).filter(x=>x[1]||x[2]);
+  const exps=realExps().slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const tbl=(head,rows,foot,num=1)=>`<table><thead><tr>${head.map((h,i)=>`<th${i>=num?' class="n"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>${foot?`<tfoot><tr>${foot.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr></tfoot>`:''}</table>`;
+  const kpi=(l,v)=>`<div class="k"><div class="l">${l}</div><div class="v">${v}</div></div>`;
+  return`<!doctype html><html><head><meta charset="utf-8"><title>${e(title)} – Summary report</title><style>
+  @page{size:letter;margin:.55in}*{box-sizing:border-box}body{margin:0;font:13px/1.45 Arial,Helvetica,sans-serif;color:#1f2a24;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hd{background:#1c5a34;color:#fff;border-radius:12px;padding:18px 22px;border-bottom:5px solid #e0b22a}.ey{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0b22a;font-weight:bold}
+  .t{font:26px/1.2 Georgia,serif;margin:4px 0 2px}.sub{opacity:.85;font-size:12.5px}.test{background:#fde8e8;color:#7a1414;border-radius:8px;padding:6px 10px;margin-top:10px;font-size:12px}
+  h2{font:bold 12px Arial;letter-spacing:.1em;text-transform:uppercase;color:#1c5a34;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #e3e6e1}
+  .ks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.k{border:1px solid #e3e6e1;border-radius:10px;padding:10px 12px}.k .l{font-size:10.5px;color:#5b6660;text-transform:uppercase;letter-spacing:.08em}.k .v{font-size:19px;font-weight:bold;margin-top:2px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#5b6660;border-bottom:1px solid #cfd6cf;padding:5px 4px}
+  td{padding:5px 4px;border-bottom:1px solid #eef0ee}.n{text-align:right}tfoot td{font-weight:bold;border-top:2px solid #1c5a34;border-bottom:0}.over{color:#a3252b;font-weight:bold}
+  .ft{margin-top:22px;color:#5b6660;font-size:11px;text-align:center}tr{break-inside:avoid}</style></head><body>
+  <div class="hd"><div class="ey">${e(title)}</div><div class="t">Summary report</div><div class="sub">${e(S.theme||'')}${S.when?' · '+e(S.when):''} · As of ${today}</div>${isTest()?'<div class="test"><b>TEST DATA</b>: practice records, not real numbers.</div>':''}</div>
+  <h2>At a glance</h2><div class="ks">${kpi('Households',D.regs.length)}${kpi('People coming',all.length)}${kpi('Collected',money(Lg.gross))}${kpi('Spent',money(Lg.out))}</div>
+  <div class="ks" style="margin-top:10px">${kpi('Balance on hand',money(Lg.end))}${kpi('Still owed',money(Lg.owed))}${kpi('Paid in full',D.regs.filter(r=>statusOf(r)==='paid').length+' of '+D.regs.length)}${contrib?kpi('Committee contributions',money(contrib)):kpi('Scholarship donations',money(Lg.schol))}</div>
+  <h2>Registrations</h2><div class="two"><div>${tbl(['Age group','People'],groups,['Total',all.length])}</div>
+  <div>${shirts.length?tbl(['T-shirt size','Count'],shirts,['Total',sum(shirts,x=>x[1])]):'<p style="color:#5b6660">No t-shirts ordered yet.</p>'}${extras.length?'<div style="height:12px"></div>'+tbl(['Extras','Count'],extras):''}</div></div>
+  <h2>Money in</h2>${tbl(['Paid through','Amount'],Object.keys(byVia).map(k=>[e(k),money(byVia[k])]).concat(contrib?[['Committee contributions',money(contrib)]]:[]),['Total',money(sum(D.pays,p=>p.amount)+contrib)])}
+  <h2>Expenses by category</h2>${tbl(['Category','Budget','Spent','Left'],cats.map(([c,b,sp])=>[e(c),money(b),money(sp),`<span class="${sp>b&&b?'over':''}">${money(b-sp)}</span>`]),['Total',money(sum(cats,x=>x[1])),money(sum(cats,x=>x[2])),money(sum(cats,x=>x[1]-x[2]))])}
+  ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(x.category||''),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
+  <div class="ft">Prepared by the ${e(S.senderName||'PSR Host Family Committee')} · ${today}</div></body></html>`}
+function printSummary(){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const d=f.contentWindow.document;d.open();d.write(summaryHTML());d.close();
+  setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(_){}setTimeout(()=>f.remove(),60000)},300)}
+document.addEventListener('click',e=>{if(e.target.closest('#printSum'))printSummary()});
 function renderOverview(){
   const Lg=ledger(),S=D.S;
   const schFund=startSchol()+Lg.schol;
