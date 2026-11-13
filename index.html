@@ -368,6 +368,83 @@ body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #h
 @media (max-width:520px){.homebtn{width:auto;margin:14px 16px 0;text-align:center}}
 body.ci-only .homebtn{display:none}
 body.viewer #tab-setup .savebar{display:none}
+
+/* ===== Roomier committee side (Nov 13) ===== */
+:root{--tip-bg:#fbf6e4;--tip-edge:#e3b318;--tip-ink:#3a463e;--note-ink:#3d4a41}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--tip-bg:#2a2616;--tip-ink:#d9dfd6;--note-ink:#c3cec5}}
+:root[data-theme="dark"]{--tip-bg:#2a2616;--tip-ink:#d9dfd6;--note-ink:#c3cec5}
+.tabs .wrap{gap:6px}.tab{font-size:16px;padding:16px 14px 13px}
+.adminbar{font-size:15px}.adminbar .wrap{padding-block:10px}.adminbar .btn.sm{font-size:15px;padding:8px 14px}
+.teststrip{background:#a3252b;color:#fff;border-bottom:0}.teststrip .wrap{font-size:16px;padding-top:12px;padding-bottom:12px}
+.teststrip .btn{background:#fff;color:#7a1414;border-color:#fff}.teststrip .btn:hover{background:#fde8e8}
+.sw{display:inline-block;width:38px;height:22px;border-radius:999px;background:rgba(248,243,226,.3);position:relative;vertical-align:middle;transition:background .2s}
+.sw i{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:#e3b318}.sw.on i{left:19px}
+#testBtn{gap:10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup){font-size:17px;gap:28px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel{padding:28px 30px;border-radius:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .tw{margin-inline:-30px;padding-inline:30px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) h2{font-size:27px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) h3{font-size:17px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel-head{margin-bottom:20px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel-head p{font-size:16px;color:var(--note-ink);margin-top:6px;max-width:68ch}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .small{font-size:15.5px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) label.f{font-size:16px;gap:7px;color:var(--note-ink)}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) :is(input,select,textarea){font-size:17px;padding:12px 14px;border-radius:10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) input[type=checkbox]{width:22px;height:22px;padding:0;flex:none}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .btn{font-size:16px;min-height:46px;padding:11px 18px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .btn.sm{font-size:15px;min-height:40px;padding:8px 14px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .fields{gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .stack{gap:20px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .grid2{gap:28px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) table{font-size:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) th{font-size:13px;padding:10px 12px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td{padding:15px 12px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td .sub{font-size:14.5px;margin-top:2px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td select{font-size:15px;padding:8px 10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .chip{font-size:13.5px;padding:4px 11px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .filter{font-size:15px;padding:8px 16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .filters{gap:8px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .mini{font-size:13.5px;margin-top:6px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .del{font-size:14px;padding:6px 10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .feed li{font-size:16px;padding-block:13px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .feed .t{font-size:14px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .barrow .top{font-size:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .barrow .top .num{font-size:15px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .bars{gap:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .empty{font-size:16px;padding:24px}
+.kpis{gap:16px}.kpi{padding:20px 20px 18px}.kpi .l{font-size:13.5px}.kpi .v{font-size:28px;margin-top:6px}.kpi .h{font-size:14.5px;margin-top:4px}
+.ctable{font-size:16px}.ctable td,.ctable th{padding:10px 10px}
+.size-grid b{font-size:22px}.size-grid span{font-size:13px}
+#tab-setup .grid2{display:block;columns:2 440px;column-gap:28px}#tab-setup .grid2>.panel{break-inside:avoid;margin-bottom:28px;display:block}#tab-setup .grid2{margin-bottom:-28px}
+.ci-kpis span{font-size:15px}.ci-kpis b{font-size:28px}
+#tab-setup .stack{gap:18px}
+.tip{margin:0!important;background:var(--tip-bg);border-left:4px solid var(--tip-edge);color:var(--tip-ink)!important;border-radius:8px;padding:11px 15px;font-size:15.5px!important;line-height:1.5}
+.check{display:flex!important;align-items:flex-start;gap:12px!important;font-size:16.5px!important;font-weight:600;color:var(--ink);cursor:pointer;line-height:1.4}
+.check input{margin-top:1px}
+.savebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:8;box-shadow:var(--shadow);padding:14px 18px}
+.savebar.bottom{position:static;box-shadow:none}
+.savebar.dirty{background:#fdf1c7;border-color:#e3b318}
+.savestate{font-size:16px;font-weight:600}
+.dollar{position:relative;display:block;min-width:0}
+.dollar::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);opacity:.65;font:600 16px var(--f-mono);pointer-events:none}
+.dollar input{padding-left:30px!important}
+.set-addon{grid-template-columns:44px minmax(0,1fr) 150px auto;gap:12px}
+.set-addon.mini{align-items:end}
+.set-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 140px 140px;gap:12px}
+.set-groups{gap:12px}
+.trash{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 15px var(--f-body);padding:0 14px;min-height:46px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.trash:hover,.trash:focus-visible{color:var(--bad);border-color:var(--bad);background:var(--bad-bg)}
+.trash.armed{color:#fff;background:var(--bad);border-color:var(--bad)}
+@media (max-width:560px){.set-addon{grid-template-columns:30px minmax(0,1fr) auto;row-gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}.set-addon>input[data-af=label]{grid-column:2/4}.set-addon>.dollar{grid-column:2/3}.set-addon .trash{grid-column:3/4}.set-addon.mini{display:none}.set-row{grid-template-columns:1fr 1fr}
+.savebar{padding:10px 12px;gap:8px;top:calc(env(safe-area-inset-top,0px) + 52px)}.savebar .savestate{flex:1 0 100%;font-size:15px}.savebar .btn{flex:1;min-height:42px!important;font-size:15px!important;padding:8px 10px!important}}
+.opt{display:inline-block;vertical-align:middle;margin-left:10px;font:700 12.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:var(--ok-bg);border:1px solid #b9dcc4;border-radius:999px;padding:3px 10px;position:relative;top:-2px}
+#tab-register .panel-head p{color:var(--note-ink)}
+.pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#1c5a34;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.pvbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;font-size:16px}
+.pvbar .btn{background:#e3b318;border-color:#e3b318;color:#2a2100;font-size:16px;min-height:44px}
+body.previewing{padding-top:68px}
+body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!important}
 </style>
 
 <header class="hero">
@@ -406,13 +483,14 @@ body.viewer #tab-setup .savebar{display:none}
   <button class="btn sm ghost" id="resetDemo" type="button">Reset demo</button>
 </div></div>
 
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><button class="btn" type="button" id="pvBack">← Back to Setup</button></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
-  <span><b>Test mode is on.</b> Everything you do saves to the red Test tabs in the sheet, not the real ones. Emails still go out, marked [TEST].</span>
+  <span><b>TEST MODE IS ON.</b> Nothing here is real. Everything you do saves to the red Test tabs in the sheet, not the real ones. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
 </div></div>
 <div class="adminbar" id="adminBar" hidden><div class="wrap">
   <span><b>Committee view.</b> Family members only see the Register page.</span>
-  <span class="row" style="gap:8px"><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" hidden>Open Sheet</a><button class="btn sm ghost" id="testBtn" type="button">Test mode: Off</button><button class="btn sm ghost" id="refreshBtn" type="button">Refresh</button><button class="btn sm ghost" id="signOut" type="button">Sign out</button></span>
+  <span class="row" style="gap:8px"><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" hidden>Open Sheet</a><button class="btn sm ghost" id="testBtn" type="button" aria-pressed="false">Test mode <span class="sw"><i></i></span> <b>Off</b></button><button class="btn sm ghost" id="refreshBtn" type="button">Refresh</button><button class="btn sm ghost" id="signOut" type="button">Sign out</button></span>
 </div></div>
 
 <nav class="tabs" id="tabsNav" aria-label="Sections"><div class="wrap" role="tablist">
@@ -453,11 +531,11 @@ body.viewer #tab-setup .savebar{display:none}
         <div style="margin-top:12px"><button type="button" class="btn sm" id="addPerson">+ Add a person</button></div>
       </div>
       <div class="panel" id="addonPanel">
-        <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Optional. Add what your household wants.</p></div></div>
+        <div class="panel-head"><div><h2>Extras<span class="opt">Optional</span></h2><p class="muted small">Add what your household wants.</p></div></div>
         <div id="addonFields"></div>
       </div>
       <div class="panel">
-        <div class="panel-head"><div><h2>PSR Scholarship</h2><p class="muted small">Supports the family's high school graduates. Kept in its own fund, separate from reunion money.</p></div></div>
+        <div class="panel-head"><div><h2>PSR Scholarship<span class="opt">Optional</span></h2><p class="muted small">Helps our family's high school graduates. This money is kept separate from the reunion money.</p></div></div>
         <div class="stack" style="gap:14px">
           <div class="stack" style="gap:6px"><span class="f-lbl">Pick an amount</span>
             <div class="quick">
@@ -505,9 +583,9 @@ body.viewer #tab-setup .savebar{display:none}
     </div>
     <form id="mpForm" class="stack" style="gap:12px" hidden novalidate>
       <label class="f">Household<select id="mpReg"></select></label>
-      <p class="muted small" style="margin-top:-6px">Not registered yet? <button class="linkbtn" type="button" id="mpGoReg">Register them first</button>, then come back.</p>
+      <p class="tip">Not registered yet? <button class="linkbtn" type="button" id="mpGoReg">Register them first</button>, then come back.</p>
       <div class="fields">
-        <label class="f">Amount ($)<input id="mpAmt" inputmode="decimal" autocomplete="off" placeholder="0.00"></label>
+        <label class="f">Amount<input data-money id="mpAmt" inputmode="decimal" autocomplete="off" placeholder="0.00"></label>
         <label class="f">Paid by<select id="mpVia"><option>Cash</option><option>Zelle</option><option>Cash App</option><option>Card (Zeffy)</option><option>Check</option><option>Other</option></select></label>
         <label class="f">Date<input id="mpDate" type="date"></label>
       </div>
@@ -515,7 +593,7 @@ body.viewer #tab-setup .savebar{display:none}
       <label class="f">Note (optional)<input id="mpNote" autocomplete="off" placeholder="e.g. paid at the door Saturday"></label>
       <label class="drop" for="mpFile"><span id="mpFileTxt"><b>Add a screenshot or photo (optional)</b><br><span class="muted small">Zelle or Cash App screenshot, check photo, or PDF</span></span></label>
       <input type="file" id="mpFile" accept="image/*,application/pdf" hidden>
-      <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="mpEmail" checked> Email a receipt to the household</label>
+      <label class="check"><input type="checkbox" id="mpEmail" checked> Email a receipt to the household</label>
       <span class="err" id="mpErr" hidden></span>
       <div class="row"><button class="btn primary" type="submit" id="mpSave">Save payment</button><button class="btn" type="button" id="mpCancel">Cancel</button></div>
     </form>
@@ -529,7 +607,7 @@ body.viewer #tab-setup .savebar{display:none}
       <div class="fields">
         <label class="f">Type<select id="ctType"><option>Committee contribution</option><option>Donation</option><option>Fundraiser</option><option>Other</option></select></label>
         <label class="f">Name<input id="ctName" autocomplete="off"></label>
-        <label class="f">Amount ($)<input id="ctAmt" inputmode="decimal" autocomplete="off" value="120"></label>
+        <label class="f">Amount<input data-money id="ctAmt" inputmode="decimal" autocomplete="off" value="120"></label>
         <label class="f">Paid by<select id="ctVia"><option>Zelle</option><option>Cash App</option><option>Cash</option><option>Check</option><option>Card (Zeffy)</option><option>Other</option></select></label>
       </div>
       <div class="fields">
@@ -582,7 +660,7 @@ body.viewer #tab-setup .savebar{display:none}
         <input type="file" id="rcptFile" accept="image/*,application/pdf" hidden>
         <div class="fields">
           <label class="f">Store<input id="rcVendor" placeholder="e.g. Costco"></label>
-          <label class="f">Total ($)<input id="rcAmount" type="number" min="0" step="0.01" inputmode="decimal"></label>
+          <label class="f">Total<input data-money id="rcAmount" type="number" min="0" step="0.01" inputmode="decimal"></label>
         </div>
         <div class="fields">
           <label class="f">What was it for?<select id="rcCat"></select><span class="sub note-red" id="rcCatHint" hidden>Bar &amp; restaurant · counts toward $6,000</span></label>
@@ -632,8 +710,8 @@ body.viewer #tab-setup .savebar{display:none}
 
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
-  <p class="muted">Change anything here, then click <b>Save changes</b>. The registration page, totals and reports update right away.</p>
-  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><a class="btn" id="previewReg" href="./" target="_blank" rel="noopener">Preview registration page</a><button class="btn primary" type="button" data-savenow>Save changes</button></div>
+  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save.</p>
+  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="grid2">
     <div class="panel">
       <div class="panel-head"><h2>Reunion details</h2></div>
@@ -649,9 +727,9 @@ body.viewer #tab-setup .savebar{display:none}
         <label class="f">When<input id="sWhen" data-k="when"></label>
         <label class="f">Hosted by<input id="sHost" data-k="host"></label>
         <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
-        <p class="muted small" style="margin-top:-6px">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
-        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
-        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
+        <p class="tip">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
+        <label class="check"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
+        <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
       </div>
     </div>
     <div class="panel">
@@ -671,37 +749,37 @@ body.viewer #tab-setup .savebar{display:none}
     <div class="panel">
       <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment.</p></div></div>
       <div class="stack" style="gap:12px">
-        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
-        <p class="muted small" style="margin-top:-6px">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
+        <label class="check"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
+        <p class="tip">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
         <div class="fields">
           <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
           <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
         </div>
-        <p class="muted small" style="margin-top:-6px">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
+        <p class="tip">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
         <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
-        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
+        <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
         <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
-        <p class="muted small" style="margin-top:-6px">Until this is filled in, families see "Online payment opens soon" after they register.</p>
-        <label class="row small" style="gap:8px;font-weight:600"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
-        <p class="muted small" style="margin-top:-6px">Test mode lets the committee try registering without saving anything. Uncheck this when you're done testing to hide the button.</p>
+        <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
+        <label class="check"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
+        <p class="tip">Test mode lets the committee try things out. Everything goes to the red Test tabs in the sheet, not the real ones. Uncheck this when testing is done to hide the button.</p>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and the daily check that watches for problems.</p></div></div>
+      <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and a daily check that watches for problems.</p></div></div>
       <div class="stack" style="gap:12px">
         <label class="f">Check-in code for helpers<input id="sCiCode" data-k="checkinCode" placeholder="Make one up, like Faison27" autocomplete="off"></label>
-        <p class="muted small" style="margin-top:-6px">Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
+        <p class="tip">Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
         <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
         <label class="f">Also email alerts to<input id="sAlert" data-k="alertEmails" placeholder="name@gmail.com" autocomplete="off"></label>
-        <p class="muted small" style="margin-top:-6px">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
+        <p class="tip">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-head"><div><h2>Emails</h2><p class="muted small">How the confirmation email looks. The reunion name, theme, dates and hotel come from the boxes above.</p></div></div>
+      <div class="panel-head"><div><h2>Emails</h2><p class="muted small">Set who emails come from, where replies go, and how the confirmation email looks. The reunion name, dates and hotel fill in automatically from above.</p></div></div>
       <div class="stack" style="gap:12px">
         <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
         <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
-        <p class="muted small" style="margin-top:-6px">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
+        <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
         <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
       </div>
     </div>
@@ -712,27 +790,28 @@ body.viewer #tab-setup .savebar{display:none}
     <div class="set-groups" id="setGroups"></div>
   </div>
   <div class="panel">
-    <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Turn extras on or off, change prices, or add new ones when events are decided.</p></div>
+    <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Check the box to offer an extra. Change names and prices, or add new ones when events are decided.</p></div>
       <button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
     <div class="set-groups" id="setAddons"></div>
   </div>
   <div class="panel">
     <div class="panel-head"><div><h2>Money</h2><p class="muted small">Starting balances are carried over from the 2026 financial summary.</p></div></div>
     <div class="fields" style="margin-bottom:16px">
-      <label class="f">Reunion account starting balance ($)<input id="sBegin" data-k="begin" type="number" step="0.01"></label>
-      <label class="f">Scholarship fund starting balance ($)<input id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
+      <label class="f">Reunion account starting balance<input data-money id="sBegin" data-k="begin" type="number" step="0.01"></label>
+      <label class="f">Scholarship fund starting balance<input data-money id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
     </div>
     <div class="mini" style="margin-bottom:8px">Hotel commitment</div>
     <div class="fields" style="margin-bottom:12px">
-      <label class="f">Catering minimum ($)<input id="sCater" data-k="caterMin" type="number" step="1"></label>
-      <label class="f">Food money per paying person ($)<input id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
-      <label class="f">PSR reunion deposit ($)<input id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
-      <label class="f">Faison reunion deposit ($)<input id="sDepFaison" data-k="depFaison" type="number" step="1"></label>
+      <label class="f">Catering minimum<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
+      <label class="f">Food money per paying person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
+      <label class="f">PSR reunion deposit<input data-money id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
+      <label class="f">Faison reunion deposit<input data-money id="sDepFaison" data-k="depFaison" type="number" step="1"></label>
       <label class="f">Service charge (%)<input id="sSvc" data-k="serviceCharge" type="number" step="0.01"></label>
       <label class="f">Sales tax (%)<input id="sTax" data-k="salesTax" type="number" step="0.01"></label>
     </div>
-    <label class="row small" style="margin-bottom:16px;gap:8px;font-weight:600"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with the hotel)</label>
-    <div class="mini" style="margin-bottom:8px">Budget by category</div>
+    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with the hotel)</label>
+    <div class="mini" style="margin-bottom:8px">Planned budget by category</div>
+    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent.</p>
     <div class="fields" id="setBudgets"></div>
   </div>
   <div class="savebar bottom"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn primary" type="button" data-savenow>Save changes</button></div>
@@ -858,7 +937,7 @@ async function api(action,data,log){
 async function loadPublic(){const j=await api('public');D.S=mergeSettings(j.settings);D.pub={people:j.people||0,households:j.households||0};D.loaded=true}
 async function loadAll(){
   const j=await api('all');
-  D.S=mergeSettings(j.settings);
+  if(!setDirty)D.S=mergeSettings(j.settings);
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
@@ -870,16 +949,17 @@ async function loadAll(){
 async function refreshLive(){if(!LIVE)return;if(isAdmin())await loadAll();else await loadPublic()}
 async function busy(btn,label,fn){const t=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent=label}
   try{return await fn()}catch(e){toast(e.message||'Something went wrong.');throw e}finally{if(btn){btn.disabled=false;btn.textContent=t}}}
-let setT;
-function setSaveState(st){const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  const msg={dirty:'Unsaved changes',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save changes to try again.'}[st];
+let setT,setDirty=false;
+function setSaveState(st){setDirty=st==='dirty'||(st==='error'&&setDirty);document.querySelectorAll('#tab-setup .savebar').forEach(b=>b.classList.toggle('dirty',setDirty));const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const msg={dirty:'You have unsaved changes. Click Save changes.',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save changes to try again.'}[st];
   document.querySelectorAll('[data-savestate]').forEach(e=>{e.textContent=msg;e.className='savestate '+st});
   document.querySelectorAll('[data-savenow]').forEach(b=>{b.disabled=st==='saving';b.textContent=st==='saving'?'Saving…':'Save changes'})}
 function saveSettingsNow(manual){clearTimeout(setT);
   if(!LIVE){save();setSaveState('saved');if(manual)toast('Settings saved.');return Promise.resolve()}
   setSaveState('saving');
-  return api('saveSettings',D.S).then(()=>{setSaveState('saved');toast('Settings saved.')}).catch(e=>{setSaveState('error');toast(e.message)})}
-function persistSettings(){setSaveState('dirty');clearTimeout(setT);setT=setTimeout(()=>saveSettingsNow(false),LIVE?1500:400)}
+  return api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved');toast('Settings saved.')}).catch(e=>{setSaveState('error');toast(e.message)})}
+function persistSettings(){setSaveState('dirty')}
+window.addEventListener('beforeunload',e=>{if(setDirty){e.preventDefault();e.returnValue=''}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-savenow]'))saveSettingsNow(true)});
 
 function readUpload(file,maxDim){return new Promise((ok,no)=>{
@@ -971,6 +1051,9 @@ function copy(txt,btn){const done=()=>{const o=btn.textContent;btn.textContent='
   try{navigator.clipboard.writeText(txt).then(done,()=>sel(btn))}catch(e){sel(btn)}}
 function sel(btn){const v=btn.parentElement.querySelector('.val');if(!v)return;const r=document.createRange();r.selectNodeContents(v);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from your keyboard menu.')}
 
+/* ---------- $ in money boxes ---------- */
+function dollarize(root){(root||document).querySelectorAll('input[data-money]').forEach(i=>{if(i.parentElement.classList.contains('dollar'))return;const w=document.createElement('span');w.className='dollar';i.parentElement.insertBefore(w,i);w.appendChild(i)})}
+new MutationObserver(()=>dollarize()).observe(document.querySelector('main'),{childList:true,subtree:true});dollarize();
 /* ---------- Tabs ---------- */
 const PAYQ=(()=>{const m=(location.hash||'').match(/^#pay=([^&]+)(?:&amt=([\d.]+))?/);return m?{code:decodeURIComponent(m[1]),amt:+m[2]||0}:null})();
 const TABS=['register','overview','payments','expenses','ledger','checkin','setup'];
@@ -1284,13 +1367,18 @@ function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
   eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&regState()==='open'&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
   const rows=String(S.schedule||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf(':');return i>0&&i<16?[l.slice(0,i).trim(),l.slice(i+1).trim()]:['',l]});
   wk.hidden=!rows.length;wk.innerHTML=rows.length?`<h2>Reunion weekend</h2>${rows.map(([d,t])=>`<div class="wk-row">${d?`<span class="wk-day">${esc(d)}</span>`:'<span></span>'}<span>${esc(t)}</span></div>`).join('')}`:''}
-function gateReg(){renderExtrasReg();const st=regState(),closed=LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
+let previewing=false;
+function gateReg(){renderExtrasReg();const st=regState(),closed=previewing?st!=='open':LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;return}
   box.hidden=!closed;$('regWrap').hidden=closed;
   if(closed)box.innerHTML=D.loadErr?`<h2>We can't reach the registration system</h2><p class="muted" style="margin-top:8px">Please refresh this page in a minute. If it keeps happening, reply to the email you got from the committee.</p>`
     :!D.loaded?`<p class="muted">Loading…</p>`
     :regMsg(st);
 }
+function setPreview(on){previewing=!!on;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
+  openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0})}
+$('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
+$('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
 
 /* ---------- Overview ---------- */
@@ -1596,18 +1684,19 @@ function renderLedger(){
 $('ledFilters').addEventListener('click',e=>{const b=e.target.closest('.filter');if(!b)return;ledFilter=b.dataset.f;$('ledFilters').querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLedger()});
 
 /* ---------- Setup ---------- */
+const TRASH='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
 function renderSetup(){
   const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
-  $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird $</span><span>After $</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
+  $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
     <input aria-label="Group name" data-g="${i}" data-gf="label" value="${esc(g.label)}"><input aria-label="Ages" data-g="${i}" data-gf="ages" value="${esc(g.ages)}">
-    <input aria-label="Early-bird price" type="number" min="0" data-g="${i}" data-gf="early" value="${g.early}"><input aria-label="Regular price" type="number" min="0" data-g="${i}" data-gf="late" value="${g.late}"></div>`).join('');
-  $('setAddons').innerHTML=S.addons.map((a,i)=>`<div class="set-addon">
+    <input data-money aria-label="Early-bird price" type="number" min="0" data-g="${i}" data-gf="early" value="${g.early}"><input data-money aria-label="Regular price" type="number" min="0" data-g="${i}" data-gf="late" value="${g.late}"></div>`).join('');
+  $('setAddons').innerHTML=(S.addons.length?'<div class="set-addon mini"><span>Offer</span><span>Item</span><span>Price</span><span></span></div>':'')+S.addons.map((a,i)=>`<div class="set-addon">
     <input type="checkbox" aria-label="Offer ${esc(a.label)}" data-a="${i}" data-af="on"${a.on?' checked':''}>
     <input aria-label="Extra name" data-a="${i}" data-af="label" value="${esc(a.label)}">
-    <input aria-label="Price" type="number" min="0" data-a="${i}" data-af="price" value="${a.price}">
-    <button class="x" type="button" data-adel="${i}" aria-label="Remove ${esc(a.label)}">×</button></div>`).join('')||'<p class="muted small">No extras yet.</p>';
+    <input data-money aria-label="Price" type="number" min="0" data-a="${i}" data-af="price" value="${a.price}">
+    <button class="trash" type="button" data-adel="${i}" aria-label="Remove ${esc(a.label)}">${TRASH}<span>Remove</span></button></div>`).join('')||'<p class="muted small">No extras yet.</p>';
   if($('ciLinkTxt'))$('ciLinkTxt').textContent=helperLink();
-  $('setBudgets').innerHTML=CATS.map(c=>`<label class="f">${esc(c)}<input type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"></label>`).join('');
+  $('setBudgets').innerHTML=CATS.map(c=>`<label class="f">${esc(c)}<input data-money type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"></label>`).join('');
 }
 $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
@@ -1617,7 +1706,9 @@ $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   else return;
   persistSettings();renderAll(true);
 });
-$('tab-setup').addEventListener('click',e=>{const b=e.target.closest('[data-adel]');if(!b)return;D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
+$('tab-setup').addEventListener('click',e=>{const b=e.target.closest('[data-adel]');if(!b)return;
+  if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
+  D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
 $('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
   const ins=$('setAddons').querySelectorAll('[data-af="label"]');const l=ins[ins.length-1];l.focus();l.select()});
 $('resetDemo').addEventListener('click',()=>{if(LIVE)return;D=seedData();try{localStorage.removeItem(KEY)}catch(e){};resetForm();renderSetup();renderAll(true);
@@ -1674,7 +1765,7 @@ function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i
         ${h.via==='Card'
           ?(zok?`<div class="ci-qr"><div id="ciQR" aria-label="QR code for the Zeffy payment page"></div><p>Have them scan this with their phone camera. It opens the payment page with the amount (<b>${money(bal)}</b>) and the steps to pay by card.</p><p class="muted small">Card payments go straight to Zeffy, so there’s nothing to record here.</p></div>`
               :`<p class="muted" style="margin-top:10px">Card payments open once the Zeffy link is added in Setup.</p>`)
-          :`<form class="ci-inline" id="ciPayForm" novalidate><label class="f">Amount ($)<input id="ciPayAmt" type="number" step="0.01" min="0" inputmode="decimal" value="${bal.toFixed(2)}"></label><button class="btn primary" type="submit" id="ciPayGo">Record payment</button></form><p class="muted small" style="margin-top:6px">They get a receipt email right away.</p>`}
+          :`<form class="ci-inline" id="ciPayForm" novalidate><label class="f">Amount<input data-money id="ciPayAmt" type="number" step="0.01" min="0" inputmode="decimal" value="${bal.toFixed(2)}"></label><button class="btn primary" type="submit" id="ciPayGo">Record payment</button></form><p class="muted small" style="margin-top:6px">They get a receipt email right away.</p>`}
         </div>`
       :`<div class="ci-pay"><span>Still owes <b>${money(bal)}</b></span><button class="btn sm gold" type="button" id="ciPayOpen">Pay now</button></div>`)
     :(+h.paid>0?`<div class="ci-pay paid">✓ Paid in full</div>`:'');
@@ -1866,7 +1957,7 @@ function applyMode(){const adm=isAdmin();
   $('tabsNav').hidden=LIVE&&!adm;$('adminBar').hidden=!(LIVE&&adm);$('foot').hidden=!LIVE||adm;
   const sl=$('sheetLink');sl.hidden=!(LIVE&&adm&&D.sheetUrl);if(D.sheetUrl)sl.href=D.sheetUrl;
   const t=isTest(),tb=$('testBtn');$('testStrip').hidden=!t;$('testClear').hidden=!(t&&adm);
-  tb.hidden=!LIVE||D.S.showTest===false;tb.textContent='Test mode: '+(t?'On':'Off');tb.classList.toggle('testing',t);
+  tb.hidden=!LIVE||D.S.showTest===false;tb.innerHTML='Test mode <span class="sw'+(t?' on':'')+'"><i></i></span> <b>'+(t?'On':'Off')+'</b>';tb.setAttribute('aria-pressed',String(t));tb.title=t?'Click to turn test mode off':'Click to turn test mode on';tb.classList.toggle('testing',t);
   // Test PIN: Test mode only, no Setup, no committee contributions.
   const v=isViewer();if(v){tb.hidden=true;$('testClear').hidden=true}
   $('testOff').hidden=v;$('contribPanel').hidden=v;document.body.classList.toggle('viewer',v);
