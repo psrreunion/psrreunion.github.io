@@ -416,7 +416,7 @@ body.viewer #tab-setup .savebar{display:none}
 .kpis{gap:16px}.kpi{padding:20px 20px 18px}.kpi .l{font-size:13.5px}.kpi .v{font-size:28px;margin-top:6px}.kpi .h{font-size:14.5px;margin-top:4px}
 .ctable{font-size:16px}.ctable td,.ctable th{padding:10px 10px}
 .size-grid b{font-size:22px}.size-grid span{font-size:13px}
-#tab-setup .grid2{display:block;columns:2 440px;column-gap:28px}#tab-setup .grid2>.panel{break-inside:avoid;margin-bottom:28px;display:block}#tab-setup .grid2{margin-bottom:-28px}
+#tab-setup .setcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;align-items:start}#tab-setup .setcol{display:flex;flex-direction:column;gap:28px;min-width:0}@media (max-width:900px){#tab-setup .setcols{grid-template-columns:minmax(0,1fr)}}
 .ci-kpis span{font-size:15px}.ci-kpis b{font-size:28px}
 #tab-setup .stack{gap:18px}
 .tip{margin:0!important;background:var(--tip-bg);border-left:4px solid var(--tip-edge);color:var(--tip-ink)!important;border-radius:8px;padding:11px 15px;font-size:15.5px!important;line-height:1.5}
@@ -712,75 +712,79 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save.</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
-  <div class="grid2">
-    <div class="panel">
-      <div class="panel-head"><h2>Reunion details</h2></div>
-      <div class="stack" style="gap:12px">
-        <div class="fields">
-          <label class="f">Which reunion<input id="sEdition" data-k="edition"></label>
-          <label class="f">Seats available<input id="sCapacity" data-k="capacity" type="number" min="1"></label>
+  <div class="setcols">
+    <div class="setcol">
+      <div class="panel">
+        <div class="panel-head"><h2>Reunion details</h2></div>
+        <div class="stack" style="gap:12px">
+          <div class="fields">
+            <label class="f">Which reunion<input id="sEdition" data-k="edition"></label>
+            <label class="f">Seats available<input id="sCapacity" data-k="capacity" type="number" min="1"></label>
+          </div>
+          <label class="f">Theme<input id="sTheme" data-k="theme"></label>
+          <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
+          <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
+          <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
+          <label class="f">When<input id="sWhen" data-k="when"></label>
+          <label class="f">Hosted by<input id="sHost" data-k="host"></label>
+          <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
+          <p class="tip">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
+          <label class="check"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
+          <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
         </div>
-        <label class="f">Theme<input id="sTheme" data-k="theme"></label>
-        <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
-        <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
-        <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
-        <label class="f">When<input id="sWhen" data-k="when"></label>
-        <label class="f">Hosted by<input id="sHost" data-k="host"></label>
-        <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
-        <p class="tip">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
-        <label class="check"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
-        <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><div><h2>Hotel</h2><p class="muted small">Shows on the registration page so families know where to stay. They book their own rooms.</p></div></div>
-      <div class="stack" style="gap:12px">
-        <label class="f">Hotel name<input id="sHotel" data-k="hotelName"></label>
-        <label class="f">Street address<input id="sStreet" data-k="hotelStreet"></label>
-        <div class="fields">
-          <label class="f">City, state, zip<input id="sCity" data-k="hotelCity"></label>
-          <label class="f">Phone (optional)<input id="sHPhone" data-k="hotelPhone"></label>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Hotel</h2><p class="muted small">Shows on the registration page so families know where to stay. They book their own rooms.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Hotel name<input id="sHotel" data-k="hotelName"></label>
+          <label class="f">Street address<input id="sStreet" data-k="hotelStreet"></label>
+          <div class="fields">
+            <label class="f">City, state, zip<input id="sCity" data-k="hotelCity"></label>
+            <label class="f">Phone (optional)<input id="sHPhone" data-k="hotelPhone"></label>
+          </div>
+          <label class="f">Room rate<input id="sRate" data-k="roomRate"></label>
+          <label class="f">Hotel booking link (from Brandi)<input id="sBook" data-k="bookUrl" type="url" placeholder="Paste the reunion booking link here"></label>
+          <label class="f">Note for families<textarea id="sHNote" data-k="hotelNote" rows="2"></textarea></label>
         </div>
-        <label class="f">Room rate<input id="sRate" data-k="roomRate"></label>
-        <label class="f">Hotel booking link (from Brandi)<input id="sBook" data-k="bookUrl" type="url" placeholder="Paste the reunion booking link here"></label>
-        <label class="f">Note for families<textarea id="sHNote" data-k="hotelNote" rows="2"></textarea></label>
       </div>
     </div>
-    <div class="panel">
-      <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment.</p></div></div>
-      <div class="stack" style="gap:12px">
-        <label class="check"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
-        <p class="tip">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
-        <div class="fields">
-          <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
-          <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
+    <div class="setcol">
+      <div class="panel">
+        <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="check"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
+          <p class="tip">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
+          <div class="fields">
+            <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
+            <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
+          </div>
+          <p class="tip">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
+          <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
+          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
+          <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
+          <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
+          <label class="check"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
+          <p class="tip">Test mode lets the committee try things out. Everything goes to the red Test tabs in the sheet, not the real ones. Uncheck this when testing is done to hide the button.</p>
         </div>
-        <p class="tip">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
-        <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
-        <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
-        <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
-        <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
-        <label class="check"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
-        <p class="tip">Test mode lets the committee try things out. Everything goes to the red Test tabs in the sheet, not the real ones. Uncheck this when testing is done to hide the button.</p>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and a daily check that watches for problems.</p></div></div>
-      <div class="stack" style="gap:12px">
-        <label class="f">Check-in code for helpers<input id="sCiCode" data-k="checkinCode" placeholder="Make one up, like Faison27" autocomplete="off"></label>
-        <p class="tip">Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
-        <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
-        <label class="f">Also email alerts to<input id="sAlert" data-k="alertEmails" placeholder="name@gmail.com" autocomplete="off"></label>
-        <p class="tip">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and a daily check that watches for problems.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Check-in code for helpers<input id="sCiCode" data-k="checkinCode" placeholder="Make one up, like Faison27" autocomplete="off"></label>
+          <p class="tip">Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
+          <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
+          <label class="f">Also email alerts to<input id="sAlert" data-k="alertEmails" placeholder="name@gmail.com" autocomplete="off"></label>
+          <p class="tip">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
+        </div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><div><h2>Emails</h2><p class="muted small">Set who emails come from, where replies go, and how the confirmation email looks. The reunion name, dates and hotel fill in automatically from above.</p></div></div>
-      <div class="stack" style="gap:12px">
-        <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
-        <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
-        <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
-        <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Emails</h2><p class="muted small">Set who emails come from, where replies go, and how the confirmation email looks. The reunion name, dates and hotel fill in automatically from above.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
+          <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+          <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
+          <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
+        </div>
       </div>
     </div>
   </div>
@@ -814,7 +818,6 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
     <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent.</p>
     <div class="fields" id="setBudgets"></div>
   </div>
-  <div class="savebar bottom"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn primary" type="button" data-savenow>Save changes</button></div>
 </section>
 </main>
 <footer class="foot" id="foot" hidden><div class="wrap">
