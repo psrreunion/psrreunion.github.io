@@ -1,0 +1,1999 @@
+<title>PSR Reunion Hub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: family-crest hero band, tri-colour stripe for the three families, sticky tab bar, then working panels */
+:root{
+  --bg:#f5f6f1; --surface:#ffffff; --surface-2:#edf0e8; --ink:#17221b; --muted:#56655b; --line:#dbe2d6;
+  --green:#1c5a34; --green-2:#277445; --on-green:#f8f3e2; --red:#ae2a2f; --gold:#e3b318; --gold-soft:#fbf0c6; --on-gold:#2a2100;
+  --ok:#1d7442; --ok-bg:#e1f1e6; --warn:#94600f; --warn-bg:#faefd5; --bad:#a3252b; --bad-bg:#f8e1e2; --info:#285790; --info-bg:#e2ebf6;
+  --shadow:0 1px 2px rgba(20,40,25,.05),0 6px 20px rgba(20,40,25,.06);
+  --f-display:"Young Serif",Georgia,"Times New Roman",serif;
+  --f-body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1611; --surface:#151f18; --surface-2:#1c2920; --ink:#e6ece5; --muted:#9cafa1; --line:#283a2e;
+  --green:#143f25; --green-2:#46a26a; --on-green:#f8f3e2; --red:#e2646a; --gold:#efc443; --gold-soft:#36301a; --on-gold:#2a2100;
+  --ok:#62c78e; --ok-bg:#163420; --warn:#e5ad52; --warn-bg:#382a13; --bad:#f0858a; --bad-bg:#3c1c1e; --info:#86b4ec; --info-bg:#172a40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1611; --surface:#151f18; --surface-2:#1c2920; --ink:#e6ece5; --muted:#9cafa1; --line:#283a2e;
+  --green:#143f25; --green-2:#46a26a; --on-green:#f8f3e2; --red:#e2646a; --gold:#efc443; --gold-soft:#36301a; --on-gold:#2a2100;
+  --ok:#62c78e; --ok-bg:#163420; --warn:#e5ad52; --warn-bg:#382a13; --bad:#f0858a; --bad-bg:#3c1c1e; --info:#86b4ec; --info-bg:#172a40;
+  --shadow:0 1px 2px rgba(0,0,0,.35); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;margin:0}
+h2{font-family:var(--f-display);font-weight:400;font-size:22px;line-height:1.25}
+h3{font-size:15px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:16px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+
+/* Hero */
+.hero{background:var(--green);color:var(--on-green);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(248,243,226,.12);box-shadow:0 0 0 40px rgba(248,243,226,.03),0 0 0 90px rgba(248,243,226,.025)}
+.hero-in{padding-block:28px 26px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;position:relative;z-index:1}
+.crest{width:64px;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+.hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,5.2vw,46px);line-height:1.08;margin-top:6px}
+.hero .sub{font-style:italic;opacity:.9;margin-top:6px;font-size:16px}
+.hero .verse{margin-top:12px;max-width:640px;font-family:var(--f-display);font-size:16px;line-height:1.45;color:var(--on-green);opacity:.92}
+.hero .verse span{display:inline-block;margin-left:6px;font-family:var(--f-body);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.hero-meta{display:flex;flex-wrap:wrap;margin-top:18px;border-top:1px solid rgba(233,187,28,.35);padding-top:12px;gap:8px 0}
+.hero-meta .mi{display:flex;align-items:center;gap:8px;font-size:14px;padding-right:18px;margin-right:18px;border-right:1px solid rgba(233,187,28,.45)}
+.hero-meta .mi:last-child{border-right:0;margin-right:0;padding-right:0}
+.hero-meta svg{flex:none;color:var(--gold)}
+@media (max-width:560px){.hero-meta{flex-direction:column}.hero-meta .mi{border-right:0;margin-right:0;padding-right:0}}
+.hero-progress{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:end;margin-top:4px}
+.hero-progress .track{grid-column:1/-1;height:8px;border-radius:999px;background:rgba(248,243,226,.15);overflow:hidden}
+.hero-progress .track i{display:block;height:100%;background:var(--gold);border-radius:999px;transition:width .5s}
+@media (max-width:560px){.hero-in{grid-template-columns:1fr}.crest{width:52px}}
+.tristripe{display:grid;grid-template-columns:repeat(3,1fr);height:6px}
+.tristripe i:nth-child(1){background:#2c8a4a}.tristripe i:nth-child(2){background:#c4313a}.tristripe i:nth-child(3){background:#e9bb1c}
+
+/* Demo strip */
+.demo{background:var(--gold-soft);color:var(--ink);font-size:13px}
+.demo .wrap{padding-block:8px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.demo b{font-weight:700}
+
+/* Tabs */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.tabs .wrap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+.tabs .wrap::-webkit-scrollbar{display:none}
+.tab{appearance:none;border:0;background:none;font:600 14px var(--f-body);color:var(--muted);padding:14px 12px 12px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--red)}
+.tab:focus-visible{outline:2px solid var(--green-2);outline-offset:-2px}
+main{padding-block:24px 64px}
+section[role=tabpanel]{display:flex;flex-direction:column;gap:20px}
+
+/* Panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow);min-width:0}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.panel-head p{margin-top:4px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:20px}
+
+/* Forms */
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px}
+label.f{display:grid;gap:5px;font-size:13px;font-weight:600;color:var(--muted)}
+input,select,textarea{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:9px 11px;width:100%;min-width:0}
+input.bad-field{border-color:var(--bad);box-shadow:0 0 0 3px var(--bad-bg)}
+input::placeholder,textarea::placeholder{color:var(--muted);opacity:.6}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--green-2);outline-offset:0;border-color:transparent}
+input[type=number]{font-family:var(--f-mono)}
+input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
+.btn{appearance:none;font:600 14px var(--f-body);border-radius:10px;padding:10px 16px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:hover{background:var(--surface-2)}
+.btn:focus-visible{outline:2px solid var(--green-2);outline-offset:2px}
+.btn.primary{background:var(--green-2);border-color:var(--green-2);color:#fff}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--on-gold);font-size:16px;padding:13px 18px}
+.btn.gold:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:8px}
+.btn.block{width:100%}
+.savebar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;margin:0 0 16px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.savebar.bottom{margin:16px 0 0}
+.savestate{font-size:14px;color:var(--muted)}.savestate.dirty{color:var(--warn)}.savestate.error{color:var(--bad)}.savestate.saved{color:var(--ok)}
+.teststrip{background:#fde8e8;color:#7a1414;border-bottom:1px solid #f3c2c2}.teststrip .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:10px;padding-bottom:10px;font-size:14px}
+.btn.testing{background:#a3252b;border-color:#a3252b;color:#fff}
+.paycard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;text-align:left}
+.paycard h3{margin:0 0 10px;font:700 15px var(--f-body);letter-spacing:.02em}
+.paycard .tipline,.note-red{color:var(--red);font-weight:600}
+.paycard .sub{margin:12px 0 0;color:var(--muted);font-size:14px}
+.formhelp{text-align:left;font-size:14px;color:var(--muted);margin:2px 0 6px}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:18px}
+.btn.choice{justify-content:center;min-height:52px;font-size:16px;background:var(--surface);border:2px solid var(--gold);color:var(--ink)}
+.btn.choice:hover,.btn.choice:focus-visible,.btn.choice:active{background:var(--gold);border-color:var(--gold);color:var(--on-gold);filter:none}
+.reghead{font:700 30px/1.15 var(--f-display);color:var(--green-2);margin:0}
+.regsub{margin:6px 0 0;font-size:17px;color:var(--muted)}
+.ordercheck .rv{display:grid;gap:4px;text-align:left;margin-top:12px}
+.ordercheck .rv b{font-weight:700}
+.tipnote b{font-weight:700}
+.paysteps{text-align:left;margin:0;padding-left:22px;display:grid;gap:8px;font-size:15px;line-height:1.45}
+.paysteps .amt{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.err{color:var(--bad);font-size:13px;font-weight:600}
+
+/* Register */
+.reg-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:860px){.reg-grid{grid-template-columns:1fr}}
+.summary{position:static}
+.person{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px) auto;gap:8px;align-items:center}
+.person .food{grid-column:1/3;font-size:15px;color:var(--ink-2)}
+.eb-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,#f7d774,#e8b923);color:#3a2c00;border-radius:14px;padding:14px 18px;margin:0 0 18px;box-shadow:0 4px 14px rgba(160,120,0,.25)}
+.eb-banner b{font-size:19px}.eb-banner .btn{background:#1c5a34;color:#fff;border-color:#1c5a34}
+.side-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);align-self:start;display:flex;flex-direction:column;gap:18px;min-width:0}
+.wk-card{border-top:4px solid var(--gold,#e0b22a)}.wk-card h2{margin-bottom:10px}
+.wk-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}.wk-row:first-of-type{border-top:0}
+.wk-day{background:var(--green);color:#fff;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
+.firsts li{padding:6px 0;border-top:1px solid var(--line);list-style:none}.firsts li:first-child{border-top:0}.firsts ol{padding:0;margin:0}
+@media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}.person .food{grid-column:1/2}}
+.x{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:18px;line-height:1}
+.x:hover{color:var(--bad);border-color:var(--bad)}
+.sizes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+@media (max-width:480px){.sizes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sizes label{display:grid;gap:3px;text-align:center;font:600 12px var(--f-mono);color:var(--muted)}
+.sizes input{text-align:center;padding:8px 4px}
+.addon{display:grid;grid-template-columns:minmax(0,1fr) 90px;gap:12px;align-items:center;padding-block:12px;border-top:1px solid var(--line)}
+.addon:first-child{border-top:0;padding-top:0}
+.addon.sized{grid-template-columns:1fr}
+.price-tag{font:600 13px var(--f-mono);color:var(--green-2)}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.lines{display:flex;flex-direction:column;gap:8px;margin-block:14px;font-size:14px}
+.line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.line .q{color:var(--muted);font-size:12px}
+.total{display:flex;justify-content:space-between;align-items:baseline;border-top:2px solid var(--ink);padding-top:12px;margin-bottom:14px}
+.total b{font:600 26px var(--f-mono)}
+.pill-note{font-size:12px;padding:6px 10px;border-radius:8px;background:var(--gold-soft);color:var(--ink)}
+
+/* Confirmation */
+.confirm{max-width:560px;margin:0 auto;text-align:center}
+.confirm.paywide{max-width:760px}
+.confirm .code{font:600 clamp(34px,9vw,52px) var(--f-mono);letter-spacing:.04em;color:var(--red);margin:6px 0 4px}
+.paybox{display:grid;gap:10px;text-align:left;margin-top:18px}
+.payrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.payrow .lbl{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.payrow .val{font:600 15px var(--f-mono);overflow-wrap:anywhere}
+.thanks{padding-block:36px}
+.tverse{margin:18px auto 0;max-width:460px;font-family:var(--f-display);font-size:18px;line-height:1.5}
+.tverse span{display:block;margin-top:6px;font-family:var(--f-body);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green-2)}
+details.demo-only{margin-top:18px;border-top:1px dashed var(--line);padding-top:12px;text-align:left}
+details.demo-only summary{cursor:pointer;font-size:14px;font-weight:600;color:var(--muted)}
+.resend{border:1px solid var(--green-2);background:var(--surface-2);border-radius:14px;padding:16px;display:grid;gap:12px;margin-bottom:14px}
+.bookbox{margin-top:18px;padding:16px;border-radius:14px;background:var(--gold-soft);text-align:left}
+.draftnote{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:var(--gold-soft);border-radius:14px;padding:14px 16px;font-weight:600}
+.f-lbl{font-size:15px;font-weight:600;color:var(--muted)}
+.btn.don{min-width:76px;font-family:var(--f-mono);font-weight:600}
+.btn.don[aria-pressed="true"]{background:var(--green-2);border-color:var(--green-2);color:#fff}
+.money{display:flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:var(--surface);max-width:280px}
+.money>span{padding-left:14px;font:600 17px var(--f-mono);color:var(--ink)}
+.money input{border:0;padding-left:6px}
+.money:focus-within{outline:2px solid var(--green-2)}
+.money input:focus{outline:0}
+.adminbar{background:var(--green);color:var(--on-green);font-size:13px}
+.adminbar .wrap{padding-block:8px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.adminbar .btn{color:var(--on-green);border-color:rgba(248,243,226,.35)}
+.adminbar .btn:hover{background:rgba(248,243,226,.12)}
+.linkbtn{appearance:none;background:none;border:0;padding:0;font:inherit;color:var(--green-2);font-weight:700;text-decoration:underline;cursor:pointer}
+.foot{border-top:1px solid var(--line);padding-block:20px 40px;font-size:14px}
+.foot .wrap{display:grid;gap:12px;justify-items:center;text-align:center}
+.pinform{display:grid;gap:10px;width:100%;max-width:320px;text-align:left}
+.payamt{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:14px;background:var(--gold-soft)}
+.payamt b{font:600 28px var(--f-mono)}
+.zeffy{transition:height .35s ease;width:100%;height:440px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.paysoon{padding:16px;border-radius:14px;border:1px dashed var(--green-2);background:var(--surface-2);text-align:left}
+.proof{font-size:12px;font-weight:700;color:var(--green-2)}
+.del{appearance:none;border:0;background:none;color:var(--muted);font:600 12px var(--f-body);cursor:pointer;padding:4px 6px;border-radius:6px;white-space:nowrap}
+.del:hover{color:var(--bad);background:var(--bad-bg)}
+.del.armed{color:#fff;background:var(--bad)}
+.memo-callout{border:2px dashed var(--line);border-radius:12px;padding:12px 14px;text-align:center;margin-top:16px;font-size:15px}
+.btn.cashapp{background:#00b84f;border-color:#00b84f;color:#fff;font-size:18px;padding:16px 18px;border-radius:14px;text-decoration:none}
+.btn.cashapp:hover,.btn.paypal:hover{filter:brightness(1.06)}
+.btn.paypal{background:#1a5fb4;border-color:#1a5fb4;color:#fff;font-size:18px;padding:16px 18px;border-radius:14px}
+.or{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+a.btn{text-decoration:none}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.info{background:var(--info-bg);color:var(--info)}
+.chip.plain{background:var(--surface-2);color:var(--muted)}
+.chip.plain::before{display:none}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 13px var(--f-body);padding:5px 12px;border-radius:999px;cursor:pointer}
+.filter[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* Tables */
+.tw{overflow-x:auto;margin-inline:-20px;padding-inline:20px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th.r,td.r{text-align:right}
+td.num{white-space:nowrap;text-align:right}
+td .sub{display:block;font-size:12px;color:var(--muted)}
+#rcCatHint{display:block;font-size:13px;margin-top:4px}#rcCatHint[hidden]{display:none}
+.in{color:var(--ok)} .out{color:var(--bad)}
+tr.start td{background:var(--surface-2);font-weight:600}
+td select{padding:5px 8px;font-size:13px}
+
+/* KPIs & bars */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);min-width:0}
+.kpi .l{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kpi .v{font:600 24px var(--f-mono);margin-top:4px;font-variant-numeric:tabular-nums}
+.kpi .h{font-size:12.5px;color:var(--muted);margin-top:2px}
+.kpi.hl{background:var(--green);border-color:var(--green);color:var(--on-green)}
+.kpi.hl .l,.kpi.hl .h{color:var(--on-green);opacity:.8}
+.bars{display:flex;flex-direction:column;gap:12px}
+.barrow{display:grid;gap:5px}
+.barrow .top{display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.barrow .top .num{font-size:13px;color:var(--muted)}
+.track{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;position:relative}
+.track i{display:block;height:100%;border-radius:999px;background:var(--green-2);transition:width .5s}
+.track i.over{background:var(--red)}
+.track i.g2{background:var(--gold)}
+.size-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;text-align:center}
+.size-grid div{border:1px solid var(--line);border-radius:10px;padding:8px 2px}
+.size-grid b{display:block;font:600 20px var(--f-mono)}
+.size-grid span{font:600 11px var(--f-mono);color:var(--muted)}
+@media (max-width:480px){.size-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* Feed */
+.feed{display:flex;flex-direction:column}
+.feed li{list-style:none;display:grid;grid-template-columns:10px minmax(0,1fr);gap:12px;padding-block:10px;border-top:1px solid var(--line);font-size:14px}
+.feed li:first-child{border-top:0}
+.feed .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;background:var(--green-2)}
+.feed .dot.warn{background:var(--gold)} .feed .dot.bad{background:var(--red)} .feed .dot.info{background:var(--info)}
+.feed .t{font-size:12px;color:var(--muted)}
+ul.feed{margin:0;padding:0}
+
+/* Email mock */
+.email{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:14px}
+.email .eh{background:var(--surface-2);padding:10px 14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.email .eb{padding:12px 14px;display:grid;gap:4px}
+.email .res{padding:10px 14px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.arrow{color:var(--muted);font-size:13px}
+
+.hotel{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:start;background:var(--gold-soft);border-color:transparent}
+.hotel .ic{width:44px;height:44px;border-radius:12px;background:var(--green);color:var(--on-green);display:grid;place-items:center}
+.hotel .addr{font-size:15px;line-height:1.5}
+.hotel .rate{font:700 19px var(--f-body);color:var(--ink)}
+.ctable{width:100%;font-size:13.5px}
+.ctable td,.ctable th{padding:7px 8px}
+.ctable tr.now td{background:var(--gold-soft);font-weight:700}
+#tab-register,#confirm{font-size:17px}
+#tab-register h2{font-size:25px}
+#tab-register .small{font-size:15px}
+#tab-register label.f,.sizes label{font-size:15px}
+#tab-register input,#tab-register select{font-size:17px;padding:13px 14px;border-radius:10px}
+#tab-register .btn{min-height:46px;font-size:16px}
+#tab-register .btn.gold{font-size:18px;min-height:56px}
+#tab-register .x{width:46px;height:46px}
+.person{grid-template-columns:minmax(0,1fr) minmax(0,240px) auto}
+.lines{font-size:16px}
+.hero .sub{font-size:18px}
+.hero-meta .mi{font-size:15px}
+.hero-meta .mi-hotel{align-items:flex-start}.hero-meta .mi-hotel svg{margin-top:3px;flex-shrink:0}
+.dirlink{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:14px;font-weight:600;color:var(--gold);text-decoration:underline;text-underline-offset:3px}.dirlink.dark{color:var(--green-2)}
+.maplink{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.bookbtn{margin:10px auto 0;width:fit-content;display:flex;justify-content:center;min-width:170px;text-decoration:none;font-size:15px;padding:11px 24px}
+@media (min-width:700px){.hero-meta{flex-wrap:nowrap;align-items:stretch}}
+.hero-meta .mi{align-items:flex-start;line-height:1.4}.hero-meta .mi svg{margin-top:2px}
+.review{border:1px solid var(--warn);background:var(--warn-bg);border-radius:14px;padding:16px;display:grid;gap:10px}
+.review-item{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,220px) auto;gap:10px;align-items:center;background:var(--surface);border-radius:10px;padding:10px 12px}
+@media (max-width:560px){.review-item{grid-template-columns:1fr}}
+.thumb{width:36px;height:36px;object-fit:cover;border-radius:6px;border:1px solid var(--line);vertical-align:middle}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:18px;text-align:center;cursor:pointer;display:grid;gap:6px;place-items:center;background:var(--surface-2)}
+.drop:hover{border-color:var(--green-2)}
+.drop img{max-height:160px;border-radius:8px}
+
+/* Report */
+.report td{padding:9px 10px}
+.report tr.sum td{font-weight:700;border-top:2px solid var(--ink)}
+.report tr.sub td{color:var(--muted)}
+
+/* Setup */
+.set-groups{display:grid;gap:8px}
+.set-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 90px 90px;gap:8px;align-items:end}
+.set-addon{display:grid;grid-template-columns:auto minmax(0,1.6fr) 90px auto;gap:8px;align-items:center}
+@media (max-width:560px){.set-row{grid-template-columns:1fr 1fr}.set-addon{grid-template-columns:auto 1fr 80px auto}}
+.mini{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:20;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.ci{width:100%;max-width:760px;margin-inline:auto;box-sizing:border-box}
+.ci-days{display:flex;gap:6px}.ci-day{appearance:none;border:2px solid var(--line);background:var(--surface);color:var(--ink);font:600 16px var(--f-body);padding:10px 18px;border-radius:10px;cursor:pointer;min-height:48px}
+.ci-day[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+.ci-stats{margin:8px 0 4px;font-size:16px;color:var(--muted)}
+.ci-find,.ci-walk{display:flex;gap:10px;align-items:flex-end;margin-top:14px}.ci-find .f,.ci-walk .f{flex:1;font-size:16px}
+.ci-find input{font-size:22px;padding:14px 16px}.ci-find .btn{min-height:58px;font-size:18px;padding:0 26px}.ci-walk .btn{min-height:46px}
+.ci-results{display:grid;gap:10px;max-height:55vh;overflow-y:auto;padding:2px}
+.ci-undo{margin-left:auto;font-size:14px}.ci-scan{width:100%;margin-top:12px}.ci-cam{position:relative;margin-top:12px;border-radius:12px;overflow:hidden;background:#000}.ci-cam video{width:100%;display:block}.ci-cam p{position:absolute;left:0;right:0;bottom:0;margin:0;padding:8px;background:rgba(0,0,0,.55);color:#fff;text-align:center}.ci-res{appearance:none;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;cursor:pointer;display:grid;gap:4px;font:inherit;color:var(--ink)}
+.ci-res b{font-size:19px}.ci-res span{color:var(--muted);font-size:15px}.ci-res:hover,.ci-res:focus-visible{border-color:var(--gold)}
+.ci-hh{font-size:22px;font-family:var(--f-display);font-weight:400}
+.ci-list{display:grid;gap:10px;margin-top:12px}
+.ci-row{appearance:none;display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:12px;padding:14px 16px;font:600 19px var(--f-body);color:var(--ink);cursor:pointer;min-height:64px}
+.ci-row.on{background:#e3f3e7;border-color:#2f8a4c}.ci-row.done{background:#eef6f0;border-color:#cfe5d6;color:var(--muted);cursor:default}
+.ci-box{flex:none;width:32px;height:32px;border:2px solid #9aa79f;border-radius:8px;display:grid;place-items:center;font-size:20px;background:#fff;color:#1d6b37}
+.ci-row.on .ci-box,.ci-row.done .ci-box{border-color:#2f8a4c;background:#2f8a4c;color:#fff}
+.ci-name{flex:1}.ci-tag{font-size:13px;font-weight:700;color:#1d6b37;text-transform:uppercase;letter-spacing:.06em}
+.ci-go{width:100%;margin-top:16px;min-height:62px;font-size:20px;background:#2f8a4c;border-color:#2f8a4c;color:#fff;justify-content:center}
+.ci-go:not(:disabled):hover,.ci-go:not(:disabled):focus-visible{background:#256f3d;border-color:#256f3d;color:#fff}
+.ci-go:disabled{background:var(--surface-2);border-color:var(--line);color:var(--muted)}
+.ci-bal{margin:8px 0 0;padding:8px 12px;border-radius:8px;background:#fdf3c4;font-size:14px}
+.ci-welcome{text-align:center;padding:40px 10px}.ci-wbig{font-family:var(--f-display);font-size:clamp(34px,7vw,56px);color:#1d6b37}.ci-welcome p{font-size:20px;margin-top:8px}
+@media (max-width:640px){.ci-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ci-alldone{margin:10px 0 0;padding:10px 12px;border-radius:10px;background:#e9f5ec;color:#1d6b37;font-weight:700;font-size:17px}
+.ci-none{margin-top:14px;display:grid;gap:12px;justify-items:start}
+.ci-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;text-align:center}.ci-kpis div{border:1px solid var(--line);border-radius:12px;padding:12px 4px}
+.ci-kpis b{display:block;font:600 26px var(--f-mono)}.ci-kpis span{font-size:13px;color:var(--muted)}
+.alertbox{border-color:#e7b4b4;background:#fdf1f1}.alertbox h2{color:#8f1f27}.alertbox ul{margin:8px 0;padding-left:20px;display:grid;gap:6px}
+body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #hEarly,body.ci-only .foot{display:none}
+.ci-start{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.ci-big{appearance:none;border:3px solid #2f8a4c;background:#e9f5ec;border-radius:16px;padding:28px 16px;cursor:pointer;font:700 24px var(--f-body);color:#174a2a;display:grid;gap:6px;text-align:center;min-height:150px;align-content:center}
+.ci-big span{font-size:15px;font-weight:500;color:var(--muted)}.ci-big.alt{border-color:var(--gold);background:#fdf6d8;color:#5a4300}
+.ci-email{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding:10px 12px;border-radius:10px;background:#fdf6d8;font-size:16px}
+.ci-email.ok{background:#e9f5ec}.ci-email-btns{display:flex;gap:8px}
+.ci-inline{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-top:10px}.ci-inline .f{flex:1;min-width:160px;font-size:15px}.ci-inline .btn{min-height:46px}
+.ci-addlink{margin-top:10px;font-size:16px}
+.ci-pay{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px;padding:12px 14px;border-radius:12px;border:2px solid var(--gold);background:#fffbea;font-size:17px}
+.ci-pay.open{display:block}.ci-pay.paid{border-color:#2f8a4c;background:#e9f5ec;color:#1d6b37;font-weight:700}
+.ci-via{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ci-qr{display:grid;justify-items:center;gap:8px;text-align:center;margin-top:12px}.ci-qr #ciQR{background:#fff;padding:10px;border-radius:8px}
+.ci-party{display:grid;gap:8px}.ci-prow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px) 36px;gap:8px;align-items:center}.ci-prow input,.ci-prow select{font-size:16px;padding:11px 12px}
+@media (max-width:560px){.ci-find{flex-direction:column;align-items:stretch}.ci-start{grid-template-columns:1fr}.ci-prow{grid-template-columns:1fr 1fr 36px}}
+.empty{padding:18px;text-align:center;color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.homebtn{display:block;width:max-content;margin:16px 16px 0 auto;background:#fff;color:var(--green);font-weight:700;font-size:17px;text-decoration:none;padding:12px 22px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.18);position:relative;z-index:2}
+.homebtn:hover{background:#f3f7f2}
+@media (min-width:1000px){.homebtn{position:absolute;top:18px;right:24px;margin:0}}
+@media (max-width:520px){.homebtn{width:auto;margin:14px 16px 0;text-align:center}}
+body.ci-only .homebtn{display:none}
+body.viewer #tab-setup .savebar{display:none}
+
+/* ===== Roomier committee side (Nov 13) ===== */
+:root{--tip-bg:#fbf6e4;--tip-edge:#e3b318;--tip-ink:#3a463e;--note-ink:#3d4a41}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--tip-bg:#2a2616;--tip-ink:#d9dfd6;--note-ink:#c3cec5}}
+:root[data-theme="dark"]{--tip-bg:#2a2616;--tip-ink:#d9dfd6;--note-ink:#c3cec5}
+.tabs .wrap{gap:6px}.tab{font-size:16px;padding:16px 14px 13px}
+.adminbar{font-size:15px}.adminbar .wrap{padding-block:10px}.adminbar .btn.sm{font-size:15px;padding:8px 14px}
+.teststrip{background:#a3252b;color:#fff;border-bottom:0}.teststrip .wrap{font-size:16px;padding-top:12px;padding-bottom:12px}
+.teststrip .btn{background:#fff;color:#7a1414;border-color:#fff}.teststrip .btn:hover{background:#fde8e8}
+.sw{display:inline-block;width:38px;height:22px;border-radius:999px;background:rgba(248,243,226,.3);position:relative;vertical-align:middle;transition:background .2s}
+.sw i{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}
+.sw.on{background:#e3b318}.sw.on i{left:19px}
+#testBtn{gap:10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup){font-size:17px;gap:28px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel{padding:28px 30px;border-radius:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .tw{margin-inline:-30px;padding-inline:30px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) h2{font-size:27px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) h3{font-size:17px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel-head{margin-bottom:20px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .panel-head p{font-size:16px;color:var(--note-ink);margin-top:6px;max-width:68ch}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .small{font-size:15.5px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) label.f{font-size:16px;gap:7px;color:var(--note-ink)}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) :is(input,select,textarea){font-size:17px;padding:12px 14px;border-radius:10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) input[type=checkbox]{width:22px;height:22px;padding:0;flex:none}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .btn{font-size:16px;min-height:46px;padding:11px 18px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .btn.sm{font-size:15px;min-height:40px;padding:8px 14px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .fields{gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .stack{gap:20px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .grid2{gap:28px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) table{font-size:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) th{font-size:13px;padding:10px 12px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td{padding:15px 12px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td .sub{font-size:14.5px;margin-top:2px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) td select{font-size:15px;padding:8px 10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .chip{font-size:13.5px;padding:4px 11px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .filter{font-size:15px;padding:8px 16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .filters{gap:8px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .mini{font-size:13.5px;margin-top:6px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .del{font-size:14px;padding:6px 10px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .feed li{font-size:16px;padding-block:13px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .feed .t{font-size:14px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .barrow .top{font-size:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .barrow .top .num{font-size:15px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .bars{gap:16px}
+:is(#tab-overview,#tab-payments,#tab-expenses,#tab-ledger,#tab-setup) .empty{font-size:16px;padding:24px}
+.kpis{gap:16px}.kpi{padding:20px 20px 18px}.kpi .l{font-size:13.5px}.kpi .v{font-size:28px;margin-top:6px}.kpi .h{font-size:14.5px;margin-top:4px}
+.ctable{font-size:16px}.ctable td,.ctable th{padding:10px 10px}
+.size-grid b{font-size:22px}.size-grid span{font-size:13px}
+#tab-setup .setcols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;align-items:start}#tab-setup .setcol{display:flex;flex-direction:column;gap:28px;min-width:0}@media (max-width:900px){#tab-setup .setcols{grid-template-columns:minmax(0,1fr)}}
+.ci-kpis span{font-size:15px}.ci-kpis b{font-size:28px}
+#tab-setup .stack{gap:18px}
+.tip{margin:0!important;background:var(--tip-bg);border-left:4px solid var(--tip-edge);color:var(--tip-ink)!important;border-radius:8px;padding:11px 15px;font-size:15.5px!important;line-height:1.5}
+.check{display:flex!important;align-items:flex-start;gap:12px!important;font-size:16.5px!important;font-weight:600;color:var(--ink);cursor:pointer;line-height:1.4}
+.check input{margin-top:1px}
+.savebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);z-index:8;box-shadow:var(--shadow);padding:14px 18px}
+.savebar.bottom{position:static;box-shadow:none}
+.savebar.dirty{background:#fdf1c7;border-color:#e3b318}
+.savestate{font-size:16px;font-weight:600}
+.dollar{position:relative;display:block;min-width:0}
+.dollar::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);opacity:.65;font:600 16px var(--f-mono);pointer-events:none}
+.dollar input{padding-left:30px!important}
+.set-addon{grid-template-columns:44px minmax(0,1fr) 150px auto;gap:12px}
+.set-addon.mini{align-items:end}
+.set-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 140px 140px;gap:12px}
+.set-groups{gap:12px}
+.trash{appearance:none;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 15px var(--f-body);padding:0 14px;min-height:46px;border-radius:10px;cursor:pointer;white-space:nowrap}
+.trash:hover,.trash:focus-visible{color:var(--bad);border-color:var(--bad);background:var(--bad-bg)}
+.trash.armed{color:#fff;background:var(--bad);border-color:var(--bad)}
+@media (max-width:560px){.set-addon{grid-template-columns:30px minmax(0,1fr) auto;row-gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}.set-addon>input[data-af=label]{grid-column:2/4}.set-addon>.dollar{grid-column:2/3}.set-addon .trash{grid-column:3/4}.set-addon.mini{display:none}.set-row{grid-template-columns:1fr 1fr}
+.savebar{padding:10px 12px;gap:8px;top:calc(env(safe-area-inset-top,0px) + 52px)}.savebar .savestate{flex:1 0 100%;font-size:15px}.savebar .btn{flex:1;min-height:42px!important;font-size:15px!important;padding:8px 10px!important}}
+.opt{display:inline-block;vertical-align:middle;margin-left:10px;font:700 12.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:var(--ok-bg);border:1px solid #b9dcc4;border-radius:999px;padding:3px 10px;position:relative;top:-2px}
+#tab-register .panel-head p{color:var(--note-ink)}
+.pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#1c5a34;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.pvbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;font-size:16px}
+.pvbar .btn{background:#e3b318;border-color:#e3b318;color:#2a2100;font-size:16px;min-height:44px}
+body.previewing{padding-top:68px}
+body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!important}
+</style>
+
+<header class="hero">
+  <a class="homebtn" href="https://www.portersanfordreid.com/">← Back to portersanfordreid.com</a>
+  <div class="wrap hero-in">
+    <svg class="crest" viewBox="0 0 100 118" aria-label="Porter-Sanford-Reid crest" role="img">
+      <defs><clipPath id="sh"><path d="M5 4H95V58C95 88 72 106 50 114C28 106 5 88 5 58Z"/></clipPath></defs>
+      <g clip-path="url(#sh)">
+        <polygon points="0,0 100,0 50,60" fill="#2c8a4a"/>
+        <polygon points="0,0 50,60 50,118 0,118" fill="#c4313a"/>
+        <polygon points="100,0 50,60 50,118 100,118" fill="#e9bb1c"/>
+      </g>
+      <path d="M5 4H95V58C95 88 72 106 50 114C28 106 5 88 5 58Z" fill="none" stroke="#111" stroke-width="3"/>
+      <text x="50" y="34" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="24" fill="#111">S</text>
+      <text x="27" y="76" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="24" fill="#111">P</text>
+      <text x="73" y="76" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="24" fill="#111">R</text>
+    </svg>
+    <div>
+      <div class="eyebrow" id="hEyebrow"></div>
+      <h1 id="hTheme"></h1>
+      <p class="sub" id="hSub"></p>
+      <p class="verse" id="hVerse"></p>
+      <div class="hero-meta" id="hMeta"></div>
+    </div>
+    <div class="hero-progress">
+      <div class="small" id="hCount"></div>
+      <div class="small" id="hEarly" style="text-align:right"></div>
+      <div class="track"><i id="hBar" style="width:0"></i></div>
+    </div>
+  </div>
+  <div class="tristripe" aria-hidden="true"><i></i><i></i><i></i></div>
+</header>
+
+<div class="demo" id="demoStrip"><div class="wrap">
+  <span><b>Demo version.</b> The families and payments here are made-up examples so you can try everything. No real money moves.</span>
+  <button class="btn sm ghost" id="resetDemo" type="button">Reset demo</button>
+</div></div>
+
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><button class="btn" type="button" id="pvBack">← Back to Setup</button></div></div>
+<div class="teststrip" id="testStrip" hidden><div class="wrap">
+  <span><b>TEST MODE IS ON.</b> Nothing here is real. Everything you do saves to the red Test tabs in the sheet, not the real ones. Emails still go out, marked [TEST].</span>
+  <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
+</div></div>
+<div class="adminbar" id="adminBar" hidden><div class="wrap">
+  <span><b>Committee view.</b> Family members only see the Register page.</span>
+  <span class="row" style="gap:8px"><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" hidden>Open Sheet</a><button class="btn sm ghost" id="testBtn" type="button" aria-pressed="false">Test mode <span class="sw"><i></i></span> <b>Off</b></button><button class="btn sm ghost" id="refreshBtn" type="button">Refresh</button><button class="btn sm ghost" id="signOut" type="button">Sign out</button></span>
+</div></div>
+
+<nav class="tabs" id="tabsNav" aria-label="Sections"><div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="register" aria-selected="true">Register</button>
+  <button class="tab" role="tab" data-tab="overview" aria-selected="false">Overview</button>
+  <button class="tab" role="tab" data-tab="payments" aria-selected="false">Payments</button>
+  <button class="tab" role="tab" data-tab="expenses" aria-selected="false">Expenses</button>
+  <button class="tab" role="tab" data-tab="ledger" aria-selected="false">Ledger</button>
+  <button class="tab" role="tab" data-tab="checkin" aria-selected="false">Check-in</button>
+  <button class="tab" role="tab" data-tab="setup" aria-selected="false">Setup</button>
+</div></nav>
+
+<main class="wrap">
+
+<!-- REGISTER -->
+<section role="tabpanel" id="tab-register">
+  <div class="panel confirm" id="regClosed" hidden></div>
+  <div id="ebBanner"></div>
+  <div class="reg-grid" id="regWrap">
+    <form id="regForm" class="stack" novalidate>
+      <div class="draftnote" id="draftNote" hidden><span>Welcome back! We saved what you started.</span><button class="btn sm" type="button" id="startOver">Start over</button></div>
+      <div class="panel hotel" id="hotelCard"></div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Who's registering</h2><p class="muted small">The household contact. Your receipt and updates go to this email. You'll list everyone coming in the next step.</p></div></div>
+        <div class="fields">
+          <label class="f">First name<input id="rFirst" autocomplete="given-name"></label>
+          <label class="f">Last name<input id="rLast" autocomplete="family-name"></label>
+          <label class="f">Email<input id="rEmail" type="email" autocomplete="email"></label>
+          <label class="f">Phone<input id="rPhone" type="tel" autocomplete="tel" inputmode="numeric" placeholder="(XXX) XXX-XXXX"></label>
+          <label class="f">City<input id="rCity" autocomplete="address-level2"></label>
+          <label class="f">State<select id="rState" autocomplete="address-level1"><option value="">Choose a state</option><option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option><option value="AR">Arkansas</option><option value="CA">California</option><option value="CO">Colorado</option><option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="DC">District of Columbia</option><option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option><option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option><option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option><option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option><option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option><option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option><option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option><option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option><option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option><option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option><option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option><option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option><option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option><option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option></select></label>
+        </div>
+        <label class="f" style="margin-top:12px">Someone else paying for you? Enter their name (optional)<input id="rPayer" autocomplete="off" placeholder="Leave blank if you're paying"></label>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Who's coming</h2><p class="muted small">Everyone in your household, including you. Pick each person's age on reunion weekend.</p></div></div>
+        <div class="stack" id="peopleList" style="gap:8px"></div>
+        <div style="margin-top:12px"><button type="button" class="btn sm" id="addPerson">+ Add a person</button></div>
+      </div>
+      <div class="panel" id="addonPanel">
+        <div class="panel-head"><div><h2>Extras<span class="opt">Optional</span></h2><p class="muted small">Add what your household wants.</p></div></div>
+        <div id="addonFields"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>PSR Scholarship<span class="opt">Optional</span></h2><p class="muted small">Helps our family's high school graduates. This money is kept separate from the reunion money.</p></div></div>
+        <div class="stack" style="gap:14px">
+          <div class="stack" style="gap:6px"><span class="f-lbl">Pick an amount</span>
+            <div class="quick">
+              <button type="button" class="btn don" data-don="10" aria-pressed="false">$10</button>
+              <button type="button" class="btn don" data-don="25" aria-pressed="false">$25</button>
+              <button type="button" class="btn don" data-don="50" aria-pressed="false">$50</button>
+              <button type="button" class="btn don" data-don="100" aria-pressed="false">$100</button>
+            </div>
+          </div>
+          <label class="f">Or enter your own amount<span class="money"><span aria-hidden="true">$</span><input id="rDonation" type="text" inputmode="decimal" placeholder="Type any amount" autocomplete="off"></span></label>
+          <p class="muted small">Optional. Leave it blank to skip.</p>
+        </div>
+      </div>
+    </form>
+    <div class="side-col"><aside class="panel summary" id="summary" aria-live="polite"></aside><div class="panel wk-card" id="weekendCard" hidden></div></div>
+  </div>
+  <div id="confirm" hidden></div>
+</section>
+
+<!-- OVERVIEW -->
+<section role="tabpanel" id="tab-overview" hidden>
+  <div class="row" style="justify-content:flex-end;margin-bottom:12px"><button class="btn sm" type="button" id="printSum">Print summary report</button></div>
+  <div id="alerts"></div>
+  <div class="kpis" id="kpis"></div>
+  <div class="panel" id="commit"></div>
+  <div class="panel" id="ciOverview"></div>
+  <div class="panel firsts" id="firsts" hidden></div>
+  <div class="grid2">
+    <div class="panel"><div class="panel-head"><div><h2>Who's coming</h2><p class="muted small" id="attSub"></p></div></div><div class="bars" id="attBars"></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Households</h2><p class="muted small">Payment status, updated as payments are matched.</p></div></div><div class="bars" id="statusBars"></div></div>
+  </div>
+  <div class="grid2">
+    <div class="panel"><div class="panel-head"><div><h2>Budget vs. spent</h2><p class="muted small">Budgets are set in Setup.</p></div></div><div class="bars" id="budgetBars"></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Orders to place</h2><p class="muted small">Totals from every registration, ready for the vendor.</p></div></div><div class="stack" id="orders"></div></div>
+  </div>
+  <div class="panel"><div class="panel-head"><div><h2>What the system did by itself</h2><p class="muted small">Every automatic action is logged here, so the committee can see it working.</p></div></div><ul class="feed" id="feed"></ul></div>
+</section>
+
+<!-- PAYMENTS -->
+<section role="tabpanel" id="tab-payments" hidden>
+  <div class="panel" id="manualPanel">
+    <div class="panel-head">
+      <div><h2>Manual payment</h2><p class="muted small">For cash at the door, Zelle, Cash App or a check. Attach a screenshot or photo if you have one.</p></div>
+      <button class="btn primary" id="mpOpen" type="button">+ Manual payment</button>
+    </div>
+    <form id="mpForm" class="stack" style="gap:12px" hidden novalidate>
+      <label class="f">Household<select id="mpReg"></select></label>
+      <p class="tip">Not registered yet? <button class="linkbtn" type="button" id="mpGoReg">Register them first</button>, then come back.</p>
+      <div class="fields">
+        <label class="f">Amount<input data-money id="mpAmt" inputmode="decimal" autocomplete="off" placeholder="0.00"></label>
+        <label class="f">Paid by<select id="mpVia"><option>Cash</option><option>Zelle</option><option>Cash App</option><option>Card (Zeffy)</option><option>Check</option><option>Other</option></select></label>
+        <label class="f">Date<input id="mpDate" type="date"></label>
+      </div>
+      <label class="f">Who sent it (if not the household contact)<input id="mpFrom" autocomplete="off" placeholder="Leave blank if it was them"></label>
+      <label class="f">Note (optional)<input id="mpNote" autocomplete="off" placeholder="e.g. paid at the door Saturday"></label>
+      <label class="drop" for="mpFile"><span id="mpFileTxt"><b>Add a screenshot or photo (optional)</b><br><span class="muted small">Zelle or Cash App screenshot, check photo, or PDF</span></span></label>
+      <input type="file" id="mpFile" accept="image/*,application/pdf" hidden>
+      <label class="check"><input type="checkbox" id="mpEmail" checked> Email a receipt to the household</label>
+      <span class="err" id="mpErr" hidden></span>
+      <div class="row"><button class="btn primary" type="submit" id="mpSave">Save payment</button><button class="btn" type="button" id="mpCancel">Cancel</button></div>
+    </form>
+  </div>
+  <div class="panel" id="contribPanel">
+    <div class="panel-head">
+      <div><h2>Committee contributions</h2><p class="muted small" id="ctSub"></p></div>
+      <button class="btn primary" id="ctOpen" type="button">+ Add contribution</button>
+    </div>
+    <form id="ctForm" class="stack" style="gap:12px;margin-bottom:16px" hidden novalidate>
+      <div class="fields">
+        <label class="f">Type<select id="ctType"><option>Committee contribution</option><option>Donation</option><option>Fundraiser</option><option>Other</option></select></label>
+        <label class="f">Name<input id="ctName" autocomplete="off"></label>
+        <label class="f">Amount<input data-money id="ctAmt" inputmode="decimal" autocomplete="off" value="120"></label>
+        <label class="f">Paid by<select id="ctVia"><option>Zelle</option><option>Cash App</option><option>Cash</option><option>Check</option><option>Card (Zeffy)</option><option>Other</option></select></label>
+      </div>
+      <div class="fields">
+        <label class="f">Received by<input id="ctTo" autocomplete="off" placeholder="Who got the money"></label>
+        <label class="f">Date<input id="ctDate" type="date"></label>
+      </div>
+      <label class="f">Note (optional)<input id="ctNote" autocomplete="off" placeholder="e.g. passed on to Leon by Cash App"></label>
+      <label class="drop" for="ctFile"><span id="ctFileTxt"><b>Add a screenshot (optional)</b><br><span class="muted small">Image or PDF</span></span></label>
+      <input type="file" id="ctFile" accept="image/*,application/pdf" hidden>
+      <span class="err" id="ctErr" hidden></span>
+      <div class="row"><button class="btn primary" type="submit" id="ctSave">Save contribution</button><button class="btn" type="button" id="ctCancel">Cancel</button></div>
+    </form>
+    <div class="tw"><table><thead><tr><th>Date</th><th>Name</th><th>Paid by</th><th>Received by</th><th class="r">Amount</th><th></th></tr></thead><tbody id="ctRows"></tbody></table></div>
+  </div>
+  <div class="panel" id="demoPayPanel">
+    <div class="panel-head">
+      <div><h2>Payment inbox</h2><p class="muted small">Zelle and Cash App send an email for every payment. The system reads each one, matches it to a household and marks them paid. In the live version this runs by itself every 5 minutes.</p></div>
+      <button class="btn primary" id="runPay" type="button">Check for new payments</button>
+    </div>
+    <div id="lastEmail"><p class="muted small">Tap the button to see the system read the next payment email.</p></div>
+  </div>
+  <div id="reviewBox"></div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Households</h2><p class="muted small" id="regCountSub"></p></div>
+      <button class="btn sm" type="button" id="remindBtn">Email reminders</button>
+      <div class="filters" id="regFilters">
+        <button class="filter" data-f="all" aria-pressed="true">All</button>
+        <button class="filter" data-f="paid" aria-pressed="false">Paid</button>
+        <button class="filter" data-f="partial" aria-pressed="false">Partly paid</button>
+        <button class="filter" data-f="waiting" aria-pressed="false">No payment</button>
+      </div>
+    </div>
+    <label class="f" style="margin-bottom:12px">Look up a household<input id="regSearch" type="search" placeholder="Name, email or confirmation # (like PSR-009)" autocomplete="off"></label>
+    <div id="resendBox"></div>
+    <div class="tw"><table><thead><tr><th>Conf. #</th><th>Household</th><th class="r">Owes</th><th class="r">Paid</th><th class="r">Balance</th><th>Status</th><th></th></tr></thead><tbody id="regRows"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Every payment received</h2><p class="muted small">Shows how each payment was matched.</p></div></div>
+    <div class="tw"><table><thead><tr><th>Date</th><th>From</th><th>Note</th><th>Matched to</th><th>How</th><th class="r">Amount</th><th></th></tr></thead><tbody id="payRows"></tbody></table></div>
+  </div>
+</section>
+
+<!-- EXPENSES -->
+<section role="tabpanel" id="tab-expenses" hidden>
+  <div class="grid2">
+    <form class="panel" id="rcptForm" novalidate>
+      <div class="panel-head"><div><h2>Add receipt</h2><p class="muted small">Take a photo of a receipt or invoice, or upload a PDF. Then fill in the store, total and what it was for.</p></div></div>
+      <div class="stack" style="gap:12px">
+        <label class="drop" id="drop" for="rcptFile"><span id="dropTxt"><b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span></span><img id="rcptPrev" alt="" hidden></label>
+        <input type="file" id="rcptFile" accept="image/*,application/pdf" hidden>
+        <div class="fields">
+          <label class="f">Store<input id="rcVendor" placeholder="e.g. Costco"></label>
+          <label class="f">Total<input data-money id="rcAmount" type="number" min="0" step="0.01" inputmode="decimal"></label>
+        </div>
+        <div class="fields">
+          <label class="f">What was it for?<select id="rcCat"></select><span class="sub note-red" id="rcCatHint" hidden>Bar &amp; restaurant · counts toward $6,000</span></label>
+          <label class="f">Date on the receipt (optional)<input id="rcDate" type="date"></label>
+        </div>
+        <label class="f">Note (optional)<input id="rcNote" placeholder="e.g. snacks for the meet and greet"></label>
+        <span class="err" id="rcErr" hidden></span>
+        <button class="btn primary" type="submit" id="rcSave">Add to the ledger</button>
+      </div>
+    </form>
+    <div class="panel" id="demoCardPanel">
+      <div class="panel-head">
+        <div><h2>Reunion card alerts</h2><p class="muted small">When the committee pays with the reunion debit card, the bank emails an alert. The system logs it and sorts it by store, with no typing.</p></div>
+        <button class="btn primary" id="runCard" type="button">Check for card alerts</button>
+      </div>
+      <div id="lastAlert"><p class="muted small">Tap the button to see a card alert get logged automatically.</p></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>All expenses</h2><p class="muted small" id="expSub"></p></div></div>
+    <div class="tw"><table><thead><tr><th>Date</th><th>Store</th><th>Category</th><th>Came in by</th><th class="r">Amount</th><th></th></tr></thead><tbody id="expRows"></tbody></table></div>
+  </div>
+</section>
+
+<!-- LEDGER -->
+<section role="tabpanel" id="tab-ledger" hidden>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Financial summary</h2><p class="muted small">Built straight from the ledger below, so every number agrees with every other number.</p></div><span class="chip ok">Always up to date</span></div>
+    <div class="tw"><table class="report"><tbody id="report"></tbody></table></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Ledger</h2><p class="muted small">Every dollar in and out, with a running balance, like a checkbook.</p></div>
+      <div class="filters" id="ledFilters">
+        <button class="filter" data-f="all" aria-pressed="true">All</button>
+        <button class="filter" data-f="in" aria-pressed="false">Money in</button>
+        <button class="filter" data-f="out" aria-pressed="false">Money out</button>
+      </div>
+    </div>
+    <div class="tw"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="r">In</th><th class="r">Out</th><th class="r">Balance</th></tr></thead><tbody id="ledRows"></tbody></table></div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section role="tabpanel" id="tab-checkin" hidden>
+  <div class="panel ci" id="ciBox"></div>
+</section>
+
+<section role="tabpanel" id="tab-setup" hidden>
+  <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
+  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save. <span class="small" style="opacity:.7">Page version: Nov 13, 4:55 PM</span></p>
+  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
+  <div class="setcols">
+    <div class="setcol">
+      <div class="panel">
+        <div class="panel-head"><h2>Reunion details</h2></div>
+        <div class="stack" style="gap:12px">
+          <div class="fields">
+            <label class="f">Which reunion<input id="sEdition" data-k="edition"></label>
+            <label class="f">Seats available<input id="sCapacity" data-k="capacity" type="number" min="1"></label>
+          </div>
+          <label class="f">Theme<input id="sTheme" data-k="theme"></label>
+          <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
+          <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
+          <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
+          <label class="f">When<input id="sWhen" data-k="when"></label>
+          <label class="f">Hosted by<input id="sHost" data-k="host"></label>
+          <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
+          <p class="tip">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
+          <label class="check"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
+          <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Hotel</h2><p class="muted small">Shows on the registration page so families know where to stay. They book their own rooms.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Hotel name<input id="sHotel" data-k="hotelName"></label>
+          <label class="f">Street address<input id="sStreet" data-k="hotelStreet"></label>
+          <div class="fields">
+            <label class="f">City, state, zip<input id="sCity" data-k="hotelCity"></label>
+            <label class="f">Phone (optional)<input id="sHPhone" data-k="hotelPhone"></label>
+          </div>
+          <label class="f">Room rate<input id="sRate" data-k="roomRate"></label>
+          <label class="f">Hotel booking link (from Brandi)<input id="sBook" data-k="bookUrl" type="url" placeholder="Paste the reunion booking link here"></label>
+          <label class="f">Note for families<textarea id="sHNote" data-k="hotelNote" rows="5"></textarea></label>
+        </div>
+      </div>
+    </div>
+    <div class="setcol">
+      <div class="panel">
+        <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="check"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
+          <p class="tip">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
+          <div class="fields">
+            <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
+            <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
+          </div>
+          <p class="tip">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
+          <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
+          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
+          <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
+          <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
+          <label class="check"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
+          <p class="tip">Test mode lets the committee try things out. Everything goes to the red Test tabs in the sheet, not the real ones. Uncheck this when testing is done to hide the button.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and a daily check that watches for problems.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Check-in code for helpers<input id="sCiCode" data-k="checkinCode" placeholder="Make one up, like Faison27" autocomplete="off"></label>
+          <p class="tip" id="ciExpired" hidden style="border-left-color:var(--bad);background:var(--bad-bg);color:var(--bad)!important"></p>
+          <p class="tip">Codes stop working on January 1 every year, so make up a new one for each reunion. Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
+          <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
+          <label class="f">Also email alerts to<input id="sAlert" data-k="alertEmails" placeholder="name@gmail.com" autocomplete="off"></label>
+          <p class="tip">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><div><h2>Emails</h2><p class="muted small">Set who emails come from, where replies go, and how the confirmation email looks. The reunion name, dates and hotel fill in automatically from above.</p></div></div>
+        <div class="stack" style="gap:12px">
+          <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
+          <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+          <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
+          <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Ages and prices</h2><p class="muted small">Set the same way as the 2026 reunion. Change anything once the family decides.</p></div>
+      <label class="f" style="min-width:200px">Early-bird deadline<input id="sEarly" data-k="earlyBird" type="date"></label></div>
+    <div class="set-groups" id="setGroups"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Check the box to offer an extra. Change names and prices, or add new ones when events are decided.</p></div>
+      <button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
+    <div class="set-groups" id="setAddons"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h2>Money</h2><p class="muted small">Starting balances are carried over from the 2026 financial summary.</p></div></div>
+    <div class="fields" style="margin-bottom:16px">
+      <label class="f">Reunion account starting balance<input data-money id="sBegin" data-k="begin" type="number" step="0.01"></label>
+      <label class="f">Scholarship fund starting balance<input data-money id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
+    </div>
+    <div class="mini" style="margin-bottom:8px">Hotel commitment</div>
+    <div class="fields" style="margin-bottom:12px">
+      <label class="f">Catering minimum<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
+      <label class="f">Food money per paying person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
+      <label class="f">PSR reunion deposit<input data-money id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
+      <label class="f">Faison reunion deposit<input data-money id="sDepFaison" data-k="depFaison" type="number" step="1"></label>
+      <label class="f">Service charge (%)<input id="sSvc" data-k="serviceCharge" type="number" step="0.01"></label>
+      <label class="f">Sales tax (%)<input id="sTax" data-k="salesTax" type="number" step="0.01"></label>
+    </div>
+    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with the hotel)</label>
+    <div class="mini" style="margin-bottom:8px">Planned budget by category</div>
+    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent.</p>
+    <div class="fields" id="setBudgets"></div>
+  </div>
+</section>
+</main>
+<footer class="foot" id="foot" hidden><div class="wrap">
+  <button class="linkbtn" id="adminLink" type="button">Committee sign-in</button>
+  <form id="pinForm" class="pinform" hidden novalidate>
+    <label class="f">Committee PIN<input id="pinIn" type="password" autocomplete="current-password"></label>
+    <span class="err" id="pinErr" hidden></span>
+    <div class="row"><button class="btn primary" type="submit" id="pinGo">Sign in</button><button class="btn" type="button" id="pinCancel">Cancel</button></div>
+  </form>
+</div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function(){
+const GUEST='Guest spending at hotel';
+const realExps=()=>D.exps.filter(e=>e.category!==GUEST);
+const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
+const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
+const FOODS=['','Vegetarian','Vegan','No pork','Diabetic','Gluten-free','Food allergy'];
+const KEY='psr-hub-demo-v6';
+/* Paste the Google Apps Script web app URL between the quotes to turn on live mode. Empty = demo mode. */
+const API_URL='https://script.google.com/macros/s/AKfycbzTASef4ORM_agnhpPL8pmICfaLBE_KUrqY11McfRjPnM-sxNQzsdcGfDjd5DkTMPbd/exec';
+const LIVE=!!API_URL;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>(n<0?'−':'')+'$'+Math.abs(+n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const money0=n=>'$'+Math.round(+n||0).toLocaleString('en-US');
+const pad=n=>String(n).padStart(2,'0');
+const now=new Date();
+const TODAY=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+const nowTime=()=>{const d=new Date();let h=d.getHours(),m=pad(d.getMinutes());const ap=h>=12?'PM':'AM';h=h%12||12;return `${h}:${m} ${ap}`};
+const nice=iso=>{if(!iso)return'';const[y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+const norm=s=>String(s||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
+
+function defaults(){return{
+  edition:'101st',family:'Porter-Sanford-Reid Family Reunion',
+  theme:'The Next Hundred Starts With Us',subtitle:'Three Families, One Tree, Growing Together',verse:'Tell ye your children of it, and let your children tell their children, and their children another generation.',verseRef:'Joel 1:3',
+  when:'Summer 2027 · dates to be set',hotelName:'DoubleTree by Hilton Greensboro Airport',hotelStreet:'6426 Burnt Poplar Road',hotelCity:'Greensboro, NC 27409',hotelPhone:'',roomRate:'$129 per night (group rate)',hotelNote:'Breakfast included · Free airport shuttle and parking · Pet-free rooms · Reunion events are inside the hotel. Book at least 30 days before the reunion to get the group rate.',bookUrl:'',
+  caterMin:6000,foodPer:40,depPSR:1500,depFaison:500,deposit:1500,depositCounts:false,serviceCharge:23,salesTax:6.75,host:'Hosted by the Greensboro family',capacity:120,
+  earlyBird:'2027-06-30',
+  groups:[
+    {id:'adult',label:'Adult',ages:'13 & up',early:125,late:150},
+    {id:'child',label:'Child',ages:'5–12',early:50,late:75},
+    {id:'tot',label:'Tot / Preschooler',ages:'0–4',early:0,late:0},
+    {id:'senior',label:'Senior',ages:'80+',early:0,late:0}],
+  addons:[
+    {id:'tshirt',label:'Reunion T-shirt',price:10,on:true,sized:true},
+    {id:'lunch',label:'Saturday boxed lunch',price:36,on:true},
+    {id:'outing',label:'Family outing pass',price:25,on:true}],
+  regOpen:false,regOpensOn:'',regClosesOn:'',lastDay:'',capStop:false,replyTo:'',schedule:'',askFood:true,earlyBanner:true,showTest:true,emailStyle:'ticket',senderName:'PSR Host Family Committee',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
+  begin:0,scholStart:0,
+  budgets:{'Hotel catering & bar':6000,'Venue & deposits':1500,'Activities':800,'T-shirts & merchandise':600,'Printing & postage':350,'Food & hospitality':250,'Supplies & decor':200,'Card processing fees':200}
+}}
+function sh(o){const s={};SIZES.forEach(k=>s[k]=o[k]||0);return s}
+function seedData(){
+  const P=(name,group)=>({name,group});
+  const regs=[
+    {code:'PSR-001',date:'2026-10-03',first:'Gloria',last:'Porter',email:'gloria@example.com',phone:'',city:'Greensboro',state:'NC',people:[P('Gloria Porter','adult'),P('Henry Porter','senior')],shirts:sh({L:1,XL:1}),addons:{lunch:2},donation:25},
+    {code:'PSR-002',date:'2026-10-05',first:'Denise',last:'Reid',email:'denise@example.com',phone:'',city:'Tallahassee',state:'FL',people:[P('Denise Reid','adult'),P('Malik Reid','child'),P('Ava Reid','tot')],shirts:sh({M:1,S:1}),addons:{lunch:1,outing:2},donation:0},
+    {code:'PSR-003',date:'2026-10-08',first:'Marcus',last:'Sanford',email:'marcus@example.com',phone:'',city:'Raleigh',state:'NC',people:[P('Marcus Sanford','adult'),P('Tasha Sanford','adult')],shirts:sh({XL:1,'2XL':1}),addons:{},donation:0},
+    {code:'PSR-004',date:'2026-10-09',first:'Yvonne',last:'Reid-Carter',email:'yvonne@example.com',phone:'',city:'Atlanta',state:'GA',people:[P('Yvonne Reid-Carter','adult')],shirts:sh({M:1}),addons:{},donation:50},
+    {code:'PSR-005',date:'2026-10-10',first:'Calvin',last:'Porter',email:'calvin@example.com',phone:'',city:'Durham',state:'NC',people:[P('Calvin Porter','adult'),P('Ruth Porter','senior'),P('Jalen Porter','child')],shirts:sh({'3XL':1,L:1}),addons:{},donation:0},
+    {code:'PSR-006',date:'2026-10-12',first:'Keisha',last:'Porter-Hill',email:'keisha@example.com',phone:'',city:'Charlotte',state:'NC',people:[P('Keisha Porter-Hill','adult'),P('Andre Hill','adult')],shirts:sh({}),addons:{},donation:0},
+    {code:'PSR-007',date:'2026-10-14',first:'Leon',last:'Sanford',email:'leon@example.com',phone:'',city:'Savannah',state:'GA',people:[P('Leon Sanford','adult')],shirts:sh({}),addons:{lunch:1},donation:0},
+    {code:'PSR-008',date:'2026-10-16',first:'Brenda',last:'Sanford',email:'brenda@example.com',phone:'',city:'Greensboro',state:'NC',people:[P('Brenda Sanford','adult'),P('Tyrese Sanford','child'),P('Nia Sanford','child')],shirts:sh({S:1,M:1,L:1}),addons:{},donation:10}];
+  const pays=[
+    {id:1,date:'2026-10-04',from:'Gloria Porter',via:'Zelle',memo:'PSR-001',amount:242,code:'PSR-001',method:'Memo code'},
+    {id:2,date:'2026-10-07',from:'Calvin Porter',via:'Cash App',memo:'PSR-005 reunion',amount:195,code:'PSR-005',method:'Memo code'},
+    {id:3,date:'2026-10-09',from:'Denise Reid',via:'Zelle',memo:'reunion',amount:100,code:'PSR-002',method:'Sender name'},
+    {id:4,date:'2026-10-14',from:'Leon Sanford',via:'Cash App',memo:'PSR-007',amount:161,code:'PSR-007',method:'Memo code'},
+    {id:5,date:'2026-10-16',from:'Brenda Sanford',via:'Zelle',memo:'PSR-008 first half',amount:150,code:'PSR-008',method:'Memo code'}];
+  const exps=[
+    {id:1,date:'2026-10-02',vendor:'DoubleTree by Hilton Greensboro Airport',category:'Venue & deposits',amount:1500,source:'Card alert',note:'Hotel deposit for the reunion'},
+    {id:2,date:'2026-10-06',vendor:'Office Depot',category:'Printing & postage',amount:95,source:'Receipt photo',note:'Save-the-date copies'},
+    {id:4,date:'2026-10-13',vendor:'Amazon',category:'Supplies & decor',amount:39.68,source:'Card alert',note:'Name badges'}];
+  const feed=[
+    {d:'2026-10-16',t:'9:12 AM',k:'ok',x:'Matched a $150.00 Zelle payment to Brenda Sanford (PSR-008) by the code in the memo. Marked partly paid.'},
+    {d:'2026-10-14',t:'6:40 PM',k:'ok',x:'Matched a $161.00 Cash App payment to Leon Sanford (PSR-007). Sent a paid-in-full receipt by email.'},
+    {d:'2026-10-13',t:'2:05 PM',k:'info',x:'Logged a $39.68 card purchase at Amazon under Supplies & decor.'},
+    {d:'2026-10-09',t:'11:31 AM',k:'warn',x:'A $100.00 Zelle payment had no code. Matched it to Denise Reid (PSR-002) by her name instead.'},
+    {d:'2026-10-08',t:'4:18 PM',k:'info',x:'Logged a $171.60 card purchase at USPS under Printing & postage.'}];
+  const contribs=[
+    {id:1,date:'2026-10-18',name:'Gloria Porter',amount:120,via:'Zelle',receivedBy:'Leon Sanford',note:'Sample entry'},
+    {id:2,date:'2026-10-19',name:'Marcus Sanford',amount:120,via:'Cash App',receivedBy:'Leon Sanford',note:'Sample entry'}];
+  return{S:defaults(),regs,pays,exps,contribs,feed,checkins:[],alerts:[],pq:0,cq:0};
+}
+let D;
+if(LIVE){D={S:defaults(),regs:[],pays:[],exps:[],contribs:[],feed:[],checkins:[],alerts:[],pq:0,cq:0,pub:{people:0,households:0},loaded:false}}
+else{
+try{const raw=localStorage.getItem(KEY);if(raw)D=JSON.parse(raw)}catch(e){}
+if(!D||!D.S||!D.regs)D=seedData();
+else{const d=defaults();D.S={...d,...D.S,budgets:{...d.budgets,...(D.S.budgets||{})}}}
+D.contribs=D.contribs||[];D.checkins=D.checkins||[];D.alerts=D.alerts||[];
+}
+const mergeSettings=x=>{const d=defaults();return{...d,...(x||{}),budgets:{...d.budgets,...((x||{}).budgets||{})}}};
+const save=()=>{if(LIVE)return;try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){try{const c=JSON.parse(JSON.stringify(D));c.exps.forEach(x=>delete x.img);localStorage.setItem(KEY,JSON.stringify(c))}catch(_){}}};
+
+/* ---------- live data (Google Sheet) ---------- */
+let PIN='';try{PIN=sessionStorage.getItem('psr-pin')||''}catch(e){}
+const isAdmin=()=>!LIVE||!!PIN;
+let testOn=false;try{testOn=localStorage.getItem('psr-test-mode')==='1'}catch(e){}
+const isViewer=()=>LIVE&&D.role==='viewer';
+const isTest=()=>LIVE&&(isViewer()||(testOn&&D.S.showTest!==false));
+const startBal=()=>isTest()?0:(+D.S.begin||0),startSchol=()=>isTest()?0:(+D.S.scholStart||0);
+function setTest(on){testOn=!!on;try{on?localStorage.setItem('psr-test-mode','1'):localStorage.removeItem('psr-test-mode')}catch(e){}
+  if(!$('confirm').hidden){$('confirm').hidden=true;$('regWrap').hidden=false}
+  renderAll();
+  refreshLive().then(()=>{renderSetup();renderAll(true)}).catch(e=>toast(e.message));
+  toast(on?'Test mode on. Everything saves to the Test tabs.':'Test mode off. Back to the real records.')}
+const uid=()=>Date.now()+Math.floor(Math.random()*1000);
+async function api(action,data,log){
+  let res;
+  try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),data:data||{},log:log||null})})}
+  catch(e){throw new Error('Could not reach the reunion system. Check your internet connection and try again.')}
+  let j;try{j=await res.json()}catch(e){throw new Error('The reunion system sent back an unexpected answer. Try again in a minute.')}
+  if(j.auth===false){signOut(true);throw new Error('Please sign in again.')}
+  if(!j.ok)throw new Error(j.error||'Something went wrong. Try again.');
+  return j;
+}
+async function loadPublic(){const j=await api('public');D.S=mergeSettings(j.settings);D.pub={people:j.people||0,households:j.households||0};D.loaded=true}
+async function loadAll(){
+  const j=await api('all');
+  if(!setDirty)D.S=mergeSettings(j.settings);
+  D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
+  D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
+  D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
+  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';
+  D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
+  D.checkins=j.checkins||[];D.alerts=j.alerts||[];ciStats=null;
+  D.pub={people:D.regs.reduce((s,r)=>s+r.people.length,0),households:D.regs.length};D.loaded=true;
+}
+async function refreshLive(){if(!LIVE)return;if(isAdmin())await loadAll();else await loadPublic()}
+async function busy(btn,label,fn){const t=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent=label}
+  try{return await fn()}catch(e){toast(e.message||'Something went wrong.');throw e}finally{if(btn){btn.disabled=false;btn.textContent=t}}}
+let setT,setDirty=false;
+function setSaveState(st){setDirty=st==='dirty'||(st==='error'&&setDirty);document.querySelectorAll('#tab-setup .savebar').forEach(b=>b.classList.toggle('dirty',setDirty));const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  const msg={dirty:'You have unsaved changes. Click Save changes.',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save changes to try again.'}[st];
+  document.querySelectorAll('[data-savestate]').forEach(e=>{e.textContent=msg;e.className='savestate '+st});
+  document.querySelectorAll('[data-savenow]').forEach(b=>{b.disabled=st==='saving';b.textContent=st==='saving'?'Saving…':'Save changes'})}
+function saveSettingsNow(manual){clearTimeout(setT);
+  if(!LIVE){save();setSaveState('saved');if(manual)toast('Settings saved.');return Promise.resolve()}
+  setSaveState('saving');
+  return api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved');toast('Settings saved.')}).catch(e=>{setSaveState('error');toast(e.message)})}
+function persistSettings(){setSaveState('dirty')}
+window.addEventListener('beforeunload',e=>{if(setDirty){e.preventDefault();e.returnValue=''}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-savenow]'))saveSettingsNow(true)});
+
+function readUpload(file,maxDim){return new Promise((ok,no)=>{
+  if(!file)return ok(null);
+  if(file.type==='application/pdf'){if(file.size>8e6)return no(new Error('That PDF is too big. Keep it under 8 MB.'));
+    const rd=new FileReader();rd.onload=()=>ok({dataUrl:rd.result,kind:'pdf',name:file.name});rd.onerror=()=>no(new Error('Could not read that file.'));rd.readAsDataURL(file);return}
+  const rd=new FileReader();rd.onerror=()=>no(new Error('Could not read that file.'));rd.onload=()=>{const im=new Image();im.onerror=()=>no(new Error('That file is not a photo or PDF.'));im.onload=()=>{
+    const c=document.createElement('canvas'),k=Math.min(1,maxDim/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok({dataUrl:c.toDataURL('image/jpeg',.78),kind:'image',name:(file.name||'photo').replace(/\.[^.]+$/,'')+'.jpg'})};im.src=rd.result};rd.readAsDataURL(file)})}
+const UPLOAD_DIM=LIVE?1400:520;
+function proofCell(x){const u=x.proofUrl||x.receiptUrl;if(u)return` <a class="proof" href="${esc(u)}" target="_blank" rel="noopener">View file</a>`;
+  if(x.proof&&/^data:image/.test(x.proof))return` <img class="thumb" src="${x.proof}" alt="Attached screenshot">`;if(x.proofName)return` <span class="proof">${esc(x.proofName)}</span>`;return''}
+const delBtn=(kind,id)=>`<button class="del" type="button" data-del="${kind}:${id}">Remove</button>`;
+
+/* ---------- money logic ---------- */
+const grp=id=>D.S.groups.find(g=>g.id===id);
+const priceFor=(g,date)=>date<=D.S.earlyBird?(+g.early||0):(+g.late||0);
+function regLines(r){
+  const L=[];
+  D.S.groups.forEach(g=>{const n=r.people.filter(p=>p.group===g.id).length;if(n){const u=priceFor(g,r.date);L.push({label:g.label,q:n,u,a:n*u})}});
+  D.S.addons.forEach(a=>{let n=a.sized?SIZES.reduce((s,k)=>s+(+r.shirts?.[k]||0),0):(+r.addons?.[a.id]||0);
+    const sz=a.sized?SIZES.filter(k=>+r.shirts?.[k]>0).map(k=>`${+r.shirts[k]} ${k}`).join(', '):'';
+    if(n>0)L.push({label:a.label+(sz?` (${sz})`:''),q:n,u:+a.price||0,a:n*(+a.price||0)})});
+  if(+r.donation>0)L.push({label:'Scholarship donation',q:1,u:+r.donation,a:+r.donation,don:true});
+  return L;
+}
+const regTotal=r=>regLines(r).reduce((s,l)=>s+l.a,0);
+const paidFor=code=>D.pays.filter(p=>p.code===code).reduce((s,p)=>s+(+p.amount),0);
+const balOf=r=>Math.max(0,regTotal(r)-paidFor(r.code));
+function statusOf(r){const t=regTotal(r),p=paidFor(r.code);if(p>=t-0.005)return'paid';if(p>0)return'partial';return'waiting'}
+const ST={paid:['ok','Paid in full'],partial:['warn','Partly paid'],waiting:['info','No payment']};
+const regName=r=>`${r.first} ${r.last}`;
+const findReg=c=>D.regs.find(r=>r.code===c);
+
+function ledger(){
+  const opPaid={};let bal=startBal(),op=0,schol=0,out=0;
+  let contrib=0;
+  const ev=D.pays.map(p=>({...p,t:'in'})).concat((D.contribs||[]).map(c=>({...c,t:'cin'}))).concat(realExps().map(e=>({...e,t:'out'})))
+    .sort((a,b)=>String(a.date).localeCompare(String(b.date))||(a.t===b.t?a.id-b.id:(a.t==='out'?1:b.t==='out'?-1:0)));
+  const rows=[];
+  ev.forEach(e=>{
+    if(e.t==='in'){
+      let o=+e.amount,s=0;const r=e.code&&findReg(e.code);
+      if(r){const need=regTotal(r)-(+r.donation||0),had=opPaid[e.code]||0;o=Math.min(+e.amount,Math.max(0,need-had));s=+e.amount-o;opPaid[e.code]=had+o}
+      bal+=o;op+=o;schol+=s;
+      rows.push({t:'in',date:e.date,desc:r?`${e.via} · ${regName(r)} (${r.code})`:`${e.via} · ${e.from}`,cat:r?'Registration & extras':'Unmatched payment',inA:o,bal,note:s>0?`${money(s)} went to the scholarship fund`:'' ,flag:!r});
+    }else if(e.t==='cin'){bal+=+e.amount;op+=+e.amount;contrib+=+e.amount;rows.push({t:'in',date:e.date,desc:`${e.via} · ${e.name}`,cat:e.type||'Committee contribution',inA:+e.amount,bal,note:e.receivedBy?`Received by ${e.receivedBy}`:''});
+    }else{bal-=+e.amount;out+=+e.amount;rows.push({t:'out',date:e.date,desc:e.vendor+(e.note?` · ${e.note}`:''),cat:e.category,outA:+e.amount,bal})}
+  });
+  const owed=D.regs.reduce((s,r)=>s+balOf(r),0);
+  return{rows,op,schol,out,contrib,end:bal,gross:op+schol,owed};
+}
+
+/* ---------- matching (what the email script does) ---------- */
+function matchPayment(p){
+  const m=String(p.memo||'').toUpperCase().match(/PSR[\s-]?0*(\d{1,4})/);
+  if(m){const c='PSR-'+m[1].padStart(3,'0');if(findReg(c))return{code:c,method:'Memo code'}}
+  const open=D.regs.filter(r=>balOf(r)>0.005);
+  const f=norm(p.from).split(' ').filter(Boolean);
+  if(f.length>=2){
+    const hit=open.filter(r=>[regName(r),...(r.payer?[r.payer]:[]),...r.people.map(x=>x.name)].some(n=>{const t=norm(n).split(' ');return t.length>=2&&t[0]===f[0]&&t[t.length-1]===f[f.length-1]}));
+    if(hit.length===1)return{code:hit[0].code,method:'Sender name'};
+  }
+  const amt=open.filter(r=>Math.abs(balOf(r)-(+p.amount))<0.005);
+  if(amt.length===1)return{code:amt[0].code,method:'Exact amount'};
+  return{code:null,method:null};
+}
+function nextIncoming(){
+  const scripted=[
+    ()=>{const r=findReg('PSR-008');return r&&balOf(r)>0?{from:'Brenda Sanford',via:'PayPal (card)',memo:'PSR-008',amount:balOf(r)}:null},
+    ()=>{const r=findReg('PSR-004');return r&&balOf(r)>0?{from:'YVONNE CARTER',via:'Zelle',memo:'PSR-004 reunion',amount:balOf(r)}:null},
+    ()=>{const r=findReg('PSR-003');return r&&balOf(r)>0?{from:'Marcus Sanford',via:'Cash App',memo:'family reunion',amount:balOf(r)}:null},
+    ()=>{const r=findReg('PSR-006');return r&&balOf(r)>0?{from:'A H',via:'Zelle',memo:'',amount:balOf(r)}:null},
+    ()=>({from:'Bernice W.',via:'Zelle',memo:'for my nephew',amount:60})];
+  while(D.pq<scripted.length){const x=scripted[D.pq++]();if(x)return x}
+  const open=D.regs.filter(r=>balOf(r)>0.005);
+  if(!open.length)return null;
+  const r=open[0];return{from:regName(r),via:Math.random()<.5?'Zelle':'Cash App',memo:r.code,amount:balOf(r)};
+}
+const CARDQ=[{vendor:'COSTCO WHSE #0249',amount:184.69},{vendor:'DOLLAR TREE 05153',amount:25.80},{vendor:'OOSHIRTS INC',amount:558.03},{vendor:'FUN PARK GROUP SALES',amount:540},{vendor:'DOUBLETREE BANQUET CATERING',amount:2400}];
+const KW=[[/costco|publix|walmart|food lion|harris|kroger|sam'?s/i,'Food & hospitality'],[/dollar|amazon|party|hobby|michaels/i,'Supplies & decor'],[/shirt|custom ink|printful/i,'T-shirts & merchandise'],[/fun park|bowling|skate|arcade|frankie/i,'Activities'],[/usps|office depot|staples|fedex|print|vistaprint/i,'Printing & postage'],[/cater|banquet|bar tab|lounge/i,'Hotel catering & bar'],[/hotel|marriott|hilton|doubletree|courtyard|venue/i,'Venue & deposits']];
+const guessCat=v=>(KW.find(([re])=>re.test(v))||[])[1]||CATS[5];
+const prettyVendor=v=>v.replace(/\s*#?\d{3,}.*$/,'').toLowerCase().replace(/\b\w/g,c=>c.toUpperCase()).replace(/ Whse/,'').replace(/ Inc$/,'');
+
+/* ---------- UI helpers ---------- */
+let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600)}
+function addFeed(k,x){D.feed.unshift({d:TODAY,t:nowTime(),k,x});D.feed=D.feed.slice(0,40)}
+function copy(txt,btn){const done=()=>{const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)};
+  try{navigator.clipboard.writeText(txt).then(done,()=>sel(btn))}catch(e){sel(btn)}}
+function sel(btn){const v=btn.parentElement.querySelector('.val');if(!v)return;const r=document.createRange();r.selectNodeContents(v);const s=getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Copy it from your keyboard menu.')}
+
+/* ---------- $ in money boxes ---------- */
+function dollarize(root){(root||document).querySelectorAll('input[data-money]').forEach(i=>{if(i.parentElement.classList.contains('dollar'))return;const w=document.createElement('span');w.className='dollar';i.parentElement.insertBefore(w,i);w.appendChild(i)})}
+new MutationObserver(()=>dollarize()).observe(document.querySelector('main'),{childList:true,subtree:true});dollarize();
+/* ---------- Tabs ---------- */
+const PAYQ=(()=>{const m=(location.hash||'').match(/^#pay=([^&]+)(?:&amt=([\d.]+))?/);return m?{code:decodeURIComponent(m[1]),amt:+m[2]||0}:null})();
+const TABS=['register','overview','payments','expenses','ledger','checkin','setup'];
+function openTab(t){if(t==='checkin'&&LIVE&&!isAdmin()){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
+  document.body.classList.toggle('ci-only',t==='checkin'&&!isAdmin());
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
+  TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='checkin')renderCheckin();
+  if(!PAYQ)try{history.replaceState(null,'','#'+t)}catch(e){}
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{openTab(b.dataset.tab);window.scrollTo({top:0})}));
+
+/* ---------- Hero ---------- */
+const mapsLink=()=>{const S=D.S;return'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent([S.hotelName,S.hotelStreet,S.hotelCity].filter(Boolean).join(', '))};
+const PIN_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+function renderHero(){
+  const S=D.S;$('hEyebrow').textContent=`The ${S.edition} ${S.family}`;$('hTheme').textContent=S.theme;$('hSub').textContent=S.subtitle;$('hVerse').innerHTML=S.verse?`“${esc(S.verse)}” <span>${esc(S.verseRef||'')}</span>`:'';$('hVerse').hidden=!S.verse;
+  const IC={cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',pin:'<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>'};
+  const ico=k=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
+  const maps=mapsLink();
+  const hotelMi=S.hotelName?`<span class="mi mi-hotel">${ico('pin')}<span><a class="maplink" href="${esc(maps)}" target="_blank" rel="noopener">${esc(S.hotelName)}</a>${S.roomRate?`<br><span class="rateln">${esc(S.roomRate)}</span>`:''}<br><a class="btn gold sm bookbtn" data-book href="${/^https?:\/\//i.test(S.bookUrl||'')?esc(S.bookUrl):'#'}" target="_blank" rel="noopener">Book your room</a></span></span>`:`<span class="mi">${ico('pin')}Location to be announced</span>`;
+  $('hMeta').innerHTML=[S.when?`<span class="mi">${ico('cal')}${esc(S.when)}</span>`:'',hotelMi,S.host?`<span class="mi">${ico('home')}${esc(S.host)}</span>`:''].join('');wireBook($('hMeta'));
+  const people=LIVE?D.pub.people:D.regs.reduce((s,r)=>s+r.people.length,0),hh=LIVE?D.pub.households:D.regs.length,cap=Math.max(1,+S.capacity||1);
+  $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family ${people===1?'member':'members'} registered · ${hh} ${hh===1?'household':'households'}`;
+  const days=Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5);
+  $('hEarly').textContent=days>=0?`Early-bird pricing ends in ${days} days`:'Early-bird pricing has ended';
+  $('hBar').style.width=Math.min(100,people/cap*100)+'%';
+}
+
+const cashLink=amt=>{const tag=String(D.S.cashapp||'').replace(/^\$/,'').trim();const a=Math.round(amt*100)/100;return`https://cash.app/$${encodeURIComponent(tag)}/${a%1?a.toFixed(2):a}`};
+const paypalLink=amt=>{const a=Math.round(amt*100)/100;return`https://www.paypal.com/paypalme/${encodeURIComponent(String(D.S.paypal||'').trim())}/${a.toFixed(2)}`};
+const cardFee=amt=>Math.round((amt*(+D.S.cardPct||0)/100+(+D.S.cardFixed||0))*100)/100;
+/* ---------- Hotel ---------- */
+function renderHotel(){const S=D.S,c=$('hotelCard');
+  if(!S.hotelName){c.hidden=true;return}c.hidden=false;
+  c.innerHTML=`<div class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-6h6v6"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></div>
+  <div class="stack" style="gap:6px"><div class="mini">Where we're staying</div><h2 style="font-size:20px">${esc(S.hotelName)}</h2>
+  <div class="addr">${esc(S.hotelStreet)}${S.hotelStreet&&S.hotelCity?'<br>':''}${esc(S.hotelCity)}${S.hotelPhone?`<br><span class="mono">${esc(S.hotelPhone)}</span>`:''}</div>
+  ${S.roomRate?`<div class="rate">${esc(S.roomRate)}</div>`:''}${S.hotelNote?`<p class="small">${esc(S.hotelNote)}</p>`:''}
+  <p style="font-weight:700">Rooms are booked directly with the hotel and are not part of your registration total.</p>
+  <p class="small">Use the <b>Book your room</b> button at the top of the page.</p></div>`;
+}
+function caterSpent(){return D.exps.filter(e=>e.category==='Hotel catering & bar').reduce((s,e)=>s+(+e.amount),0)}
+function guestSpent(){return D.exps.filter(e=>e.category===GUEST).reduce((s,e)=>s+(+e.amount),0)}
+function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=+S.depFaison||0,dep=depPSR+depF;
+  const f=(1+(+S.serviceCharge||0)/100)*(1+(+S.salesTax||0)/100);
+  const billed=caterSpent(),counted=billed/f+guestSpent()+(S.depositCounts?depPSR:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
+  const heads=D.regs.reduce((s,r)=>s+r.people.length,0);
+  const depPaid=D.exps.filter(e=>e.category==='Venue & deposits').reduce((s,e)=>s+(+e.amount),0);
+  const steps=[75,100,125,150,200];
+  const foodPer=+S.foodPer||0,paying=D.regs.reduce((s,r)=>s+r.people.filter(p=>{const g=grp(p.group);return g&&((+g.early||0)>0||(+g.late||0)>0)}).length,0);
+  const need=min*f,foodIn=paying*foodPer,still=Math.max(0,need-foodIn),more=foodPer?Math.ceil(still/foodPer):0;
+  $('commit').innerHTML=`<div class="panel-head"><div><h2>Hotel commitment</h2><p class="muted small">Order ${money0(min)} in hotel food and drinks and the event space is free. The hotel adds a ${+S.serviceCharge||0}% service charge and ${+S.salesTax||0}% tax on top, so the real bill for the minimum is about <b>${money0(min*f)}</b>.</p></div>
+    <span class="chip ${still<=0?'ok':'warn'}">${still<=0?'Covered by registrations':money0(still)+' still needed'}</span></div>
+  <div class="kpis" style="margin-bottom:16px">
+    <div class="kpi"><div class="l">Counted toward ${money0(min)}</div><div class="v">${money(counted)}</div><div class="h">Hotel food and bar billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
+    <div class="kpi"><div class="l">Still needed from registrations</div><div class="v">${money(still)}</div><div class="h">${paying} ${paying===1?'person':'people'} registered${still>0&&foodPer?` · about ${more} more needed`:' · covered ✓'}</div></div>
+    <div class="kpi"><div class="l">Hotel bills paid</div><div class="v">${money(billed)}</div><div class="h">Catering and bar, charges included</div></div>
+    <div class="kpi"><div class="l">Deposit</div><div class="v">${money(dep)}</div><div class="h">${money0(depPSR)} PSR · ${money0(depF)} Faison<br>${(()=>{const raised=D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0),gap=dep-raised;return gap>0?`<b style="color:var(--red)">−${money0(gap)} to go</b>`:'<b style="color:var(--ok)">Raised ✓</b>'})()}<br>${dep&&depPaid>=dep?'<b style="color:var(--ok)">Paid ✓</b>':depPaid>0?`${money0(depPaid)} of ${money0(dep)} paid`:'Not yet paid'}</div></div>
+  </div>
+  <div class="track" style="margin-bottom:16px"><i class="${left<=0?'':'g2'}" style="width:${pct}%"></i></div>
+  <div class="tw"><table class="ctable"><thead><tr><th>If this many come</th><th class="r">Food per person</th><th class="r">With service + tax</th></tr></thead><tbody>
+    ${steps.map(n=>`<tr><td>${n} people</td><td class="num">${money(min/n)}</td><td class="num"><b>${money(min*f/n)}</b></td></tr>`).join('')}
+    ${heads?`<tr class="now"><td>Registered now: ${heads}</td><td class="num">${money(min/heads)}</td><td class="num">${money(min*f/heads)}</td></tr>`:''}</tbody></table></div>
+  <p class="muted small" style="margin-top:10px">Each person's share of the minimum. Seniors and tots register free, so adult and child fees cover their share. A private bar adds $150 per bartender. Friday's outside food is allowed once the minimum is met.</p>`;
+}
+
+/* ---------- Register ---------- */
+let F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
+const DRAFT='psr-reg-draft',DRAFT_DAYS=7,DF=['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer','rDonation'];
+let draftT;
+function saveDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{try{
+  const v={};DF.forEach(i=>v[i]=$(i).value);
+  const any=DF.some(i=>i!=='rDonation'&&v[i])||F.people.some(p=>p.name)||+v.rDonation>0;
+  if(!any)return;localStorage.setItem(DRAFT,JSON.stringify({ts:Date.now(),v,F}))}catch(e){}},400)}
+function clearDraft(){clearTimeout(draftT);try{localStorage.removeItem(DRAFT)}catch(e){}$('draftNote').hidden=true}
+function loadDraft(){try{const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d)return;
+  if(Date.now()-d.ts>DRAFT_DAYS*864e5){localStorage.removeItem(DRAFT);return}
+  F=d.F;F.shirts=sh(F.shirts||{});F.addons=F.addons||{};if(!F.people||!F.people.length)F.people=[{name:'',group:''}];
+  DF.forEach(i=>{if(d.v[i]!=null)$(i).value=d.v[i]});markDon();$('draftNote').hidden=false}catch(e){}}
+const groupOptions=sel=>`<option value="" disabled${sel&&grp(sel)?'':' selected'}>Pick an age group</option>`+D.S.groups.map(g=>{const p=priceFor(g,TODAY);return`<option value="${g.id}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)}) · ${p?money0(p):'Free'}</option>`}).join('');
+function renderPeople(){
+  $('peopleList').innerHTML=F.people.map((p,i)=>`<div class="person">
+    <input aria-label="Full name, person ${i+1}" placeholder="Full name" data-pi="${i}" data-pf="name" value="${esc(p.name)}">
+    <select aria-label="Age group, person ${i+1}" data-pi="${i}" data-pf="group">${groupOptions(p.group)}</select>
+    <button type="button" class="x" data-rm="${i}" aria-label="Remove person ${i+1}"${F.people.length<2?' disabled style="opacity:.35;cursor:default"':''}>×</button>
+    ${D.S.askFood!==false?`<select class="food" aria-label="Food needs, person ${i+1}" data-pi="${i}" data-pf="food">${FOODS.map(f=>`<option value="${f}"${(p.food||'')===f?' selected':''}>${f||'Food needs: none'}</option>`).join('')}</select>`:''}</div>`).join('');
+}
+function renderAddonFields(){
+  const on=D.S.addons.filter(a=>a.on);$('addonPanel').hidden=!on.length;
+  $('addonFields').innerHTML=on.map(a=>a.sized?`<div class="addon sized"><div class="spread"><h3>${esc(a.label)}</h3><span class="price-tag">${money0(a.price)} each</span></div>
+      <p class="muted small" style="margin:-4px 0 8px">How many of each size?</p>
+      <div class="sizes">${SIZES.map(k=>`<label>${k}<input type="number" min="0" step="1" inputmode="numeric" data-size="${k}" value="${F.shirts[k]||''}" placeholder="0"></label>`).join('')}</div></div>`
+    :`<div class="addon"><div><h3>${esc(a.label)}</h3><span class="price-tag">${money0(a.price)} each</span></div>
+      <label class="f" style="text-align:center">How many<input type="number" min="0" step="1" inputmode="numeric" data-addon="${a.id}" value="${F.addons[a.id]||''}" placeholder="0" style="text-align:center"></label></div>`).join('');
+}
+function draftReg(){return{date:TODAY,people:F.people.filter(p=>p.name.trim()||F.people.length===1).map(p=>({...p})),shirts:F.shirts,addons:F.addons,donation:+$('rDonation').value||0}}
+function renderSummary(){
+  const r=draftReg(),L=regLines(r),t=L.reduce((s,l)=>s+l.a,0);
+  const early=TODAY<=D.S.earlyBird;
+  $('summary').innerHTML=`<h2>Your total</h2>
+    <div class="lines">${L.length?L.map(l=>`<div class="line"><span>${esc(l.label)} ${l.don?'':`<span class="q">× ${l.q}</span>`}</span><span class="num">${l.a?money(l.a):'Free'}</span></div>`).join(''):'<p class="muted small">Add the people coming and your total shows up here.</p>'}</div>
+    <div class="total"><span>Total</span><b>${money(t)}</b></div>
+    <p class="pill-note" style="margin-bottom:14px">${early?`Early-bird prices through ${nice(D.S.earlyBird)}.`:'Regular prices apply.'} No processing fees.</p>
+    <span class="err" id="regErr" hidden></span>
+    <button class="btn gold block" type="submit" form="regForm">Review my order</button>
+    <p class="muted small" style="margin-top:10px;text-align:center">Next you'll see how to pay online.</p>`;
+}
+const titleCase=v=>v.replace(/(^|[\s\-'])([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+const fmtPhone=v=>{let d=v.replace(/\D/g,'');if(d.length>10&&d[0]==='1')d=d.slice(1);d=d.slice(0,10);
+  if(d.length<4)return d.length?'('+d:'';if(d.length<7)return`(${d.slice(0,3)}) ${d.slice(3)}`;return`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`};
+function liveFormat(el){
+  if(el.id==='rDonation'){let v=el.value.replace(/[^\d.]/g,'');const i=v.indexOf('.');if(i>-1)v=v.slice(0,i+1)+v.slice(i+1).replace(/\./g,'').slice(0,2);if(v!==el.value)el.value=v;markDon();return}
+  if(el.id==='rPhone'){const nv=fmtPhone(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(nv.length,nv.length)}catch(_){}}return}
+  if(['rFirst','rLast','rCity','rPayer'].includes(el.id)||el.dataset.pf==='name'){const pos=el.selectionStart,nv=titleCase(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(pos,pos)}catch(_){}}}
+}
+$('regForm').addEventListener('input',e=>{
+  const el=e.target;liveFormat(el);
+  if(el.dataset.pi!==undefined){F.people[+el.dataset.pi][el.dataset.pf]=el.value}
+  else if(el.dataset.size){F.shirts[el.dataset.size]=Math.max(0,parseInt(el.value)||0)}
+  else if(el.dataset.addon){F.addons[el.dataset.addon]=Math.max(0,parseInt(el.value)||0)}
+  renderSummary();
+});
+$('regForm').addEventListener('input',saveDraft);
+$('regForm').addEventListener('change',saveDraft);
+$('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='food'){F.people[+e.target.dataset.pi].food=e.target.value;saveDraft&&saveDraft();return}if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
+$('peopleList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b||F.people.length<2)return;F.people.splice(+b.dataset.rm,1);renderPeople();renderSummary()});
+$('addPerson').addEventListener('click',()=>{F.people.push({name:'',group:''});renderPeople();renderSummary();const ins=$('peopleList').querySelectorAll('input');ins[ins.length-1].focus()});
+function markDon(){const v=String(+$('rDonation').value||'');document.querySelectorAll('[data-don]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.don===v)))}
+document.querySelectorAll('[data-don]').forEach(b=>b.addEventListener('click',()=>{const on=b.getAttribute('aria-pressed')==='true';$('rDonation').value=on?'':b.dataset.don;markDon();renderSummary();saveDraft()}));
+$('rFirst').addEventListener('change',()=>{if(F.people.length===1&&!F.people[0].name){F.people[0].name=`${$('rFirst').value} ${$('rLast').value}`.trim();renderPeople()}});
+$('rLast').addEventListener('change',()=>{if(F.people.length===1&&(!F.people[0].name||F.people[0].name===$('rFirst').value.trim())){F.people[0].name=`${$('rFirst').value} ${$('rLast').value}`.trim();renderPeople()}});
+
+$('regForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const first=$('rFirst').value.trim(),last=$('rLast').value.trim(),email=$('rEmail').value.trim();
+  const people=F.people.filter(p=>p.name.trim());
+  let msg='';
+  if(!first||!last)msg='Add the first and last name of the household contact.';
+  else if(!/^\S+@\S+\.\S+$/.test(email))msg='Add an email so we can send your receipt.';
+  else if(!people.length)msg='Add at least one person who is coming.';
+  const noGrp=F.people.findIndex(p=>p.name.trim()&&!grp(p.group));
+  if(!msg&&noGrp>=0)msg='Pick an age group for '+F.people[noGrp].name.trim()+'.';
+  const er=$('regErr');document.querySelectorAll('.bad-field').forEach(x=>x.classList.remove('bad-field'));
+  if(msg){er.textContent=msg;er.hidden=false;
+    const bad=(!first?$('rFirst'):!last?$('rLast'):!/^\S+@\S+\.\S+$/.test(email)?$('rEmail'):(people.length&&noGrp>=0)?$('peopleList').querySelector(`select[data-pi="${noGrp}"]`):$('peopleList').querySelector('input'));
+    if(bad){bad.classList.add('bad-field');bad.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>bad.focus({preventScroll:true}),350)}
+    return}
+  const reg={date:TODAY,first,last,email,phone:$('rPhone').value.trim(),city:$('rCity').value.trim(),state:$('rState').value,payer:$('rPayer').value.trim(),
+    people:people.map(p=>({name:p.name.trim(),group:p.group})),shirts:{...F.shirts},addons:{...F.addons},donation:+$('rDonation').value||0};
+  if(!reviewOK){showReview(reg);return}
+  reviewOK=false;
+  if(LIVE){
+    const btn=$('summary').querySelector('.btn.gold');
+    busy(btn,'Registering…',async()=>{
+      const lines=regLines(reg).map(l=>({label:l.label,q:l.q,a:l.a,don:!!l.don}));
+      const j=await api('register',{reg,total:regTotal(reg),lines});
+      reg.code=j.code;clearDraft();
+      try{await refreshLive()}catch(_){}
+      showConfirm(reg,j.emailed!==false);renderAll();
+    }).catch(()=>{showReview(reg)});
+    return;
+  }
+  const n=D.regs.reduce((m,r)=>Math.max(m,parseInt(r.code.slice(4))||0),0)+1;
+  reg.code='PSR-'+String(n).padStart(3,'0');
+  D.regs.push(reg);clearDraft();
+  addFeed('ok',`New registration from ${first} ${last} (${reg.code}): ${reg.people.length} ${reg.people.length===1?'person':'people'}, ${money(regTotal(reg))}. Sent payment instructions to ${email}.`);
+  save();showConfirm(reg,true);renderAll();
+});
+let reviewOK=false;
+function showReview(r){const L=regLines(r),t=regTotal(r);
+  $('regWrap').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm ordercheck">
+    <div class="eyebrow" style="color:var(--green-2)">Almost done</div>
+    <h2 style="margin-top:6px">Check your order</h2>
+    <p class="muted small" style="margin-top:6px">Nothing is saved yet. Make sure everything is right.</p>
+    <div class="rv"><div><b>${esc(r.first)} ${esc(r.last)}</b> · ${esc(r.email)}${r.phone?` · ${esc(r.phone)}`:''}</div>
+      ${r.payer?`<div class="muted small">Paid by: ${esc(r.payer)}</div>`:''}</div>
+    <div class="mini" style="margin-top:14px;text-align:left">Who’s coming</div>
+    <div class="lines" style="text-align:left">${r.people.map(p=>`<div class="line"><span>${esc(p.name)}</span><span class="muted small">${esc((grp(p.group)||{}).label||'')}</span></div>`).join('')}</div>
+    <div class="mini" style="margin-top:14px;text-align:left">Your order</div>
+    <div class="lines" style="text-align:left">${L.map(l=>`<div class="line"><span>${esc(l.label)} ${l.don?'':`<span class="q">× ${l.q}</span>`}</span><span class="num">${l.a?money(l.a):'Free'}</span></div>`).join('')}</div>
+    <div class="total" style="text-align:left"><span>Total</span><b>${money(t)}</b></div>
+    <div class="choices">
+      <button class="btn choice" type="button" id="rvBack">← Go back and fix</button>
+      <button class="btn choice" type="button" id="rvOk">Looks right, register</button>
+    </div></div>`;
+  $('rvBack').addEventListener('click',()=>{c.hidden=true;$('regWrap').hidden=false;window.scrollTo({top:$('regWrap').offsetTop-80})});
+  $('rvOk').addEventListener('click',e=>{reviewOK=true;e.target.disabled=true;e.target.textContent='Registering…';$('regForm').dispatchEvent(new Event('submit',{cancelable:true}))});
+  window.scrollTo({top:0});
+}
+const zeffyEmbed=u=>String(u).replace(/zeffy\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?(?!embed\/)/,'zeffy.com/embed/');
+function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.test(u||'');
+  if(!ok)return`<div class="paysoon"><b>Online payment opens soon.</b><p class="small" style="margin-top:4px">Your spot is saved. We'll email you as soon as you can pay online.</p></div>`;
+  return`<div class="paycard">
+      <div id="paySteps1"><h3>How to pay</h3>
+      <ol class="paysteps">
+        <li>Tap <b>Copy amount</b> above.</li>
+        <li>In the <b>Choose your donation amount</b> box, paste your amount, or type a smaller amount if you’re making a partial payment. Then click <b>Continue</b>. If the amount is wrong after you click Continue, click <b>Back</b> to fix it.</li>
+      </ol></div>
+      <h3 id="payStepsHead2" style="margin-top:14px">Then</h3>
+      <ol class="paysteps" start="3">
+        <li id="payStepAmt" hidden>In the <b>Choose your donation amount</b> box, paste your amount${t>0?` (<b>${money(t)}</b>)`:''}, or type a smaller amount if you’re making a partial payment. Then click <b>Continue</b>. If the amount is wrong after you click Continue, click <b>Back</b> to fix it.</li>
+        <li><b>Who is this payment for?</b> Type the name on the registration.</li>
+        <li>Click the tip box (it shows a %, like 15%) and choose “Other.” <span class="note-red">This removes Zeffy’s tip.</span></li>
+        <li>Check that the <b>Total</b> is right.</li>
+        <li>Choose how to pay and fill in your information.</li>
+        <li>Corporate/organization box: <span class="note-red">Leave it unchecked.</span></li>
+        <li>Click <b>Donate</b> (this finishes your reunion payment). <span class="note-red">It says Donate, but this is your reunion payment.</span></li>
+      </ol>
+    </div>
+    <p class="formhelp">Don’t see the form below? <a href="${esc(u)}" target="_blank" rel="noopener">Open it here</a></p>
+    <iframe class="zeffy" src="${esc(zeffyEmbed(u))}" title="Secure payment form" loading="lazy" allow="payment"></iframe>`}
+// Copy button + the step change on the first click into Zeffy's box.
+// The page can't see inside Zeffy's box, only that someone clicked into it. Then the
+// Copy amount box, steps 1-2 and "Then" go away, and the "type your amount" step shows.
+function wirePay(c){
+  c.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>copy(b.dataset.copy,b)));
+  const ifr=c.querySelector('.zeffy');if(!ifr)return;
+  let started=false;
+  const reveal=()=>{if(started)return;started=true;
+    ['paySteps1','payAmtBox','payStepsHead2'].forEach(id=>{const e=$(id);if(e)e.hidden=true});
+    const a=$('payStepAmt');if(a)a.hidden=false};
+  const onBlur=()=>setTimeout(()=>{if(document.activeElement===ifr){reveal();window.removeEventListener('blur',onBlur)}},0);
+  window.addEventListener('blur',onBlur);
+}
+// Pay page: reunion-site/#pay=PSR-003&amt=125.00 (from the email's Pay online button and the check-in QR code).
+const payLink=(code,amt)=>location.origin+location.pathname+'#pay='+encodeURIComponent(code)+'&amt='+(+amt||0).toFixed(2);
+function showPayPage(){if(!PAYQ)return;const{code,amt}=PAYQ;
+  $('regWrap').hidden=true;$('regClosed').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm paywide">
+    <h2 class="reghead">Reunion payment</h2>
+    <p class="regsub">Confirmation # <span class="mono">${esc(code)}</span></p>
+    <div class="paybox">
+      ${amt>0?`<div class="payamt" id="payAmtBox"><span>Amount to pay</span><b>${money(amt)}</b><button class="btn sm" type="button" data-copy="${amt.toFixed(2)}">Copy amount</button></div>`:''}
+      ${LIVE&&!D.loaded?'<p class="muted">Loading…</p>':payBlock(amt)}
+    </div></div>`;
+  wirePay(c);wireBook(c);
+}
+function showConfirm(r,emailed){
+  const L=regLines(r),t=regTotal(r);
+  $('regWrap').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm paywide">
+    <h2 class="reghead">You’re registered!</h2>
+    <p class="regsub">Thank you, ${esc(r.first)}.</p>
+    <div class="lines" style="text-align:left">${L.map(l=>`<div class="line"><span>${esc(l.label)} ${l.don?'':`<span class="q">× ${l.q}</span>`}</span><span class="num">${l.a?money(l.a):'Free'}</span></div>`).join('')}</div>
+    <div class="paybox">
+      <div class="payamt" id="payAmtBox"><span>Amount to pay</span><b>${money(t)}</b><button class="btn sm" type="button" data-copy="${t.toFixed(2)}">Copy amount</button></div>
+      ${payBlock(t)}
+    </div>
+    <p style="margin-top:18px">${isTest()?`<b>Test mode:</b> saved to the Test tabs only. `:''}${emailed===false?`We couldn't send the confirmation email right now. Your registration is saved.`:`We've emailed your confirmation to <b>${esc(r.email)}</b>.`} You'll get a receipt once your payment arrives.</p>
+    <p style="margin-top:14px"><button class="linkbtn" type="button" id="another2">Register another household</button></p>
+    ${isAdmin()?`<p style="margin-top:12px"><button class="linkbtn" type="button" id="recPay">Committee: record a payment for this household now</button></p>`:''}
+    <p class="muted small" style="margin-top:16px">Confirmation # <span class="mono">${esc(r.code)}</span></p>
+    ${LIVE?'':`<details class="demo-only"><summary>Demo only: preview the emails and the committee view</summary>
+      <div class="email" style="margin-top:10px;text-align:left"><div class="eh"><span>To: ${esc(r.email)}</span><span>Right after registering</span></div>
+        <div class="eb"><b>You're registered for the ${esc(D.S.edition)} PSR Family Reunion</b><span class="small">Hi ${esc(r.first)}, thank you for registering ${r.people.length} ${r.people.length===1?'person':'people'}. Amount due: ${money(t)}. Pay online with the secure Zeffy form.</span><span class="muted small">Confirmation # ${esc(r.code)}</span></div></div>
+      <div class="email" style="margin-top:10px;text-align:left"><div class="eh"><span>To: ${esc(r.email)}</span><span>When payment arrives</span></div>
+        <div class="eb"><b>Payment received, thank you!</b><span class="small">We received ${money(t)}. You're paid in full. See you at the reunion!</span><span class="muted small">Confirmation # ${esc(r.code)}</span></div></div>
+      <button class="btn sm" type="button" id="seePay" style="margin-top:12px">See it on the payments page</button>
+    </details>`}</div>`;
+  wirePay(c);
+  const rp=$('recPay');if(rp)rp.addEventListener('click',()=>{const code=r.code;resetForm();openTab('payments');openManual(code);window.scrollTo({top:0})});
+  $('another2').addEventListener('click',resetForm);wireBook(c);
+  if($('seePay'))$('seePay').addEventListener('click',()=>{resetForm();openTab('payments');window.scrollTo({top:0})});
+  window.scrollTo({top:0});
+}
+function S_hotelBlock(){const S=D.S;if(!S.hotelName)return'';
+  const ok=/^https?:\/\//i.test(S.bookUrl||'');
+  return`<div class="bookbox"><div class="mini">Staying at the hotel?</div>
+    <p style="margin:4px 0 10px"><b>${esc(S.hotelName)}</b>${S.roomRate?` · ${esc(S.roomRate)}`:''}</p>
+    <a class="btn gold block" data-book href="${ok?esc(S.bookUrl):'#'}" target="_blank" rel="noopener">Book your room</a>
+    <p class="muted small" style="margin-top:8px">Opens in a new tab, so this page stays open. Rooms are paid to the hotel, not the reunion. Staying home each night? You can skip this.</p></div>`}
+function wireBook(c){c.querySelectorAll('[data-book]').forEach(a=>a.addEventListener('click',e=>{if(!/^https?:\/\//i.test(D.S.bookUrl||'')){e.preventDefault();toast(isAdmin()?'Booking link coming soon. Paste the hotel link in Setup once Brandi sends it.':'Booking link coming soon.')}}))}
+function showThanks(r,later,emailed){const S=D.S,c=$('confirm');
+  c.innerHTML=`<div class="panel confirm thanks">
+    <div class="eyebrow" style="color:var(--green-2)">${esc(S.theme)}</div>
+    <h2 style="margin-top:8px;font-size:30px">You're all set, ${esc(r.first)}!</h2>
+    <p style="margin-top:10px">${later?`No problem. The payment link is in your confirmation email whenever you're ready.`:`We can't wait to see you at the reunion.`}</p>
+    ${S.verse?`<p class="tverse">“${esc(S.verse)}”<span>${esc(S.verseRef||'')}</span></p>`:''}
+    <p class="muted small" style="margin-top:14px">${esc(S.when)}${S.hotelName?' · '+esc(S.hotelName):''}</p>
+    <div style="text-align:left;margin-top:16px">${S_hotelBlock()}</div>
+    <div class="choices">
+      <button class="btn choice" type="button" id="backPay">← Back</button>
+      <button class="btn choice" type="button" id="restart">Register another</button>
+      <button class="btn choice" type="button" id="allDone">Done</button>
+    </div>
+    <p class="muted small" style="margin-top:12px">Confirmation # <span class="mono">${esc(r.code)}</span></p></div>`;
+  $('backPay').addEventListener('click',()=>showConfirm(r,emailed));
+  $('allDone').addEventListener('click',()=>{c.innerHTML=`<div class="panel confirm thanks"><h2 style="font-size:28px">See you in Greensboro!</h2><p style="margin-top:10px">You can close this page now.</p><button class="btn ghost sm" type="button" id="restart2" style="margin-top:16px">Register another household</button></div>`;$('restart2').addEventListener('click',resetForm);window.scrollTo({top:0})});
+  wireBook(c);if($('restart'))$('restart').addEventListener('click',resetForm);window.scrollTo({top:0});
+}
+function resetForm(){F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
+  ['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer'].forEach(i=>$(i).value='');$('rDonation').value='';markDon();
+  $('confirm').hidden=true;$('regWrap').hidden=false;$('draftNote').hidden=true;renderPeople();renderAddonFields();renderSummary();gateReg();}
+// Registration window: opens on its own on the open date, closes after the last reunion day
+// (or the host's own close date), and stops when seats run out if the host turned that on.
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const addDay=iso=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+1);return d.toISOString().slice(0,10)};
+const niceDate=iso=>new Date(iso+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+function regState(){const S=D.S,t=todayISO();
+  const open=S.regOpen||(S.regOpensOn&&t>=S.regOpensOn);if(!open)return'soon';
+  const close=S.regClosesOn||(S.lastDay?addDay(S.lastDay):'');if(close&&t>=close)return'ended';
+  if(S.capStop&&+S.capacity>0){const n=LIVE?(D.pub.people||0):D.regs.reduce((s,r)=>s+r.people.length,0);if(n>=+S.capacity)return'full'}
+  return'open'}
+function regMsg(st){const S=D.S;
+  if(st==='ended')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration has ended</h2><p style="margin-top:8px">Thank you, family. ${S.lastDay&&todayISO()>S.lastDay?'We hope to see you at the next reunion!':'We’ll see you at the reunion!'}</p>`;
+  if(st==='full')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration is full</h2><p style="margin-top:8px">Every seat has been taken. If you have questions, reply to any reunion email and the host will get back to you.</p>`;
+  return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration opens ${S.regOpensOn&&todayISO()<S.regOpensOn?niceDate(S.regOpensOn):'soon'}</h2><p style="margin-top:8px">Check back soon. The committee will email the family as soon as you can sign up.</p>`}
+function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
+  let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
+  eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&regState()==='open'&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
+  const rows=String(S.schedule||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf(':');return i>0&&i<16?[l.slice(0,i).trim(),l.slice(i+1).trim()]:['',l]});
+  wk.hidden=!rows.length;wk.innerHTML=rows.length?`<h2>Reunion weekend</h2>${rows.map(([d,t])=>`<div class="wk-row">${d?`<span class="wk-day">${esc(d)}</span>`:'<span></span>'}<span>${esc(t)}</span></div>`).join('')}`:''}
+let previewing=false;
+function gateReg(){renderExtrasReg();const st=regState(),closed=previewing?st!=='open':LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
+  if(!$('confirm').hidden){box.hidden=true;return}
+  box.hidden=!closed;$('regWrap').hidden=closed;
+  if(closed)box.innerHTML=D.loadErr?`<h2>We can't reach the registration system</h2><p class="muted" style="margin-top:8px">Please refresh this page in a minute. If it keeps happening, reply to the email you got from the committee.</p>`
+    :!D.loaded?`<p class="muted">Loading…</p>`
+    :regMsg(st);
+}
+function setPreview(on){previewing=!!on;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
+  openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0})}
+$('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
+$('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
+$('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
+
+/* ---------- Overview ---------- */
+function bar(label,valTxt,pct,cls=''){return`<div class="barrow"><div class="top"><span>${label}</span><span class="num">${valTxt}</span></div><div class="track"><i class="${cls}" style="width:${Math.max(0,Math.min(100,pct))}%"></i></div></div>`}
+// One-page summary report for the reunion committee: print it or save it as a PDF.
+function summaryHTML(){
+  const S=D.S,Lg=ledger(),all=D.regs.flatMap(r=>r.people),e=esc;
+  const title=[S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
+  const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const sum=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
+  const groups=S.groups.map(g=>[g.label,all.filter(p=>p.group===g.id).length]);
+  const shirts=SIZES.map(z=>[z,sum(D.regs,r=>(r.shirts||{})[z])]).filter(x=>x[1]>0);
+  const extras=(S.addons||[]).filter(a=>!a.sized).map(a=>[a.label,sum(D.regs,r=>(r.addons||{})[a.id])]).filter(x=>x[1]>0);
+  const foods=FOODS.filter(Boolean).map(f=>[f,all.filter(p=>p.food===f).length]).filter(x=>x[1]>0);
+  const byVia={};D.pays.forEach(p=>{const k=p.via||p.method||'Other';byVia[k]=(byVia[k]||0)+(+p.amount||0)});
+  const contrib=isViewer()?0:sum(D.contribs||[],c=>c.amount);
+  const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[c,b,sp]}).filter(x=>x[1]||x[2]);
+  const exps=realExps().slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+  const tbl=(head,rows,foot,num=1)=>`<table><thead><tr>${head.map((h,i)=>`<th${i>=num?' class="n"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>${foot?`<tfoot><tr>${foot.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr></tfoot>`:''}</table>`;
+  const kpi=(l,v)=>`<div class="k"><div class="l">${l}</div><div class="v">${v}</div></div>`;
+  return`<!doctype html><html><head><meta charset="utf-8"><title>${e(title)} – Summary report</title><style>
+  @page{size:letter;margin:.55in}*{box-sizing:border-box}body{margin:0;font:13px/1.45 Arial,Helvetica,sans-serif;color:#1f2a24;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .hd{background:#1c5a34;color:#fff;border-radius:12px;padding:18px 22px;border-bottom:5px solid #e0b22a}.ey{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#e0b22a;font-weight:bold}
+  .t{font:26px/1.2 Georgia,serif;margin:4px 0 2px}.sub{opacity:.85;font-size:12.5px}.test{background:#fde8e8;color:#7a1414;border-radius:8px;padding:6px 10px;margin-top:10px;font-size:12px}
+  h2{font:bold 12px Arial;letter-spacing:.1em;text-transform:uppercase;color:#1c5a34;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #e3e6e1}
+  .ks{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.k{border:1px solid #e3e6e1;border-radius:10px;padding:10px 12px}.k .l{font-size:10.5px;color:#5b6660;text-transform:uppercase;letter-spacing:.08em}.k .v{font-size:19px;font-weight:bold;margin-top:2px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#5b6660;border-bottom:1px solid #cfd6cf;padding:5px 4px}
+  td{padding:5px 4px;border-bottom:1px solid #eef0ee}.n{text-align:right}tfoot td{font-weight:bold;border-top:2px solid #1c5a34;border-bottom:0}.over{color:#a3252b;font-weight:bold}
+  .ft{margin-top:22px;color:#5b6660;font-size:11px;text-align:center}tr{break-inside:avoid}</style></head><body>
+  <div class="hd"><div class="ey">${e(title)}</div><div class="t">Summary report</div><div class="sub">${e(S.theme||'')}${S.when?' · '+e(S.when):''} · As of ${today}</div>${isTest()?'<div class="test"><b>TEST DATA</b>: practice records, not real numbers.</div>':''}</div>
+  <h2>At a glance</h2><div class="ks">${kpi('Households',D.regs.length)}${kpi('People coming',all.length)}${kpi('Collected',money(Lg.gross))}${kpi('Spent',money(Lg.out))}</div>
+  <div class="ks" style="margin-top:10px">${kpi('Balance on hand',money(Lg.end))}${kpi('Still owed',money(Lg.owed))}${kpi('Paid in full',D.regs.filter(r=>statusOf(r)==='paid').length+' of '+D.regs.length)}${contrib?kpi('Committee contributions',money(contrib)):kpi('Scholarship donations',money(Lg.schol))}</div>
+  <h2>Registrations</h2><div class="two"><div>${tbl(['Age group','People'],groups,['Total',all.length])}</div>
+  <div>${shirts.length?tbl(['T-shirt size','Count'],shirts,['Total',sum(shirts,x=>x[1])]):'<p style="color:#5b6660">No t-shirts ordered yet.</p>'}${extras.length?'<div style="height:12px"></div>'+tbl(['Extras','Count'],extras):''}${foods.length?'<div style="height:12px"></div>'+tbl(['Food needs (for the caterer)','People'],foods):''}</div></div>
+  <h2>Money in</h2>${tbl(['Paid through','Amount'],Object.keys(byVia).map(k=>[e(k),money(byVia[k])]).concat(contrib?[['Committee contributions',money(contrib)]]:[]),['Total',money(sum(D.pays,p=>p.amount)+contrib)])}
+  <h2>Expenses by category</h2>${tbl(['Category','Budget','Spent','Left'],cats.map(([c,b,sp])=>[e(c),money(b),money(sp),`<span class="${sp>b&&b?'over':''}">${money(b-sp)}</span>`]),['Total',money(sum(cats,x=>x[1])),money(sum(cats,x=>x[2])),money(sum(cats,x=>x[1]-x[2]))])}
+  ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(x.category||''),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
+  <div class="ft">Prepared by the ${e(S.senderName||'PSR Host Family Committee')} · ${today}</div></body></html>`}
+// Paper backup for check-in: every household A–Z with a box for each person and what they owe.
+function checkinListHTML(){const S=D.S,e=esc;const title=[S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
+  const regs=D.regs.slice().sort((a,b)=>(a.last+a.first).localeCompare(b.last+b.first));
+  return`<!doctype html><html><head><meta charset="utf-8"><title>Check-in list</title><style>@page{size:letter;margin:.5in}body{font:12.5px/1.4 Arial,sans-serif;color:#1f2a24;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h1{font:22px Georgia,serif;margin:0}.sub{color:#5b6660;margin:2px 0 12px}table{width:100%;border-collapse:collapse}th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#5b6660;border-bottom:2px solid #1c5a34;padding:5px 4px}
+  td{padding:7px 4px;border-bottom:1px solid #dfe3de;vertical-align:top}tr{break-inside:avoid}.p{display:block}.p:before{content:"☐ ";font-size:15px}.n{text-align:right;white-space:nowrap}.owe{color:#a3252b;font-weight:bold}</style></head><body>
+  <h1>Check-in list</h1><div class="sub">${e(title)} · ${regs.length} households · ${regs.reduce((s,r)=>s+r.people.length,0)} people · printed ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+  <table><thead><tr><th>Household</th><th>Confirmation #</th><th>Who's coming (check off)</th><th class="n">Still owes</th></tr></thead><tbody>
+  ${regs.map(r=>{const b=balOf(r);return`<tr><td><b>${e(r.last)}, ${e(r.first)}</b>${r.phone?'<br><span style="color:#5b6660">'+e(r.phone)+'</span>':''}</td><td>${e(r.code)}</td><td>${r.people.map(p=>`<span class="p">${e(p.name)}${p.food?' <i style="color:#5b6660">('+e(p.food)+')</i>':''}</span>`).join('')}</td><td class="n ${b>0?'owe':''}">${b>0?money(b):'Paid'}</td></tr>`}).join('')}
+  </tbody></table></body></html>`}
+function printHTML(html){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const d=f.contentWindow.document;d.open();d.write(html);d.close();
+  setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(_){}setTimeout(()=>f.remove(),60000)},300)}
+document.addEventListener('click',e=>{if(e.target.closest('#ciPrintList'))printHTML(checkinListHTML())});
+// Thank-you landing for families coming back from Zeffy (set Zeffy's "Redirect to your own thank-you page" to the site address + #paid).
+const PAIDQ=/^#paid/.test(location.hash||'');
+function showPaidPage(){if(!PAIDQ)return;$('regWrap').hidden=true;$('regClosed').hidden=true;const c=$('confirm');c.hidden=false;
+  c.innerHTML=`<div class="panel confirm" style="text-align:center"><div style="font-size:44px;line-height:1">✓</div><h2 class="reghead" style="margin-top:8px">Thank you! Your payment went through.</h2>
+  <p class="regsub" style="margin-top:8px">Zeffy is emailing your receipt now. Your reunion balance updates within a few minutes, and we’ll email you an updated balance too.</p>
+  ${D.S.hotelUrl?`<p style="margin-top:16px"><a class="btn gold" href="${esc(D.S.hotelUrl)}" target="_blank" rel="noopener">Book your hotel room</a></p>`:''}</div>`}
+function printSummary(){const f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const d=f.contentWindow.document;d.open();d.write(summaryHTML());d.close();
+  setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(_){}setTimeout(()=>f.remove(),60000)},300)}
+document.addEventListener('click',e=>{if(e.target.closest('#printSum'))printSummary()});
+function renderOverview(){
+  const Lg=ledger(),S=D.S;
+  {const f=$('firsts'),num=r=>parseInt(String(r.code).replace(/\D/g,''),10)||0,top=D.regs.slice().sort((a,b)=>num(a)-num(b)).slice(0,3);
+   f.hidden=!top.length;f.innerHTML=top.length?`<div class="panel-head"><div><h2>First to register</h2><p class="muted small">For a shout-out at the reunion. Only the committee sees this.</p></div></div><ol>${top.map((r,i)=>`<li><b>${i+1}. The ${esc(r.last)} family</b> <span class="muted small">· ${esc(r.code)}${r.created?' · '+esc(r.created):r.date?' · '+esc(r.date):''}${r.city?' · '+esc(r.city)+(r.state?', '+esc(r.state):''):''}</span></li>`).join('')}</ol>`:''}
+  const schFund=startSchol()+Lg.schol;
+  $('kpis').innerHTML=[
+    ['hl','Reunion balance',money(Lg.end),'Money on hand right now'],
+    ['','Collected',money(Lg.gross),`${money(D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0))} from committee`],
+    ['','Spent',money(Lg.out),`${realExps().length} expenses logged`],
+    ['','Still owed',money(Lg.owed),`${D.regs.filter(r=>statusOf(r)!=='paid').length} households with a balance`],
+    ['','Scholarship fund',money(schFund),`${money(Lg.schol)} donated this year`]
+  ].map(([c,l,v,h])=>`<div class="kpi ${c}"><div class="l">${l}</div><div class="v">${v}</div><div class="h">${h}</div></div>`).join('');
+  const all=D.regs.flatMap(r=>r.people),tot=all.length||1;
+  $('attSub').textContent=`${all.length} people registered so far.`;
+  $('attBars').innerHTML=S.groups.map(g=>{const n=all.filter(p=>p.group===g.id).length;return bar(`${esc(g.label)} <span class="muted small">(${esc(g.ages)})</span>`,n,n/tot*100)}).join('');
+  const hh=D.regs.length||1;
+  $('statusBars').innerHTML=['paid','partial','waiting'].map(s=>{const n=D.regs.filter(r=>statusOf(r)===s).length;return bar(`<span class="chip ${ST[s][0]}">${ST[s][1]}</span>`,`${n} of ${D.regs.length}`,n/hh*100,s==='paid'?'':'g2')}).join('');
+  $('budgetBars').innerHTML=CATS.map(c=>{const sp=D.exps.filter(e=>e.category===c).reduce((s,e)=>s+(+e.amount),0),b=+S.budgets[c]||0;
+    return bar(esc(c),`${money0(sp)} of ${money0(b)}`,b?sp/b*100:(sp?100:0),b&&sp>b?'over':'')}).join('');
+  const shirts=SIZES.map(k=>[k,D.regs.reduce((s,r)=>s+(+r.shirts?.[k]||0),0)]),stot=shirts.reduce((s,x)=>s+x[1],0);
+  const tsh=S.addons.find(a=>a.sized);
+  $('orders').innerHTML=(tsh?`<div><div class="spread" style="margin-bottom:8px"><h3>${esc(tsh.label)}s</h3><span class="muted small">${stot} total</span></div>
+    <div class="size-grid">${shirts.map(([k,n])=>`<div><b>${n}</b><span>${k}</span></div>`).join('')}</div></div>`:'')+
+    S.addons.filter(a=>!a.sized).map(a=>{const n=D.regs.reduce((s,r)=>s+(+r.addons?.[a.id]||0),0);return`<div class="spread" style="border-top:1px solid var(--line);padding-top:12px"><span>${esc(a.label)}</span><b class="mono">${n}</b></div>`}).join('');
+  $('feed').innerHTML=D.feed.slice(0,8).map(f=>`<li><span class="dot ${f.k}"></span><div><div>${esc(f.x)}</div><div class="t">${nice(f.d)} · ${esc(f.t)}</div></div></li>`).join('')||'<li class="empty">Nothing yet.</li>';
+}
+
+/* ---------- Payments ---------- */
+let regFilter='all';
+function renderPayments(){
+  const qv=norm($('regSearch').value),qc=$('regSearch').value.trim().toUpperCase().replace(/\s/g,'');
+  const rows=D.regs.slice().reverse().filter(r=>regFilter==='all'||statusOf(r)===regFilter).filter(r=>!qc||r.code.includes(qc)||norm([regName(r),r.email,r.payer||'',...r.people.map(x=>x.name)].join(' ')).includes(qv));
+  $('regCountSub').textContent=`${D.regs.length} households registered.`;
+  $('regRows').innerHTML=rows.map(r=>{const s=statusOf(r),t=regTotal(r),p=paidFor(r.code);
+    return`<tr><td class="mono">${r.code}</td><td>${esc(regName(r))}<span class="sub">${r.people.length} ${r.people.length===1?'person':'people'} · ${esc(r.people.map(x=>x.name.split(' ')[0]).join(', '))}</span></td>
+    <td class="num">${money(t)}</td><td class="num">${money(p)}</td><td class="num">${money(Math.max(0,t-p))}</td><td><span class="chip ${ST[s][0]}">${ST[s][1]}</span></td><td><button class="btn sm" type="button" data-resend="${r.code}">Resend receipt</button></td></tr>`}).join('')||'<tr><td colspan="7" class="empty">No households match.</td></tr>';
+  $('payRows').innerHTML=D.pays.slice().reverse().map(p=>{const r=p.code&&findReg(p.code);
+    return`<tr><td>${nice(p.date)}</td><td>${esc(p.from)}<span class="sub">${esc(p.via)}</span></td><td class="small">${esc(p.note||p.memo)||'<span class="muted">—</span>'}${proofCell(p)}</td>
+    <td>${r?`${esc(regName(r))} <span class="sub mono">${r.code}</span>`:'<span class="chip warn">Needs a look</span>'}</td>
+    <td>${p.method?`<span class="chip plain">${esc(p.method)}</span>`:''}</td><td class="num in">${money(p.amount)}</td><td>${p.method==='Manual entry'||LIVE?delBtn('pays',p.id):''}</td></tr>`}).join('')||'<tr><td colspan="7" class="empty">No payments yet.</td></tr>';
+  const ct=D.contribs||[],ctot=ct.reduce((s,c)=>s+(+c.amount),0);
+  $('ctSub').textContent=ct.length?`${ct.length} contributions · ${money(ctot)} total. These count toward the reunion balance.`:'The $120 committee contributions. They count toward the reunion balance.';
+  $('ctRows').innerHTML=ct.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))||b.id-a.id).map(c=>`<tr><td>${nice(c.date)}</td><td>${esc(c.name)}${c.note?`<span class="sub">${esc(c.note)}</span>`:''}${proofCell(c)}</td>
+    <td><span class="chip plain">${esc(c.via)}</span></td><td>${esc(c.receivedBy||'')}</td><td class="num in">${money(c.amount)}</td><td>${delBtn('contribs',c.id)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No contributions recorded yet.</td></tr>';
+  fillMpReg();
+  const un=D.pays.filter(p=>!p.code);
+  $('reviewBox').innerHTML=un.length?`<div class="review"><div><h3>Needs a look (${un.length})</h3><p class="small">The system couldn't tell who sent these, so it set them aside instead of guessing. Pick the household and it's done.</p></div>
+    ${un.map(p=>`<div class="review-item"><div><b class="mono">${money(p.amount)}</b> from ${esc(p.from)} by ${esc(p.via)}<span class="sub muted small">Memo: ${esc(p.memo)||'(blank)'} · ${nice(p.date)}</span></div>
+      <select data-assign="${p.id}" aria-label="Choose household"><option value="">Choose household…</option>${D.regs.map(r=>`<option value="${r.code}">${r.code} · ${esc(regName(r))} (owes ${money(balOf(r))})</option>`).join('')}</select>
+      <button class="btn sm primary" type="button" data-assign-btn="${p.id}">Match it</button></div>`).join('')}</div>`:'';
+}
+$('regSearch').addEventListener('input',renderPayments);
+let resendCode=null;
+function receiptSubject(r){const s=statusOf(r);return s==='paid'?'Payment received, thank you! PSR Family Reunion':s==='partial'?'Payment received, balance remaining: PSR Family Reunion':'Your PSR Family Reunion registration: payment due'}
+function receiptBody(r){const t=regTotal(r),p=paidFor(r.code),s=statusOf(r),bal=Math.max(0,t-p),u=D.S.zeffyUrl;
+  return s==='paid'?`We received ${money(p)}. You're paid in full. See you at the reunion!`
+    :s==='partial'?`We've received ${money(p)} of ${money(t)}. Remaining balance: ${money(bal)}.${u?` You can pay the rest online: ${u}`:''}`
+    :`Your total is ${money(t)}.${u?` Pay online: ${u}`:` Online payment opens soon. We'll email you when it's ready.`}`}
+async function sendReceipt(r,to){
+  const lines=regLines(r).map(l=>({label:l.label,q:l.q,a:l.a,don:!!l.don}));
+  await api('sendReceipt',{to:to||r.email,code:r.code,reg:{first:r.first,last:r.last,email:r.email,people:r.people},lines,total:regTotal(r),paid:paidFor(r.code)},
+    {k:'ok',x:`Sent a receipt to ${regName(r)} (${r.code}) at ${to||r.email}.`});
+}
+function renderResend(){const box=$('resendBox'),r=resendCode&&findReg(resendCode);
+  if(!r){box.innerHTML='';return}
+  const t=regTotal(r),p=paidFor(r.code),s=statusOf(r),bal=Math.max(0,t-p);
+  const subj=s==='paid'?'Payment received, thank you!':s==='partial'?'Payment received: balance remaining':'Your registration: payment still due';
+  const body=receiptBody(r);
+  box.innerHTML=`<div class="resend">
+    <div class="spread"><h3>Resend receipt to ${esc(regName(r))}</h3><button class="x" type="button" id="rsClose" aria-label="Close">×</button></div>
+    <label class="f">Send to this email (fix it here if it was mistyped)<input id="rsEmail" type="email" value="${esc(r.email)}"></label>
+    <div class="email"><div class="eh"><span>Subject: ${esc(subj)}</span><span>Confirmation # ${esc(r.code)}</span></div>
+      <div class="eb"><span class="small">Hi ${esc(r.first)},</span><span class="small">${esc(body)}</span><span class="muted small">Registered: ${r.people.length} ${r.people.length===1?'person':'people'} · Confirmation # ${esc(r.code)}</span></div></div>
+    <p class="muted small">Tip: ask them to check their spam or junk folder too.</p>
+    <span class="err" id="rsErr" hidden></span>
+    <div class="row"><button class="btn primary" type="button" id="rsSend">Send receipt</button><button class="btn" type="button" id="rsCancel">Cancel</button></div></div>`;
+  const close=()=>{resendCode=null;renderResend()};
+  $('rsClose').onclick=close;$('rsCancel').onclick=close;
+  $('rsSend').onclick=()=>{const em=$('rsEmail').value.trim();
+    if(!/^\S+@\S+\.\S+$/.test(em)){const e=$('rsErr');e.textContent='Enter a full email address, like name@gmail.com.';e.hidden=false;return}
+    const changed=em!==r.email;
+    if(LIVE){busy($('rsSend'),'Sending…',async()=>{
+      if(changed)await api('updateReg',{code:r.code,email:em},{k:'info',x:`Updated ${regName(r)}'s email from ${r.email} to ${em}.`});
+      await sendReceipt(r,em);resendCode=null;await refreshLive();renderAll();toast(`Receipt sent to ${em}${changed?' (email updated)':''}.`)}).catch(()=>{});return}
+    if(changed){addFeed('info',`Updated ${regName(r)}'s email from ${r.email} to ${em}.`);r.email=em}
+    addFeed('ok',`Resent the receipt to ${regName(r)} (${r.code}) at ${em}.`);
+    resendCode=null;save();renderAll();toast(`Receipt sent to ${em}${changed?' (email updated)':''}.`)};
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+$('regRows').addEventListener('click',e=>{const b=e.target.closest('[data-resend]');if(!b)return;resendCode=b.dataset.resend;renderResend();setTimeout(()=>{const i=$('rsEmail');if(i)i.focus({preventScroll:true})},200)});
+$('regFilters').addEventListener('click',e=>{const b=e.target.closest('.filter');if(!b)return;regFilter=b.dataset.f;$('regFilters').querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderPayments()});
+$('reviewBox').addEventListener('click',e=>{const b=e.target.closest('[data-assign-btn]');if(!b)return;const id=+b.dataset.assignBtn,sel=$('reviewBox').querySelector(`[data-assign="${id}"]`);
+  if(!sel.value){toast('Pick a household first.');return}const p=D.pays.find(x=>x.id===id);
+  if(LIVE){busy(b,'Saving…',async()=>{await api('updatePayment',{id,code:sel.value,method:'Matched by treasurer',total:regTotal(findReg(sel.value))},{k:'ok',x:`Treasurer matched ${money(p.amount)} from ${p.from} to ${regName(findReg(sel.value))} (${sel.value}).`});await refreshLive();renderAll();toast('Payment matched.')}).catch(()=>{});return}
+  p.code=sel.value;p.method='Matched by treasurer';
+  addFeed('ok',`Treasurer matched ${money(p.amount)} from ${p.from} to ${regName(findReg(p.code))} (${p.code}).`);save();renderAll();toast('Payment matched.')});
+$('runPay').addEventListener('click',()=>{
+  const inc=nextIncoming();
+  if(!inc){$('lastEmail').innerHTML='<p class="muted small">No new payment emails. Everyone who registered has paid.</p>';toast('No new payments.');return}
+  const res=matchPayment(inc),id=D.pays.reduce((m,p)=>Math.max(m,p.id),0)+1;
+  const p={id,date:TODAY,...inc,code:res.code,method:res.method};D.pays.push(p);
+  let feeNote='';if(/paypal/i.test(p.via)){const fee=cardFee(p.amount),eid=D.exps.reduce((m,x)=>Math.max(m,x.id),0)+1;p.fee=fee;
+    D.exps.push({id:eid,date:TODAY,vendor:'PayPal card fee',category:'Card processing fees',amount:fee,source:'Automatic',note:`On ${money(p.amount)} from ${p.from}${p.code?' ('+p.code+')':''}`});
+    feeNote=` · ${money(fee)} card fee logged as an expense`;
+    addFeed('info',`Logged a ${money(fee)} PayPal card fee on ${p.from}'s ${money(p.amount)} payment. The household still shows the full ${money(p.amount)} paid.`)}
+  const r=res.code&&findReg(res.code);let chip,txt;
+  if(r){const s=statusOf(r);chip=`<span class="chip ok">Matched by ${res.method.toLowerCase()}</span>`;
+    txt=`→ ${esc(regName(r))} (${r.code}) · now <b>${ST[s][1].toLowerCase()}</b>${s==='paid'?' · receipt emailed':''}${feeNote}`;
+    addFeed(res.method==='Memo code'?'ok':'warn',`Matched a ${money(p.amount)} ${p.via} payment to ${regName(r)} (${r.code})${res.method==='Memo code'?' by the code in the memo':res.method==='Sender name'?'. No code in the memo, so it matched by the sender\'s name':'. No code or recognizable name, but the amount matched exactly one household'}. ${s==='paid'?'Sent a paid-in-full receipt by email.':'Marked partly paid.'}`);
+  }else{chip='<span class="chip warn">Set aside for a look</span>';txt='Couldn\'t tell who this is for, so it\'s waiting below instead of guessing.';
+    addFeed('bad',`Couldn't match ${money(p.amount)} from ${p.from}. Set aside for the treasurer.`)}
+  $('lastEmail').innerHTML=`<div class="email"><div class="eh"><span>From: ${p.via==='Zelle'?'Zelle® alerts':/paypal/i.test(p.via)?'PayPal':'Cash App'}</span><span>Just now</span></div>
+    <div class="eb"><b>${esc(p.from)} sent you ${money(p.amount)}${p.fee?` by card`:''}</b>${p.fee?`<span class="muted small">PayPal fee ${money(p.fee)} · You received ${money(p.amount-p.fee)}</span>`:''}<span class="muted small">Memo: ${esc(p.memo)||'(blank)'}</span></div>
+    <div class="res">${chip}<span class="arrow">${txt}</span></div></div>`;
+  save();renderAll();toast(r?'Payment matched automatically.':'Payment set aside for a look.');
+});
+
+/* ---------- Manual payment ---------- */
+let mpUp=null,ctUp=null;
+function fillMpReg(sel){const el=$('mpReg'),cur=sel||el.value;
+  el.innerHTML='<option value="">Choose household…</option>'+D.regs.slice().sort((a,b)=>regName(a).localeCompare(regName(b))).map(r=>`<option value="${r.code}"${r.code===cur?' selected':''}>${esc(regName(r))} · ${r.code} (owes ${money(balOf(r))})</option>`).join('')}
+function openManual(code){const f=$('mpForm');f.hidden=false;$('mpOpen').hidden=true;fillMpReg(code);$('mpDate').value=TODAY;$('mpErr').hidden=true;
+  if(code){const r=findReg(code);if(r)$('mpAmt').value=balOf(r).toFixed(2)}setTimeout(()=>(code?$('mpAmt'):$('mpReg')).focus(),50)}
+function closeManual(){$('mpForm').reset();$('mpForm').hidden=true;$('mpOpen').hidden=false;mpUp=null;$('mpFileTxt').innerHTML='<b>Add a screenshot or photo (optional)</b><br><span class="muted small">Zelle or Cash App screenshot, check photo, or PDF</span>'}
+$('mpOpen').addEventListener('click',()=>openManual());
+$('mpCancel').addEventListener('click',closeManual);
+$('mpGoReg').addEventListener('click',()=>{closeManual();openTab('register');window.scrollTo({top:0})});
+$('mpReg').addEventListener('change',()=>{const r=findReg($('mpReg').value);if(r&&!$('mpAmt').value)$('mpAmt').value=balOf(r).toFixed(2)});
+$('mpAmt').addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^\d.]/g,'')});
+$('ctAmt').addEventListener('input',e=>{e.target.value=e.target.value.replace(/[^\d.]/g,'')});
+async function pickFile(input,txtId,setter){const f=input.files[0];if(!f)return;
+  try{const up=await readUpload(f,UPLOAD_DIM);setter(up);$(txtId).innerHTML=up.kind==='pdf'?`<b>PDF attached:</b> ${esc(up.name)}`:`<img src="${up.dataUrl}" alt="" style="max-height:140px;border-radius:8px"><br><span class="muted small">Tap to choose a different file</span>`}
+  catch(e){toast(e.message);input.value=''}}
+$('mpFile').addEventListener('change',e=>pickFile(e.target,'mpFileTxt',u=>mpUp=u));
+$('ctFile').addEventListener('change',e=>pickFile(e.target,'ctFileTxt',u=>ctUp=u));
+$('mpForm').addEventListener('submit',e=>{e.preventDefault();
+  const code=$('mpReg').value,a=Math.round(parseFloat($('mpAmt').value)*100)/100,er=$('mpErr'),r=findReg(code);
+  if(!r){er.textContent='Choose the household this payment is for.';er.hidden=false;return}
+  if(!(a>0)){er.textContent='Enter the amount they paid.';er.hidden=false;return}
+  er.hidden=true;
+  const via=$('mpVia').value,p={id:uid(),date:$('mpDate').value||TODAY,from:$('mpFrom').value.trim()||regName(r),via,memo:'',amount:a,code,method:'Manual entry',note:$('mpNote').value.trim()};
+  const mail=$('mpEmail').checked,logx={k:'ok',x:`Recorded a ${money(a)} ${via} payment for ${regName(r)} (${code}) by hand${mpUp?' with a screenshot':''}.`};
+  if(LIVE){busy($('mpSave'),'Saving…',async()=>{
+      await api('addPayment',{...p,total:regTotal(r),takenBy:'Committee',proof:mpUp?mpUp.dataUrl:'',proofName:mpUp?mpUp.name:''},logx);
+      await refreshLive();const rr=findReg(code);let note='';
+      if(mail&&rr){try{await sendReceipt(rr);await refreshLive();note=' Receipt emailed.'}catch(err){note=' The receipt email did not send.'}}
+      closeManual();renderAll();toast('Payment saved.'+note)}).catch(()=>{});return}
+  if(mpUp){if(mpUp.kind==='image')p.proof=mpUp.dataUrl;else p.proofName=mpUp.name}
+  D.pays.push(p);addFeed(logx.k,logx.x);if(mail)addFeed('ok',`Emailed a receipt to ${regName(r)} (${code}).`);
+  save();closeManual();renderAll();toast('Payment saved.'+(mail?' Receipt emailed.':''));
+});
+/* ---------- Committee contributions ---------- */
+$('ctOpen').addEventListener('click',()=>{$('ctForm').hidden=false;$('ctOpen').hidden=true;$('ctDate').value=TODAY;$('ctErr').hidden=true;setTimeout(()=>$('ctName').focus(),50)});
+function closeCt(){$('ctForm').reset();$('ctAmt').value='120';$('ctForm').hidden=true;$('ctOpen').hidden=false;ctUp=null;$('ctFileTxt').innerHTML='<b>Add a screenshot (optional)</b><br><span class="muted small">Image or PDF</span>'}
+$('ctCancel').addEventListener('click',closeCt);
+$('ctName').addEventListener('input',e=>{const el=e.target,pos=el.selectionStart,nv=titleCase(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(pos,pos)}catch(_){}}});
+$('ctForm').addEventListener('submit',e=>{e.preventDefault();
+  const name=$('ctName').value.trim(),a=Math.round(parseFloat($('ctAmt').value)*100)/100,er=$('ctErr');
+  if(!name){er.textContent='Enter who the contribution is from.';er.hidden=false;return}
+  if(!(a>0)){er.textContent='Enter the amount.';er.hidden=false;return}
+  er.hidden=true;
+  const c={id:uid(),date:$('ctDate').value||TODAY,type:$('ctType').value,name,amount:a,via:$('ctVia').value,receivedBy:$('ctTo').value.trim(),note:$('ctNote').value.trim()};
+  const logx={k:'ok',x:`Recorded a ${money(a)} committee contribution from ${name} (${c.via}).`};
+  if(LIVE){busy($('ctSave'),'Saving…',async()=>{await api('addContribution',{...c,proof:ctUp?ctUp.dataUrl:'',proofName:ctUp?ctUp.name:''},logx);await refreshLive();closeCt();renderAll();toast('Contribution saved.')}).catch(()=>{});return}
+  if(ctUp){if(ctUp.kind==='image')c.proof=ctUp.dataUrl;else c.proofName=ctUp.name}
+  D.contribs.push(c);addFeed(logx.k,logx.x);save();closeCt();renderAll();toast('Contribution saved.');
+});
+/* ---------- Remove entries (two taps) ---------- */
+const SHEET={pays:'Payments',exps:'Expenses',contribs:'Contributions'};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-del]');
+  document.querySelectorAll('.del.armed').forEach(x=>{if(x!==b){x.classList.remove('armed');x.textContent='Remove'}});
+  if(!b)return;
+  if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='Tap again to remove';return}
+  const [kind,idS]=b.dataset.del.split(':'),id=+idS,item=(D[kind]||[]).find(x=>x.id===id);if(!item)return;
+  const what=kind==='exps'?`${money(item.amount)} expense at ${item.vendor}`:kind==='contribs'?`${money(item.amount)} contribution from ${item.name}`:`${money(item.amount)} payment from ${item.from}`;
+  const logx={k:'warn',x:`Removed the ${what}.`};
+  if(LIVE){busy(b,'Removing…',async()=>{await api('delete',{sheet:SHEET[kind],id},logx);await refreshLive();renderAll();toast('Removed.')}).catch(()=>{});return}
+  D[kind]=D[kind].filter(x=>x.id!==id);addFeed(logx.k,logx.x);save();renderAll();toast('Removed.');
+});
+
+/* ---------- Expenses ---------- */
+let rcImg=null;
+function catOptions(sel){return [...CATS,GUEST].map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('')}
+function renderExpenses(){
+  const tot=realExps().reduce((s,e)=>s+(+e.amount),0);
+  $('expSub').textContent=`${realExps().length} expenses · ${money(tot)} total. Change a category any time.`;
+  $('expRows').innerHTML=D.exps.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(e=>`<tr>
+    <td>${nice(e.date)}</td><td>${e.img?`<img class="thumb" src="${e.img}" alt="Receipt"> `:''}${esc(e.vendor)}${e.note?`<span class="sub">${esc(e.note)}</span>`:''}${proofCell(e)}</td>
+    <td><select data-ecat="${e.id}" aria-label="Category">${catOptions(e.category)}</select></td>
+    <td><span class="chip ${e.source==='Card alert'||e.source==='Automatic'?'info':'plain'}">${esc(e.source)}</span></td><td class="num${e.category===GUEST?'':' out'}">${money(e.amount)}${e.category===GUEST?'<span class="sub">Toward $6,000 only</span>':''}</td><td>${delBtn('exps',e.id)}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No expenses yet.</td></tr>';
+}
+$('rcCat').innerHTML=catOptions(CATS[4]);
+const rcHint=()=>{$('rcCatHint').hidden=$('rcCat').value!==GUEST};
+$('rcCat').addEventListener('change',rcHint);
+$('expRows').addEventListener('change',e=>{const s=e.target.closest('[data-ecat]');if(!s)return;const x=D.exps.find(v=>v.id===+s.dataset.ecat);
+  if(LIVE){api('updateExpense',{id:x.id,category:s.value}).then(()=>{x.category=s.value;renderAll();toast('Category updated.')}).catch(err=>{toast(err.message);renderAll()});return}
+  x.category=s.value;save();renderAll();toast('Category updated.')});
+$('rcptFile').addEventListener('change',e=>pickFile(e.target,'dropTxt',u=>rcImg=u));
+$('rcVendor').addEventListener('change',()=>{const v=$('rcVendor').value;if(v)$('rcCat').value=guessCat(v);rcHint()});
+$('rcptForm').addEventListener('submit',e=>{e.preventDefault();
+  const v=$('rcVendor').value.trim(),a=parseFloat($('rcAmount').value),er=$('rcErr');
+  if(!v||!(a>0)){er.textContent='Add the store and the total from the receipt.';er.hidden=false;return}er.hidden=true;
+  const ex={id:uid(),date:$('rcDate').value||TODAY,vendor:v,category:$('rcCat').value,amount:Math.round(a*100)/100,source:rcImg?(rcImg.kind==='pdf'?'Invoice upload':'Receipt photo'):'Typed in',note:$('rcNote').value.trim()};
+  const logx={k:'info',x:`Logged a ${money(a)} expense from ${v} under ${ex.category}${rcImg?' with the receipt attached':''}.`};
+  const clear=()=>{['rcVendor','rcAmount','rcNote','rcDate'].forEach(i=>$(i).value='');rcImg=null;$('rcptFile').value='';
+    $('dropTxt').innerHTML='<b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span>';$('rcCat').value=CATS[4];rcHint()};
+  if(LIVE){busy($('rcSave'),'Saving…',async()=>{await api('addExpense',{...ex,receipt:rcImg?rcImg.dataUrl:'',receiptName:rcImg?rcImg.name:''},logx);await refreshLive();clear();renderAll();toast('Receipt added to the ledger.')}).catch(()=>{});return}
+  if(rcImg){if(rcImg.kind==='image')ex.img=rcImg.dataUrl;else ex.proofName=rcImg.name}
+  D.exps.push(ex);addFeed(logx.k,logx.x);clear();save();renderAll();toast('Receipt added to the ledger.')});
+$('runCard').addEventListener('click',()=>{
+  if(D.cq>=CARDQ.length){$('lastAlert').innerHTML='<p class="muted small">No new card alerts.</p>';toast('No new card alerts.');return}
+  const c=CARDQ[D.cq++],cat=guessCat(c.vendor),v=prettyVendor(c.vendor),id=D.exps.reduce((m,x)=>Math.max(m,x.id),0)+1;
+  D.exps.push({id,date:TODAY,vendor:v,category:cat,amount:c.amount,source:'Card alert',note:''});
+  addFeed('info',`Logged a ${money(c.amount)} card purchase at ${v} under ${cat}.`);
+  $('lastAlert').innerHTML=`<div class="email"><div class="eh"><span>From: Your bank</span><span>Just now</span></div>
+    <div class="eb"><b>A ${money(c.amount)} debit card purchase was made</b><span class="muted small mono">${esc(c.vendor)} · card ending 0000</span></div>
+    <div class="res"><span class="chip ok">Logged automatically</span><span class="arrow">→ ${esc(v)} · ${esc(cat)}</span></div></div>`;
+  save();renderAll();toast('Card purchase logged.')});
+
+/* ---------- Ledger ---------- */
+let ledFilter='all';
+function renderLedger(){
+  const L=ledger(),S=D.S;
+  $('report').innerHTML=[
+    ['','Total collected (registrations + committee)',L.gross],
+    ['sub','Includes committee contributions',L.contrib],
+    ['sub','Less: scholarship donations (kept in their own fund)',-L.schol],
+    ['','Reunion money collected',L.op],
+    ['','Starting balance carried over',startBal()],
+    ['','Expenses paid',-L.out],
+    ['sum','Reunion balance now',L.end],
+    ['sub','Still owed by registered households',L.owed],
+    ['sum','Projected balance once everyone pays',L.end+L.owed],
+    ['sub','Scholarship fund balance',startSchol()+L.schol]
+  ].map(([c,l,v])=>`<tr class="${c}"><td>${l}</td><td class="num">${money(v)}</td></tr>`).join('');
+  const rows=L.rows.filter(r=>ledFilter==='all'||r.t===ledFilter).slice().reverse();
+  $('ledRows').innerHTML=rows.map(r=>`<tr><td>${nice(r.date)}</td><td>${esc(r.desc)}${r.note?`<span class="sub">${esc(r.note)}</span>`:''}</td>
+    <td>${r.flag?'<span class="chip warn">Unmatched</span>':esc(r.cat)}</td><td class="num in">${r.inA!=null?money(r.inA):''}</td><td class="num out">${r.outA!=null?money(r.outA):''}</td><td class="num">${money(r.bal)}</td></tr>`).join('')
+    +(ledFilter==='all'?`<tr class="start"><td></td><td>Starting balance</td><td>Carried over from 2026</td><td></td><td></td><td class="num">${money(startBal())}</td></tr>`:'');
+}
+$('ledFilters').addEventListener('click',e=>{const b=e.target.closest('.filter');if(!b)return;ledFilter=b.dataset.f;$('ledFilters').querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLedger()});
+
+/* ---------- Setup ---------- */
+const TRASH='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
+function renderSetup(){
+  const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
+  $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
+    <input aria-label="Group name" data-g="${i}" data-gf="label" value="${esc(g.label)}"><input aria-label="Ages" data-g="${i}" data-gf="ages" value="${esc(g.ages)}">
+    <input data-money aria-label="Early-bird price" type="number" min="0" data-g="${i}" data-gf="early" value="${g.early}"><input data-money aria-label="Regular price" type="number" min="0" data-g="${i}" data-gf="late" value="${g.late}"></div>`).join('');
+  $('setAddons').innerHTML=(S.addons.length?'<div class="set-addon mini"><span>Offer</span><span>Item</span><span>Price</span><span></span></div>':'')+S.addons.map((a,i)=>`<div class="set-addon">
+    <input type="checkbox" aria-label="Offer ${esc(a.label)}" data-a="${i}" data-af="on"${a.on?' checked':''}>
+    <input aria-label="Extra name" data-a="${i}" data-af="label" value="${esc(a.label)}">
+    <input data-money aria-label="Price" type="number" min="0" data-a="${i}" data-af="price" value="${a.price}">
+    <button class="trash" type="button" data-adel="${i}" aria-label="Remove ${esc(a.label)}">${TRASH}<span>Remove</span></button></div>`).join('')||'<p class="muted small">No extras yet.</p>';
+  if($('ciLinkTxt'))$('ciLinkTxt').textContent=helperLink();
+  {const yr=new Date().getFullYear(),cy=+S.checkinCodeYear||yr,ex=$('ciExpired');if(ex){const bad=!!String(S.checkinCode||'').trim()&&cy<yr;ex.hidden=!bad;if(bad)ex.textContent='This code was made in '+cy+' and no longer works. Type a new code for '+yr+' (it can’t be last year’s code), then click Save changes.'}}
+  $('setBudgets').innerHTML=CATS.map(c=>`<label class="f">${esc(c)}<input data-money type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"></label>`).join('');
+}
+$('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
+  if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
+  else if(el.dataset.g!==undefined){const g=S.groups[+el.dataset.g],f=el.dataset.gf;g[f]=(f==='early'||f==='late')?(parseFloat(el.value)||0):el.value}
+  else if(el.dataset.a!==undefined){const a=S.addons[+el.dataset.a],f=el.dataset.af;a[f]=f==='on'?el.checked:f==='price'?(parseFloat(el.value)||0):el.value}
+  else if(el.dataset.b){S.budgets[el.dataset.b]=parseFloat(el.value)||0}
+  else return;
+  persistSettings();renderAll(true);
+});
+$('tab-setup').addEventListener('click',e=>{const b=e.target.closest('[data-adel]');if(!b)return;
+  if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
+  D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
+$('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
+  const ins=$('setAddons').querySelectorAll('[data-af="label"]');const l=ins[ins.length-1];l.focus();l.select()});
+$('resetDemo').addEventListener('click',()=>{if(LIVE)return;D=seedData();try{localStorage.removeItem(KEY)}catch(e){};resetForm();renderSetup();renderAll(true);
+  $('lastEmail').innerHTML='<p class="muted small">Tap the button to see the system read the next payment email.</p>';$('lastAlert').innerHTML='<p class="muted small">Tap the button to see a card alert get logged automatically.</p>';toast('Demo reset to the sample families.')});
+
+/* ---------- Check-in (reunion weekend) ---------- */
+let CI='';try{CI=sessionStorage.getItem('psr-ci')||''}catch(e){}
+let ciStream=null,ciRAF=0;
+let ciDay=new Date().getDay()===6?'Saturday':'Friday',ciView='start',ciRes=null,ciOpen=null,ciPick={},ciStats=null,ciWelcome=null,ciTimer=0,ciQ='',ciNew=null;
+const canCI=()=>isAdmin()||!!CI;
+const helperLink=()=>location.origin+location.pathname+'#checkin';
+const okEmail=e=>/^\S+@\S+\.\S+$/.test(e||'');
+async function ciApi(action,data){
+  let res;try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),data:data||{}})})}
+  catch(e){throw new Error('Could not reach the reunion system. Check the internet connection and try again.')}
+  let j;try{j=await res.json()}catch(e){throw new Error('The reunion system sent back an unexpected answer. Try again.')}
+  if(j.ciAuth===false){CI='';try{sessionStorage.removeItem('psr-ci')}catch(e){}renderCheckin();throw new Error(j.error)}
+  if(!j.ok)throw new Error(j.error||'Something went wrong. Try again.');
+  return j;
+}
+const liveSync=()=>{if(LIVE&&isAdmin())refreshLive().then(()=>renderAll()).catch(()=>{})};
+const ciRegObj=r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}});
+const ciLines=r=>regLines(r).map(l=>({label:l.label,q:l.q,a:l.a,don:!!l.don}));
+function ciLocalStats(){const s={total:0,Friday:0,Saturday:0,walkins:0};(D.checkins||[]).forEach(c=>{s.total++;if(s[c.day]!=null)s[c.day]++;if(c.walkin)s.walkins++});return s}
+function ciHH(r){return{code:r.code,household:regName(r),people:r.people.map(p=>p.name).filter(Boolean),reg:ciRegObj(r),paid:paidFor(r.code),
+  done:(D.checkins||[]).filter(c=>c.code===r.code).map(c=>c.name),doneDay:Object.fromEntries((D.checkins||[]).filter(c=>c.code===r.code).map(c=>[c.name,c.day]))}}
+function ciLocalFind(q){const toks=norm(q).split(' ').filter(Boolean);if(!toks.length)return[];
+  return D.regs.map(r=>{const names=r.people.map(p=>p.name).filter(Boolean),hay=norm([r.first,r.last,...names].join(' '));
+    if(!toks.every(t=>hay.includes(t)))return null;return{...ciHH(r),exact:names.some(n=>toks.every(t=>norm(n).includes(t)))}})
+    .filter(Boolean).sort((a,b)=>(b.exact-a.exact)||a.household.localeCompare(b.household)).slice(0,12)}
+function ciReset(keepWelcome){ciScanStop();ciView='start';ciRes=null;ciOpen=null;ciPick={};ciQ='';ciNew=null;if(!keepWelcome)ciWelcome=null}
+function ciStatLine(){const st=ciStats||(isAdmin()||!LIVE?ciLocalStats():null);if(!st)return'';
+  return`<p class="ci-stats"><b>${st.total??(st.Friday+st.Saturday)}</b> checked in so far · ${st.Friday} on Friday · ${st.Saturday} on Saturday${st.walkins?` · ${st.walkins} walk-in${st.walkins===1?'':'s'}`:''}</p>`}
+const ciGroupOpts=sel=>D.S.groups.map(g=>`<option value="${esc(g.id)}"${g.id===sel?' selected':''}>${esc(g.label)} (${esc(g.ages)})</option>`).join('');
+function ciOpenH(h){ciOpen={...h,reg:ciRegObj(h.reg||{people:[]}),emailOK:!!(h.reg&&h.reg.emailOK),editEmail:false,adding:false,paying:false,via:'Cash'};ciPick={};}
+const ciBal=h=>Math.max(0,regTotal(h.reg)-(+h.paid||0));
+function ciHouseholdHTML(){const h=ciOpen,picked=h.people.filter((n,i)=>ciPick[i]).length,bal=ciBal(h),em=h.reg.email||'';
+  const rows=h.people.map((n,i)=>h.done.includes(n)
+      ?`<div class="ci-row done"><span class="ci-box" aria-hidden="true">✓</span><span class="ci-name">${esc(n)}</span><span class="ci-tag">Checked in${(h.doneDay||{})[n]?' '+esc(h.doneDay[n]):''}</span><button class="linkbtn ci-undo" type="button" data-ci-undo="${i}">Undo</button></div>`
+      :`<button type="button" class="ci-row${ciPick[i]?' on':''}" data-ci-p="${i}" aria-pressed="${!!ciPick[i]}"><span class="ci-box" aria-hidden="true">${ciPick[i]?'✓':''}</span><span class="ci-name">${esc(n)}</span></button>`).join('');
+  const allDone=h.people.length&&h.people.every(n=>h.done.includes(n));
+  const emailBox=h.editEmail
+    ?`<form class="ci-inline" id="ciEmailForm" novalidate><label class="f">Email<input id="ciEmailIn" type="email" value="${esc(em)}" autocomplete="off" inputmode="email"></label><button class="btn primary" type="submit">Save</button><button class="btn" type="button" id="ciEmailCancel">Cancel</button></form>`
+    :h.emailOK?`<div class="ci-email ok"><span>✓ Email confirmed: <b>${esc(em)}</b></span><button class="linkbtn" type="button" id="ciEmailEdit">Change</button></div>`
+    :`<div class="ci-email"><span>${em?`Is this still your email? <b>${esc(em)}</b>`:'<b>No email on file.</b> Please add one.'}</span><span class="ci-email-btns">${em?'<button class="btn sm primary" type="button" id="ciEmailYes">Yes</button>':''}<button class="btn sm" type="button" id="ciEmailEdit">${em?'Change':'Add email'}</button></span></div>`;
+  const addBox=h.adding
+    ?`<form class="ci-inline" id="ciAddForm" novalidate><label class="f">Name<input id="ciAddName" placeholder="First and last name" autocomplete="off"></label><label class="f">Age group<select id="ciAddGroup">${ciGroupOpts(D.S.groups[0]&&D.S.groups[0].id)}</select></label><button class="btn primary" type="submit">Add</button><button class="btn" type="button" id="ciAddCancel">Cancel</button></form>`
+    :`<button class="linkbtn ci-addlink" type="button" id="ciAddOpen">+ Add someone to this household</button>`;
+  const zok=/^https:\/\/(www\.)?zeffy\.com\//i.test(D.S.zeffyUrl||'');
+  const payBox=bal>0.005
+    ?(h.paying
+      ?`<div class="ci-pay open"><div class="spread"><b>Pay now</b><button class="linkbtn" type="button" id="ciPayCancel">Cancel</button></div>
+        <div class="ci-via" role="group" aria-label="How they're paying">${['Cash','Cash App','Zelle','Card'].map(v=>`<button type="button" class="ci-day" data-ci-via="${v}" aria-pressed="${h.via===v}">${v}</button>`).join('')}</div>
+        ${h.via==='Card'
+          ?(zok?`<div class="ci-qr"><div id="ciQR" aria-label="QR code for the Zeffy payment page"></div><p>Have them scan this with their phone camera. It opens the payment page with the amount (<b>${money(bal)}</b>) and the steps to pay by card.</p><p class="muted small">Card payments go straight to Zeffy, so there’s nothing to record here.</p></div>`
+              :`<p class="muted" style="margin-top:10px">Card payments open once the Zeffy link is added in Setup.</p>`)
+          :`<form class="ci-inline" id="ciPayForm" novalidate><label class="f">Amount<input data-money id="ciPayAmt" type="number" step="0.01" min="0" inputmode="decimal" value="${bal.toFixed(2)}"></label><button class="btn primary" type="submit" id="ciPayGo">Record payment</button></form><p class="muted small" style="margin-top:6px">They get a receipt email right away.</p>`}
+        </div>`
+      :`<div class="ci-pay"><span>Still owes <b>${money(bal)}</b></span><button class="btn sm gold" type="button" id="ciPayOpen">Pay now</button></div>`)
+    :(+h.paid>0?`<div class="ci-pay paid">✓ Paid in full</div>`:'');
+  return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">${esc(h.household)} household</h3><span class="row" style="gap:14px">${ciRes&&ciRes.length>1?'<button class="linkbtn" type="button" id="ciToList">← Back to list</button>':''}<button class="linkbtn" type="button" id="ciBack">Start over</button></span></div>
+    ${emailBox}
+    ${allDone?`<p class="ci-alldone">Everyone in this household is already checked in.</p>`:''}
+    <div class="ci-list">${rows}</div>${addBox}${payBox}
+    ${allDone&&!picked?`<button class="btn ci-go" type="button" id="ciDone">Done</button>`:`<button class="btn ci-go" type="button" id="ciGo"${picked?'':' disabled'}>${picked?`Check in ${picked} ${picked===1?'person':'people'}`:'Tap the people who are here'}</button>`}`}
+function ciNewHTML(){const n=ciNew,st=($('rState')||{}).innerHTML||'';
+  return`<div class="spread" style="margin-top:4px"><h3 class="ci-hh">Register now</h3><button class="linkbtn" type="button" id="ciBack">← Start over</button></div>
+  <form id="ciNewForm" novalidate>
+    <div class="fields" style="margin-top:10px">
+      <label class="f">First name<input id="cnFirst" value="${esc(n.first)}" autocomplete="off" autocapitalize="words"></label>
+      <label class="f">Last name<input id="cnLast" value="${esc(n.last)}" autocomplete="off" autocapitalize="words"></label>
+      <label class="f">Email<input id="cnEmail" type="email" value="${esc(n.email)}" autocomplete="off" inputmode="email"></label>
+      <label class="f">Phone<input id="cnPhone" type="tel" value="${esc(n.phone)}" autocomplete="off" inputmode="tel"></label>
+      <label class="f">City<input id="cnCity" value="${esc(n.city)}" autocomplete="off"></label>
+      <label class="f">State<select id="cnState">${st}</select></label>
+    </div>
+    <div class="mini" style="margin:16px 0 8px">Who’s here? (include yourself)</div>
+    <div class="ci-party">${n.party.map((p,i)=>`<div class="ci-prow"><input data-cn-name="${i}" value="${esc(p.name)}" placeholder="First and last name" aria-label="Name" autocomplete="off"><select data-cn-group="${i}" aria-label="Age group">${ciGroupOpts(p.group)}</select>${n.party.length>1?`<button class="x" type="button" data-cn-del="${i}" aria-label="Remove">×</button>`:''}</div>`).join('')}</div>
+    <button class="linkbtn ci-addlink" type="button" id="cnAdd">+ Add another person</button>
+    <p class="err" id="cnErr" hidden></p>
+    <button class="btn ci-go" type="submit" id="cnGo">Register and continue</button>
+  </form>`}
+function ciCaptureNew(){if(!ciNew||!$('cnFirst'))return;['First','Last','Email','Phone','City','State'].forEach(k=>ciNew[k.toLowerCase()]=$('cn'+k).value.trim());
+  ciNew.party=ciNew.party.map((p,i)=>({name:($(`ciBox`).querySelector(`[data-cn-name="${i}"]`)||{}).value??p.name,group:($(`ciBox`).querySelector(`[data-cn-group="${i}"]`)||{}).value||p.group}))}
+function renderCheckin(){const box=$('ciBox');if(!box||$('tab-checkin').hidden&&!isAdmin())return;
+  if(LIVE&&!canCI()){
+    box.innerHTML=`<h2>Check-in</h2><p class="muted" style="margin-top:6px">Enter the check-in code from the committee.</p>
+      <form id="ciCodeForm" class="ci-find" novalidate><label class="f">Check-in code<input id="ciCodeIn" autocomplete="off" autocapitalize="off"></label><button class="btn gold" type="submit" id="ciCodeGo">Start</button></form>
+      <p class="err" id="ciCodeErr" hidden></p>`;
+    $('ciCodeForm').addEventListener('submit',e=>{e.preventDefault();const v=$('ciCodeIn').value.trim(),er=$('ciCodeErr');if(!v){er.textContent='Type the code.';er.hidden=false;return}
+      CI=v;busy($('ciCodeGo'),'Checking…',async()=>{try{const j=await ciApi('ciFind',{q:'',day:ciDay});ciStats=j.stats;try{sessionStorage.setItem('psr-ci',v)}catch(_){}renderCheckin()}
+        catch(err){CI='';const e2=$('ciCodeErr');if(e2){e2.textContent=err.message;e2.hidden=false}}}).catch(()=>{})});
+    return}
+  const days=['Friday','Saturday'].map(d=>`<button type="button" class="ci-day" data-ci-day="${d}" aria-pressed="${d===ciDay}">${d}</button>`).join('');
+  let body='';
+  if(ciWelcome)body=`<div class="ci-welcome"><div class="ci-wbig">Welcome, ${esc(ciWelcome.first)}!</div><p>${ciWelcome.n} ${ciWelcome.n===1?'person':'people'} checked in for ${ciWelcome.day}.</p></div>`;
+  else if(ciOpen)body=ciHouseholdHTML();
+  else if(ciView==='new')body=ciNewHTML();
+  else if(ciView==='find'){body=`<form class="ci-find" id="ciFindForm" novalidate><label class="f">Type a name (3 letters is enough)<input id="ciQ" value="${esc(ciQ)}" autocomplete="off" autocapitalize="words" enterkeyhint="search"></label><button class="btn gold" type="submit" id="ciFindGo">Find</button></form>`
+    +(isAdmin()&&!ciRes?`<button class="btn ci-scan" type="button" id="ciScan">Scan a ticket</button><div id="ciCam"></div>`:'')
+    +`<div id="ciResBox">${ciResHTML()}</div>`
+    +`<p style="margin-top:14px"><button class="linkbtn" type="button" id="ciBack">← Start over</button></p>`}
+  else body=`<div class="ci-start"><button type="button" class="ci-big" data-ci-go="find">Already registered<span>Find your name and check in</span></button><button type="button" class="ci-big alt" data-ci-go="new">Not registered yet<span>Sign up here and check in</span></button></div>`
+    +(isAdmin()&&D.regs.length?`<p style="margin-top:14px;text-align:center"><button class="linkbtn" type="button" id="ciPrintList">Print a paper check-in list (backup if the Wi-Fi goes down)</button></p>`:'');
+  box.innerHTML=`<div class="spread"><h2>Check-in</h2><div class="ci-days" role="group" aria-label="Day">${days}</div></div>${ciStatLine()}${body}`;
+  if(ciView==='new'&&$('cnState'))$('cnState').value=ciNew.state||'';
+  if(ciOpen&&ciOpen.paying&&ciOpen.via==='Card'&&$('ciQR'))ciQR($('ciQR'),payLink(ciOpen.code,ciBal(ciOpen)));
+}
+let qrLib=null;
+function ciQR(el,url){const draw=()=>{el.innerHTML='';new QRCode(el,{text:url,width:220,height:220,correctLevel:QRCode.CorrectLevel.M})};
+  if(window.QRCode)return draw();
+  qrLib=qrLib||new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+  qrLib.then(draw).catch(()=>{el.innerHTML=`<p class="muted small">Couldn’t draw the QR code. Open this link on their phone: ${esc(url)}</p>`})}
+// Scan a ticket's check-in code with this device's camera.
+function ciScanStop(){cancelAnimationFrame(ciRAF);if(ciStream){ciStream.getTracks().forEach(t=>t.stop());ciStream=null}const b=$('ciCam');if(b)b.innerHTML=''}
+function ciCodeFrom(txt){const m=String(txt||'').match(/#ci=([^&\s]+)/)||String(txt||'').match(/\b([A-Z]{2,5}-\d{2,5})\b/i);return m?decodeURIComponent(m[1]).toUpperCase():''}
+async function ciScanStart(){const box=$('ciCam');if(!box)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('This device can’t open the camera here. Type the name instead.');return}
+  box.innerHTML='<div class="ci-cam"><video playsinline muted></video><p>Point the camera at the ticket’s code. <button class="linkbtn" type="button" id="ciScanStop" style="color:#fff">Stop</button></p></div>';
+  $('ciScanStop').onclick=ciScanStop;
+  try{ciStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}})}catch(e){box.innerHTML='';toast('Camera not allowed. Type the name instead.');return}
+  const v=box.querySelector('video');v.srcObject=ciStream;await v.play().catch(()=>{});
+  let detect=null;
+  if('BarcodeDetector' in window){try{const bd=new BarcodeDetector({formats:['qr_code']});detect=async()=>{const r=await bd.detect(v);return r[0]&&r[0].rawValue}}catch(_){}}
+  if(!detect){if(!window.jsQR)await new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js';sc.onload=ok;sc.onerror=no;document.head.appendChild(sc)}).catch(()=>{});
+    if(!window.jsQR){ciScanStop();toast('Scanner couldn’t load. Type the name instead.');return}
+    const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
+    detect=async()=>{if(!v.videoWidth)return null;c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const r=jsQR(x.getImageData(0,0,c.width,c.height).data,c.width,c.height);return r&&r.data}}
+  const tick=async()=>{if(!ciStream)return;let txt=null;try{txt=await detect()}catch(_){}
+    const code=ciCodeFrom(txt);if(code){ciScanStop();ciQ='';await ciSearch(null,false,code);if(!ciOpen)toast('No registration found for '+code+'.');return}
+    ciRAF=requestAnimationFrame(tick)};
+  tick()}
+function ciResHTML(){return (ciRes?(ciRes.length
+      ?`<p class="muted" style="margin:10px 0 6px">${ciRes.length===1?'Tap to open:':'Tap your household ('+ciRes.length+'):'}</p><div class="ci-results">${ciRes.map((h,i)=>`<button type="button" class="ci-res" data-ci-open="${i}"><b>${esc(h.household)}</b><span>${esc(h.people.join(', '))}</span></button>`).join('')}</div>`
+      :`<div class="ci-none"><p><b>We couldn’t find “${esc(ciQ)}.”</b> Check the spelling, or try just the last name.</p><button class="btn" type="button" data-ci-go="new">Not registered? Register now</button></div>`):'')}
+async function ciSearch(btn,live,code){
+  const keep=()=>{const el=$('ciQ');if(live&&el){el.focus();const n=el.value.length;try{el.setSelectionRange(n,n)}catch(_){}}};
+  if(!LIVE){ciRes=code?ciLocalFind(code):ciLocalFind(ciQ);if(!live&&ciRes.length===1)ciOpenH(ciRes[0]);if(live&&$('ciResBox')){$('ciResBox').innerHTML=ciResHTML()}else renderCheckin();keep();return}
+  const run=async()=>{const q=ciQ;const j=await ciApi('ciFind',code?{code:code,day:ciDay}:{q:ciQ,day:ciDay});if(!code&&q!==ciQ)return;ciStats=j.stats;ciRes=j.results;if(!live&&ciRes.length===1)ciOpenH(ciRes[0]);if(live&&$('ciResBox')&&!ciOpen){$('ciResBox').innerHTML=ciResHTML();const sc=$('ciScan');if(sc)sc.hidden=true}else renderCheckin();keep()};
+  if(live||!btn){await run().catch(()=>{});return}
+  await busy(btn,'Finding…',run).catch(()=>{});
+}
+async function ciSave(btn){const h=ciOpen,names=h.people.filter((n,i)=>ciPick[i]),n=names.length;if(!n)return;
+  const first=String(names[0]).split(' ')[0];
+  const done=added=>{ciWelcome={first,n:added??n,day:ciDay};ciReset(true);renderCheckin();clearTimeout(ciTimer);
+    ciTimer=setTimeout(()=>{ciWelcome=null;renderCheckin()},4000)};
+  if(!LIVE){D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x,walkin:!!h.door,by:'Committee'})));
+    addFeed('ok',`Checked in ${n} ${n===1?'person':'people'} from the ${h.household} household for ${ciDay}.`);save();ciStats=null;done();renderCiOverview();return}
+  await busy(btn,'Checking in…',async()=>{const j=await ciApi('ciSave',{code:h.code,household:h.household,day:ciDay,names,walkin:!!h.door});ciStats=j.stats;
+    if(isAdmin())D.checkins.push(...names.map((x,i)=>({id:Date.now()+i,day:ciDay,code:h.code,household:h.household,name:x,walkin:!!h.door})));done(j.added);renderCiOverview()}).catch(()=>{});
+}
+async function ciRegister(btn){ciCaptureNew();const n=ciNew,er=$('cnErr');
+  const party=n.party.filter(p=>p.name.trim()).map(p=>({name:p.name.trim(),group:p.group}));
+  if(!party.length&&n.first&&n.last)party.push({name:`${n.first} ${n.last}`,group:D.S.groups[0].id});
+  const msg=!n.first||!n.last?'Add their first and last name.':!okEmail(n.email)?'Add an email so we can send their confirmation.':!party.length?'Add at least one person who is here.':'';
+  if(msg){er.textContent=msg;er.hidden=false;return}
+  const reg={date:TODAY,first:n.first,last:n.last,email:n.email,emailOK:TODAY,phone:n.phone,city:n.city,state:n.state,payer:'',people:party,shirts:sh({}),addons:{},donation:0};
+  const open=code=>{reg.code=code;const h={code,household:regName(reg),people:party.map(p=>p.name),done:[],reg,paid:0};ciView='start';ciNew=null;ciOpenH(h);ciOpen.emailOK=true;ciOpen.door=true;party.forEach((p,i)=>ciPick[i]=true);renderCheckin();toast(`Registered ${regName(reg)} (${code}). Confirmation emailed.`)};
+  if(!LIVE){const k=D.regs.reduce((m,r)=>Math.max(m,parseInt(r.code.slice(4))||0),0)+1;const code='PSR-'+String(k).padStart(3,'0');reg.code=code;D.regs.push(reg);
+    addFeed('ok',`Registered ${regName(reg)} (${code}) at check-in: ${party.length} ${party.length===1?'person':'people'}, ${money(regTotal(reg))}.`);save();open(code);renderAll();return}
+  await busy(btn,'Registering…',async()=>{const j=await api('register',{reg,total:regTotal(reg),lines:ciLines(reg)});open(j.code);liveSync()}).catch(()=>{});
+}
+$('tab-checkin').addEventListener('click',e=>{const t=e.target;
+  const g=t.closest('[data-ci-go]');if(g){ciView=g.dataset.ciGo;ciRes=null;ciOpen=null;if(ciView==='new'){const w=ciQ.split(' ');ciNew={first:w[0]||'',last:w.slice(1).join(' '),email:'',phone:'',city:'',state:'',party:[{name:ciQ,group:D.S.groups[0].id}]}}
+    renderCheckin();const f=ciView==='new'?$('cnFirst'):$('ciQ');if(f)f.focus();return}
+  const d=t.closest('[data-ci-day]');if(d){ciDay=d.dataset.ciDay;if(ciOpen){const q=ciQ;ciOpen=null;ciView='find';ciQ=q;if(q)ciSearch();else renderCheckin()}else renderCheckin();return}
+  const o=t.closest('[data-ci-open]');if(o){ciScanStop();ciOpenH(ciRes[+o.dataset.ciOpen]);renderCheckin();return}
+  if(t.closest('#ciToList')){ciOpen=null;ciPick={};ciView='find';renderCheckin();return}
+  if(t.closest('#ciScan')){ciScanStart();return}
+  const u=t.closest('[data-ci-undo]');if(u){const h=ciOpen,name=h.people[+u.dataset.ciUndo];
+    if(!LIVE){h.done=h.done.filter(n=>n!==name);renderCheckin();toast('Undid check-in for '+name+'.');return}
+    u.disabled=true;ciApi('ciUndo',{code:h.code,name:name}).then(j=>{if(j.stats)ciStats=j.stats;h.done=h.done.filter(n=>n!==name);if(h.doneDay)delete h.doneDay[name];renderCheckin();toast('Undid check-in for '+name+'.')}).catch(e=>{u.disabled=false;toast(e.message)});return}
+  const p=t.closest('[data-ci-p]');if(p){const i=+p.dataset.ciP;ciPick[i]=!ciPick[i];renderCheckin();return}
+  const v=t.closest('[data-ci-via]');if(v){ciOpen.via=v.dataset.ciVia;renderCheckin();return}
+  if(t.closest('[data-cn-del]')){ciCaptureNew();ciNew.party.splice(+t.closest('[data-cn-del]').dataset.cnDel,1);renderCheckin();return}
+  if(t.closest('#cnAdd')){ciCaptureNew();ciNew.party.push({name:'',group:D.S.groups[0].id});renderCheckin();const ins=$('ciBox').querySelectorAll('[data-cn-name]');ins[ins.length-1].focus();return}
+  if(t.closest('#ciBack')){clearTimeout(ciTimer);ciReset();renderCheckin();return}
+  if(t.closest('#ciEmailYes')){const h=ciOpen,fin=()=>{h.emailOK=true;h.reg.emailOK=TODAY;renderCheckin()};
+    if(!LIVE){const r=findReg(h.code);if(r){r.emailOK=TODAY;save()}fin();return}
+    busy(t.closest('#ciEmailYes'),'Saving…',async()=>{await ciApi('ciEmail',{code:h.code,email:h.reg.email});fin();liveSync()}).catch(()=>{});return}
+  if(t.closest('#ciEmailEdit')){ciOpen.editEmail=true;renderCheckin();const i=$('ciEmailIn');if(i){i.focus();i.select()}return}
+  if(t.closest('#ciEmailCancel')){ciOpen.editEmail=false;renderCheckin();return}
+  if(t.closest('#ciAddOpen')){ciOpen.adding=true;renderCheckin();$('ciAddName').focus();return}
+  if(t.closest('#ciAddCancel')){ciOpen.adding=false;renderCheckin();return}
+  if(t.closest('#ciPayOpen')){ciOpen.paying=true;renderCheckin();return}
+  if(t.closest('#ciPayCancel')){ciOpen.paying=false;renderCheckin();return}
+  if(t.closest('#ciGo')){ciSave($('ciGo'));return}
+  if(t.closest('#ciDone')){clearTimeout(ciTimer);ciReset();renderCheckin();window.scrollTo({top:0});return}
+});
+$('tab-checkin').addEventListener('input',e=>{const el=e.target;
+  if(['cnFirst','cnLast','cnCity','ciAddName','ciQ'].includes(el.id)||el.dataset.cnName!==undefined){const pos=el.selectionStart,nv=titleCase(el.value);if(nv!==el.value){el.value=nv;try{el.setSelectionRange(pos,pos)}catch(_){}}}
+  if(el.id==='cnPhone'){const nv=fmtPhone(el.value);if(nv!==el.value)el.value=nv}
+  if(el.id==='ciQ'){ciQ=el.value.trim();clearTimeout(ciTimer);
+    if(ciQ.length>=3)ciTimer=setTimeout(()=>ciSearch(null,true),350);
+    else if(ciRes){ciRes=null;$('ciResBox').innerHTML='';const sc=$('ciScan');if(sc)sc.hidden=false}}});
+$('tab-checkin').addEventListener('submit',e=>{e.preventDefault();const id=e.target.id,h=ciOpen;
+  if(id==='ciFindForm'){ciQ=$('ciQ').value.trim();if(ciQ)ciSearch($('ciFindGo'));return}
+  if(id==='ciNewForm'){ciRegister($('cnGo'));return}
+  if(id==='ciEmailForm'){const em=$('ciEmailIn').value.trim();if(!okEmail(em)){toast('That email address doesn’t look right.');return}
+    const fin=()=>{h.reg.email=em;h.reg.emailOK=TODAY;h.emailOK=true;h.editEmail=false;renderCheckin();toast('Email saved.')};
+    if(!LIVE){const r=findReg(h.code);if(r){if(r.email!==em)addFeed('info',`Updated ${regName(r)}'s email at check-in.`);r.email=em;r.emailOK=TODAY;save()}fin();return}
+    busy(e.target.querySelector('[type=submit]'),'Saving…',async()=>{await ciApi('ciEmail',{code:h.code,email:em});fin();liveSync()}).catch(()=>{});return}
+  if(id==='ciAddForm'){const name=$('ciAddName').value.trim(),group=$('ciAddGroup').value;if(!name){toast('Type the person’s name.');return}
+    const reg2={...h.reg,people:[...h.reg.people,{name,group}]};
+    const fin=()=>{h.reg=reg2;h.people=[...h.people,name];ciPick[h.people.length-1]=true;h.adding=false;renderCheckin();toast(`Added ${name} to the household.`)};
+    if(!LIVE){const r=findReg(h.code);if(r){r.people.push({name,group});addFeed('info',`Added ${name} to ${regName(r)}'s household at check-in.`);save()}fin();renderAll();return}
+    busy(e.target.querySelector('[type=submit]'),'Adding…',async()=>{await ciApi('ciAdd',{code:h.code,person:{name,group},total:regTotal(reg2)});fin();liveSync()}).catch(()=>{});return}
+  if(id==='ciPayForm'){const amt=Math.round((parseFloat($('ciPayAmt').value)||0)*100)/100;if(!(amt>0)){toast('Type the amount they paid.');return}
+    const fin=(paid,emailed)=>{h.paid=paid;h.paying=false;renderCheckin();toast(`${money(amt)} ${h.via} recorded.${emailed?' Receipt emailed.':''}`)};
+    if(!LIVE){D.pays.push({id:Date.now(),date:TODAY,from:h.household,via:h.via,memo:'At check-in',amount:amt,code:h.code,method:'At check-in'});
+      addFeed('ok',`Took ${money(amt)} (${h.via}) from ${h.household} (${h.code}) at check-in.`);save();fin(paidFor(h.code),okEmail(h.reg.email));renderAll();return}
+    busy($('ciPayGo'),'Saving…',async()=>{const j=await ciApi('ciPay',{code:h.code,amount:amt,via:h.via,total:regTotal(h.reg),lines:ciLines(h.reg)});fin(j.paid,j.emailed);liveSync()}).catch(()=>{});return}
+});
+function renderCiOverview(){const el=$('ciOverview');if(!el)return;const st=ciLocalStats();
+  const reg=D.regs.reduce((s,r)=>s+r.people.length,0);
+  el.innerHTML=`<div class="panel-head"><div><h2>Check-in</h2><p class="muted small">Who actually came, compared with who registered.</p></div><button class="btn sm" type="button" id="ciOpenTab">Open check-in</button></div>
+    <div class="ci-kpis"><div><b>${reg}</b><span>Registered</span></div><div><b>${st.total}</b><span>Checked in</span></div><div><b>${st.Friday}</b><span>Arrived Friday</span></div><div><b>${st.Saturday}</b><span>Arrived Saturday</span></div><div><b>${st.walkins}</b><span>Walk-ins</span></div></div>`;
+  $('ciOpenTab').onclick=()=>{openTab('checkin');window.scrollTo({top:0})};
+}
+function renderAlerts(){const el=$('alerts');if(!el)return;const a=D.alerts||[];
+  el.innerHTML=a.length?`<div class="panel alertbox"><h2>Things to check</h2><ul>${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p class="muted small">The daily check also emails these to the reunion account.</p></div>`:''}
+/* reminders to households with a balance */
+let remArm=0;
+function owing(){return D.regs.filter(r=>balOf(r)>0.005&&/^\S+@\S+\.\S+$/.test(r.email||''))}
+function renderRemind(){const b=$('remindBtn');if(!b)return;const n=owing().length;b.hidden=!isAdmin();b.disabled=!n;if(Date.now()-remArm>4000)b.textContent=n?`Email reminders (${n})`:'No balances to remind'}
+$('remindBtn').addEventListener('click',e=>{const b=e.target,list=owing();if(!list.length)return;
+  if(Date.now()-remArm>4000){remArm=Date.now();b.textContent=`Tap again to email ${list.length} ${list.length===1?'family':'families'}`;setTimeout(()=>{remArm=0;renderRemind()},4000);return}
+  remArm=0;const items=list.map(r=>({to:r.email,code:r.code,reg:{first:r.first,last:r.last,email:r.email,people:r.people},lines:regLines(r).map(l=>({label:l.label,q:l.q,a:l.a,don:!!l.don})),total:regTotal(r),paid:paidFor(r.code)}));
+  if(!LIVE){addFeed('ok',`Emailed a balance reminder to ${list.length} ${list.length===1?'household':'households'}.`);save();renderAll();toast(`Reminder sent to ${list.length} ${list.length===1?'family':'families'}.`);return}
+  busy(b,'Sending…',async()=>{const j=await api('sendReminders',{items},{k:'ok',x:`Emailed a balance reminder to ${list.length} ${list.length===1?'household':'households'}.`});
+    await refreshLive();renderAll();toast(j.queued?`Sent ${j.sent}. ${j.queued} will go out when the daily email limit resets.`:`Reminder sent to ${j.sent} ${j.sent===1?'family':'families'}.`)}).catch(()=>{});
+});
+$('ciLinkCopy').addEventListener('click',e=>copy(helperLink(),e.target));
+
+function renderAll(settingsChanged){
+  renderHero();
+  if(settingsChanged){
+    F.people.forEach(p=>{if(p.group&&!grp(p.group))p.group=''});
+    renderPeople();renderAddonFields();
+  }
+  renderHotel();renderCommit();renderSummary();renderOverview();renderPayments();renderExpenses();renderLedger();renderCheckin();renderCiOverview();renderAlerts();renderRemind();
+  applyMode();gateReg();
+}
+function applyMode(){const adm=isAdmin();
+  $('demoStrip').hidden=LIVE;$('demoPayPanel').hidden=LIVE;$('demoCardPanel').hidden=LIVE;
+  $('tabsNav').hidden=LIVE&&!adm;$('adminBar').hidden=!(LIVE&&adm);$('foot').hidden=!LIVE||adm;
+  const sl=$('sheetLink');sl.hidden=!(LIVE&&adm&&D.sheetUrl);if(D.sheetUrl)sl.href=D.sheetUrl;
+  const t=isTest(),tb=$('testBtn');$('testStrip').hidden=!t;$('testClear').hidden=!(t&&adm);
+  tb.hidden=!LIVE||D.S.showTest===false;tb.innerHTML='Test mode <span class="sw'+(t?' on':'')+'"><i></i></span> <b>'+(t?'On':'Off')+'</b>';tb.setAttribute('aria-pressed',String(t));tb.title=t?'Click to turn test mode off':'Click to turn test mode on';tb.classList.toggle('testing',t);
+  // Test PIN: Test mode only, no Setup, no committee contributions.
+  const v=isViewer();if(v){tb.hidden=true;$('testClear').hidden=true}
+  $('testOff').hidden=v;$('contribPanel').hidden=v;document.body.classList.toggle('viewer',v);
+  document.querySelectorAll('#tab-setup input,#tab-setup select,#tab-setup textarea,#tab-setup button').forEach(el=>{if(v&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!v&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
+  ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
+  const vn=$('setupViewNote');if(vn)vn.hidden=!v;
+}
+$('testBtn').addEventListener('click',()=>setTest(!isTest()));
+$('testOff').addEventListener('click',()=>setTest(false));
+let clearArm=0;$('testClear').addEventListener('click',e=>{const b=e.target;
+  if(Date.now()-clearArm>4000){clearArm=Date.now();b.textContent='Tap again to clear';setTimeout(()=>{if(b.textContent==='Tap again to clear')b.textContent='Clear test data'},4000);return}
+  clearArm=0;busy(b,'Clearing…',async()=>{await api('clearTest');await refreshLive();renderAll();toast('Test data cleared.')}).then(()=>b.textContent='Clear test data').catch(()=>{b.textContent='Clear test data'})});
+function signOut(silent){PIN='';D.role='';try{sessionStorage.removeItem('psr-pin')}catch(e){}
+  D.regs=[];D.pays=[];D.exps=[];D.contribs=[];D.feed=[];D.checkins=[];D.alerts=[];openTab('register');renderAll();if(!silent)toast('Signed out.')}
+$('signOut').addEventListener('click',()=>signOut());
+$('refreshBtn').addEventListener('click',e=>busy(e.target,'Refreshing…',async()=>{await refreshLive();renderSetup();renderAll(true);toast('Up to date.')}).catch(()=>{}));
+$('adminLink').addEventListener('click',()=>{$('pinForm').hidden=false;$('adminLink').hidden=true;$('pinErr').hidden=true;setTimeout(()=>$('pinIn').focus(),50)});
+$('pinCancel').addEventListener('click',()=>{$('pinForm').hidden=true;$('adminLink').hidden=false;$('pinIn').value=''});
+$('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn').value.trim(),er=$('pinErr');
+  if(!pin){er.textContent='Enter the committee PIN.';er.hidden=false;return}
+  busy($('pinGo'),'Checking…',async()=>{PIN=pin;
+    try{await loadAll()}catch(err){PIN='';er.textContent=/sign in|PIN/i.test(err.message)?'That PIN is not right.':err.message;er.hidden=false;return}
+    try{sessionStorage.setItem('psr-pin',pin)}catch(_){}
+    $('pinIn').value='';$('pinForm').hidden=true;$('adminLink').hidden=false;renderSetup();renderPeople();renderAddonFields();renderAll();openTab('overview');window.scrollTo({top:0});toast('Signed in.')}).catch(()=>{});
+});
+loadDraft();renderSetup();renderPeople();renderAddonFields();renderAll();
+openTab(PAYQ||PAIDQ?'register':(location.hash||'').slice(1));showPayPage();showPaidPage();
+if(LIVE){
+  if(location.hash==='#committee'&&!isAdmin())$('adminLink').click();
+  refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();if(PAYQ||PAIDQ){openTab('register');showPayPage();showPaidPage()}else openTab((location.hash||'').slice(1))})
+    .catch(()=>{D.loadErr=true;if(PIN){signOut(true)}renderAll()});
+}
+})();
+</script>
