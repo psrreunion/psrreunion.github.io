@@ -138,7 +138,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 .side-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);align-self:start;display:flex;flex-direction:column;gap:18px;min-width:0}
 .wk-card{border-top:4px solid var(--gold,#e0b22a)}.wk-card h2{margin-bottom:10px}
 .wk-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}.wk-row:first-of-type{border-top:0}
-.wk-day{background:var(--green);color:#fff;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
+.wk-items{display:grid;gap:4px}.wk-day{background:var(--green);color:#fff;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
 .firsts li{padding:6px 0;border-top:1px solid var(--line);list-style:none}.firsts li:first-child{border-top:0}.firsts ol{padding:0;margin:0}
 @media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}.person .food{grid-column:1/2}}
 .x{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:18px;line-height:1}
@@ -713,7 +713,7 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
 
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
-  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save. <span class="small" style="opacity:.7">Page version: Nov 13, 7:10 PM</span></p>
+  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save. <span class="small" style="opacity:.7">Page version: Nov 13, 9:30 PM</span></p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="setcols">
     <div class="setcol">
@@ -722,17 +722,19 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
         <div class="stack" style="gap:12px">
           <div class="fields">
             <label class="f">Which reunion<input id="sEdition" data-k="edition"></label>
-            <label class="f">Most people your venue can hold<input id="sCapacity" data-k="capacity" type="number" min="1" placeholder="Leave blank for no limit"></label>
+            <label class="f">Venue’s maximum capacity<input id="sCapacity" data-k="capacity" type="number" min="1" placeholder="Leave blank for no limit"></label>
           </div>
-          <p class="tip">This fills the bar families see at the top of the registration page. It can also stop registration once that many people sign up (turn that on under Registration &amp; payment). Leave it blank if there’s no limit.</p>
+          <p class="tip">Families see a bar at the top of the page showing how many seats are left. To stop registration when it’s full, turn that on under Registration &amp; payment. Leave it blank if there’s no limit.</p>
           <label class="f">Theme<input id="sTheme" data-k="theme"></label>
           <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
           <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
           <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
           <label class="f">When<input id="sWhen" data-k="when"></label>
           <label class="f">Hosted by<input id="sHost" data-k="host"></label>
-          <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="4" placeholder="Friday: Meet and greet, 6–9 PM&#10;Saturday: Program and banquet&#10;Sunday: Church and farewell"></textarea></label>
-          <p class="tip">One line per day, like "Friday: Meet and greet." Shows next to the registration form. Leave blank to hide it.</p>
+          <label class="f">Reunion weekend schedule<textarea id="sSchedule" data-k="schedule" rows="7" placeholder="Friday&#10;Meet and greet, 6–9 PM&#10;Saturday&#10;Picnic, 12–3 PM&#10;Children's activities&#10;Program and banquet, 6 PM&#10;Sunday&#10;Church and farewell"></textarea></label>
+          <p class="tip">Type each day on its own line, then each event on the lines under it. Families see this next to the registration form. Leave it blank if you don’t want it to show.</p>
+          <div><button class="btn sm" type="button" id="schedEx">See example</button></div>
+          <div id="schedExBox" class="card wk-card" hidden style="padding:18px"></div>
           <label class="check"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask each person about food needs (vegetarian, vegan, no pork, and more)</label>
           <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder in the last 2 weeks</label>
         </div>
@@ -757,16 +759,16 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
         <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment, for example Cash App, cash, Zelle or checks.</p></div></div>
         <div class="stack" style="gap:12px">
           <label class="toggle"><input type="checkbox" role="switch" id="sRegOpen" data-k="regOpen"><span>Registration: <span class="st" id="sRegOpenTxt">Closed</span></span></label>
-          <p class="tip">When this is Closed, families see "Registration opens soon." Opening registration turns Test mode off for good.</p>
+          <p class="tip">When this is Closed, families see "Registration opens soon." Once the first family registers, Test mode turns off for good.</p>
           <div class="fields">
             <label class="f">Open registration on this date<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
             <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
           </div>
           <p class="tip">Or leave the date blank and switch registration to Open when you’re ready. Registration stays open through the last reunion day, so people can still sign up at the door.</p>
           <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
-          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when the venue is full (uses "Most people your venue can hold")</label>
+          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when the venue is full (uses “Venue’s maximum capacity”)</label>
           <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
-          <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
+          <p class="tip">Paste your Zeffy link here. Until it’s filled in, families see "Online payment opens soon" after they register.</p>
           <label class="toggle"><input type="checkbox" role="switch" id="sShowTest" data-k="showTest"><span>Show Test mode button: <span class="st" id="sShowTestTxt">Off</span></span></label>
           <p class="tip" id="testTip">Test mode lets the hosting committee practice without touching real records. Anything entered goes to the red Test tabs in the sheet. Turn this on to show the Test mode button on the home screen, or off to hide it. When this is off, everything you enter goes into the real reunion records.</p>
         </div>
@@ -776,18 +778,18 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
         <div class="stack" style="gap:12px">
           <label class="f">Check-in code for helpers<input id="sCiCode" readonly placeholder="Made automatically" autocomplete="off" style="font-family:var(--f-mono);font-weight:700;letter-spacing:.08em"></label>
           <p class="tip" id="ciStatus" hidden style="border-left-color:var(--bad);background:var(--bad-bg);color:var(--bad)!important"></p>
-          <p class="tip">Helpers open <b id="ciLinkTxt"></b> and type this code to check people in. They can’t see money or the hosting committee pages. A new code is made automatically each year, and it stops working the day after the last reunion day.</p>
+          <p class="tip">Click <b>Copy helper link</b> and text it to your helpers. They open it on a phone, tablet or laptop and type the code above to check people in. They can’t see money or the hosting committee pages. A new code is made automatically each year, and it stops working the day after the last reunion day.<span id="ciLinkTxt" hidden></span></p>
           <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
           <div class="f" style="display:grid;gap:8px"><span>Add an email where you want alerts to go</span><div class="stack" id="alertRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="alertAdd">+ Add another email</button></div></div>
           <p class="tip">We’ll email you if something looks wrong, like a missed payment or an email that didn’t send.</p>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-head"><div><h2>Setting up emails to and from families</h2><p class="muted small">This is used to send families things like Save the Dates and confirmations, and to get their replies. The reunion name, dates and hotel are added to each email automatically.</p></div></div>
+        <div class="panel-head"><div><h2>Set up how you send and receive emails with families</h2><p class="muted small">This is used to send families things like Save the Dates and email confirmations, and lets them reply to you. The reunion name, dates and hotel are added to each email automatically.</p></div></div>
         <div class="stack" style="gap:12px">
           <label class="f">Sender name families will see<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
-          <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
-          <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
+          <label class="f">Your email (where families’ replies come)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+          <p class="tip">When a family answers one of your emails, their answer comes here.</p>
           <label class="f">What families get after they register<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Email with a check-in pass to show at the door</option><option value="regular">Simple thank-you email</option></select></label>
           <div><button class="btn sm" type="button" id="exBtn">See example</button></div>
           <div id="exBox" hidden></div>
@@ -813,18 +815,18 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
       <label class="f">Scholarship fund starting balance<input data-money id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
     </div>
     <div class="mini" style="margin-bottom:8px">Venue and catering costs</div>
-    <p class="tip" style="margin-bottom:14px!important">If your venue or caterer has a minimum, service charge or tax, enter it here. If not, put 0.</p>
+    <p class="tip" style="margin-bottom:14px!important">Enter what your venue or caterer charges for food, plus any service charge or tax. If something doesn’t apply, put 0.</p>
     <div class="fields" style="margin-bottom:12px">
-      <label class="f">Catering minimum<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
+      <label class="f">Catering cost<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
       <label class="f">Registration fee per person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
       <label class="f">Hotel/venue deposit<input data-money id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
       <label class="f">Service charge (%)<input id="sSvc" data-k="serviceCharge" type="number" step="0.01"></label>
       <label class="f">Sales tax (%)<input id="sTax" data-k="salesTax" type="number" step="0.01"></label>
     </div>
     <p class="tip" style="margin-bottom:12px!important">Your registration fees are based on the total cost of the reunion. The more people who register, the less each person has to pay.</p>
-    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with your venue or caterer)</label>
+    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering cost (confirm with your venue or caterer)</label>
     <div class="mini" style="margin-bottom:8px">Planned budget by category</div>
-    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent. Catering and Venue &amp; deposits fill in from the boxes above.</p>
+    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent. Catering and Hotel/venue deposit fill in automatically from the boxes above.</p>
     <div class="fields" id="setBudgets"></div>
   </div>
 </section>
@@ -843,7 +845,7 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
 (function(){
 const GUEST='Guest spending at hotel';
 const realExps=()=>D.exps.filter(e=>e.category!==GUEST);
-const catName=c=>c==='Hotel catering & bar'?'Catering':c;
+const catName=c=>c==='Hotel catering & bar'?'Catering':c==='Venue & deposits'?'Hotel/venue deposit':c;
 const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
 const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
 const FOODS=['','Vegetarian','Vegan','No pork','Diabetic','Gluten-free','Food allergy'];
@@ -1119,10 +1121,10 @@ function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,dep=d
   const steps=[75,100,125,150,200];
   const foodPer=+S.foodPer||0,paying=D.regs.reduce((s,r)=>s+r.people.filter(p=>{const g=grp(p.group);return g&&((+g.early||0)>0||(+g.late||0)>0)}).length,0);
   const need=min*f,foodIn=paying*foodPer,still=Math.max(0,need-foodIn),more=foodPer?Math.ceil(still/foodPer):0;
-  $('commit').innerHTML=`<div class="panel-head"><div><h2>Venue and catering costs</h2><p class="muted small">Your venue or caterer's food and drink minimum is ${money0(min)}.${(+S.serviceCharge||0)||(+S.salesTax||0)?` With the ${+S.serviceCharge||0}% service charge and ${+S.salesTax||0}% tax, the real bill is about <b>${money0(min*f)}</b>.`:''}</p></div>
+  $('commit').innerHTML=`<div class="panel-head"><div><h2>Venue and catering costs</h2><p class="muted small">Your catering cost is ${money0(min)}.${(+S.serviceCharge||0)||(+S.salesTax||0)?` With the ${+S.serviceCharge||0}% service charge and ${+S.salesTax||0}% tax, the real bill is about <b>${money0(min*f)}</b>.`:''}</p></div>
     <span class="chip ${still<=0?'ok':'warn'}">${still<=0?'Covered by registrations':money0(still)+' still needed'}</span></div>
   <div class="kpis" style="margin-bottom:16px">
-    <div class="kpi"><div class="l">Counted toward ${money0(min)}</div><div class="v">${money(counted)}</div><div class="h">Food and drinks billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
+    <div class="kpi"><div class="l">Counted toward catering</div><div class="v">${money(counted)}</div><div class="h">Food and drinks billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
     <div class="kpi"><div class="l">Still needed from registrations</div><div class="v">${money(still)}</div><div class="h">${paying} ${paying===1?'person':'people'} registered${still>0&&foodPer?` · about ${more} more needed`:' · covered ✓'}</div></div>
     <div class="kpi"><div class="l">Catering bills paid</div><div class="v">${money(billed)}</div><div class="h">Charges included</div></div>
     <div class="kpi"><div class="l">Hotel/venue deposit</div><div class="v">${money(dep)}</div><div class="h">${(()=>{const raised=D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0),gap=dep-raised;return gap>0?`<b style="color:var(--red)">−${money0(gap)} to go</b>`:'<b style="color:var(--ok)">Raised ✓</b>'})()}<br>${dep&&depPaid>=dep?'<b style="color:var(--ok)">Paid ✓</b>':depPaid>0?`${money0(depPaid)} of ${money0(dep)} paid`:'Not yet paid'}</div></div>
@@ -1379,8 +1381,17 @@ function regMsg(st){const S=D.S;
 function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
   let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
   eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&regState()==='open'&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
-  const rows=String(S.schedule||'').split('\n').map(l=>l.trim()).filter(Boolean).map(l=>{const i=l.indexOf(':');return i>0&&i<16?[l.slice(0,i).trim(),l.slice(i+1).trim()]:['',l]});
-  wk.hidden=!rows.length;wk.innerHTML=rows.length?`<h2>Reunion weekend</h2>${rows.map(([d,t])=>`<div class="wk-row">${d?`<span class="wk-day">${esc(d)}</span>`:'<span></span>'}<span>${esc(t)}</span></div>`).join('')}`:''}
+  const sd=parseSched(S.schedule);wk.hidden=!sd.length;wk.innerHTML=schedHTML(sd)}
+// Schedule text: a day on its own line (or "Day:"), then one event per line under it. "Friday: Meet and greet" also works.
+const WKDAY=/^(mon|tues|wednes|thurs|fri|satur|sun)day\b/i;
+function parseSched(txt){const out=[];let cur=null;
+  String(txt||'').split('\n').map(l=>l.trim()).filter(Boolean).forEach(l=>{
+    const i=l.indexOf(':'),head=i>0&&i<24?l.slice(0,i).trim():'',rest=head?l.slice(i+1).trim():'';
+    if(head&&WKDAY.test(head)){cur={day:head,items:[]};out.push(cur);if(rest)cur.items.push(rest);return}
+    if(!head&&WKDAY.test(l)&&l.length<30&&!/,/.test(l)){cur={day:l.replace(/:$/,''),items:[]};out.push(cur);return}
+    if(!cur){cur={day:'',items:[]};out.push(cur)}cur.items.push(l)});
+  return out}
+function schedHTML(days){return days.length?`<h2>Reunion weekend</h2>${days.map(d=>`<div class="wk-row">${d.day?`<span class="wk-day">${esc(d.day)}</span>`:'<span></span>'}<div class="wk-items">${d.items.map(t=>`<div>${esc(t)}</div>`).join('')||'<div class="muted">Details coming soon</div>'}</div></div>`).join('')}`:''}
 let previewing=false;
 function gateReg(){renderExtrasReg();const st=regState(),closed=previewing?st!=='open':LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;return}
@@ -1713,12 +1724,34 @@ function readAlertRows(){D.S.alertEmails=[...document.querySelectorAll('[data-al
 function setupExtras(){const S=D.S;
   const ro=$('sRegOpenTxt');if(ro)ro.textContent=S.regOpen?'Open':'Closed';
   const tt=$('sShowTestTxt');if(tt)tt.textContent=S.showTest===false?'Off':'On';
-  const ts=$('sShowTest');if(ts&&!ts.dataset.vd)ts.disabled=!!S.testRetired;
-  const tip=$('testTip');if(tip&&S.testRetired)tip.textContent='Test mode was turned off for good when registration opened. Everything you enter now goes into the real reunion records.';
+  const ro2=$('sRegOpen');if(ro2)ro2.checked=!!S.regOpen;
+  const ts=$('sShowTest');if(ts){ts.checked=S.showTest!==false&&!S.testDone;if(!isViewer())ts.disabled=!!S.testDone}
+  if(tt)tt.textContent=ts&&ts.checked?'On':'Off';
+  const tip=$('testTip');if(tip&&S.testDone)tip.textContent='Test mode turned off for good when the first family registered. Everything you enter now goes into the real reunion records.';
   const t=isTest(),bt=$('balTestTip');if(bt)bt.hidden=!t;['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l&&!isViewer())l.hidden=t});
 }
-const EX_HTML={ticket:`<div class="ex-shot"><div style="border:2px dashed var(--green-2);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px"><div class="mini">Check-in pass</div><div style="font:700 22px var(--f-mono);margin:6px 0">PSR-1042</div><div>The Smith family · 4 people</div><div class="muted small">Show this at check-in. No pass? Just tell us your name.</div></div><b>Thank you, Jane!</b><br>You’re registered. Who’s coming, what you ordered, your balance and the hotel are listed below the pass.</div>`,
- regular:`<div class="ex-shot"><b>Thank you, Jane!</b><br>You’re registered for the reunion. Your confirmation number is <b>PSR-1042</b>.<br><br><b>Who’s coming:</b> Jane, John, Amy, Ben Smith<br><b>Balance:</b> $0.00, paid in full<br><br>Hotel details and a booking reminder are at the bottom.</div>`};
+function exEmail(style){const S=D.S,G='#1c5a34',MUTED='#5b6660',LINE='#e3e6e1',GOLD='#e0b22a',ticket=style!=='regular';
+  const ppl=['Jon Davis','Jane Davis','Drew Davis'],code='PSR-001',ed=S.edition?S.edition+' ':'';
+  const ad=(S.groups||[])[0]||{label:'Adult',early:125};const price=+(ad.early||ad.late||125),total=price*ppl.length;
+  const sec=t=>`<h3 style="margin:22px 0 8px;font-size:14px;color:${G};text-transform:uppercase;letter-spacing:.06em">${t}</h3>`;
+  const row=(a,b,bold)=>`<tr><td style="padding:6px 0;border-bottom:1px solid ${LINE}${bold?';font-weight:bold':''}">${a}</td><td style="padding:6px 0;border-bottom:1px solid ${LINE};text-align:right${bold?';font-weight:bold':''}">${b}</td></tr>`;
+  const lab=t=>`<div style="font-size:11px;color:${MUTED};letter-spacing:.1em;text-transform:uppercase">${t}</div>`;
+  const when=String(S.when||'').split('·').map(x=>x.trim()).filter(Boolean);
+  const qr='https://quickchart.io/qr?size=240&margin=1&text='+encodeURIComponent(location.origin+location.pathname+'#ci='+code);
+  let h=`<p style="margin:0 0 12px">Hi Jane,</p><p style="margin:0 0 16px">Thank you for registering for the ${esc(ed)}Porter-Sanford-Reid Family Reunion!</p>`;
+  if(!ticket)h+=`<div style="background:#f3f7f2;border:1px solid #cfe0d2;border-radius:10px;padding:14px 16px;text-align:center"><div style="font-size:12px;color:${MUTED};text-transform:uppercase;letter-spacing:.08em">Confirmation number</div><div style="font-size:26px;font-weight:bold;color:${G};letter-spacing:.04em;margin-top:2px">${code}</div></div>`+sec('Who’s coming')+`<ul style="margin:0;padding-left:20px">${ppl.map(p=>`<li>${p}</li>`).join('')}</ul>`;
+  h+=sec('Your order')+`<table style="width:100%;border-collapse:collapse">${row(`${esc(ad.label||'Adult')} <span style="color:${MUTED}">× ${ppl.length}</span>`,money(total))}${row('Total',money(total),true)}</table>`;
+  h+=sec('Payment')+`<p style="margin:0 0 10px">Amount due: <b>${money(total)}</b></p><p style="margin:0 0 10px"><span style="display:inline-block;background:${G};color:#fff;font-weight:bold;padding:10px 20px;border-radius:8px">Pay online</span></p><p style="margin:0;color:${MUTED}">The payment page shows your amount and walks you through each step.</p>`;
+  if(S.hotelName)h+=sec('Hotel')+`<p style="margin:0;line-height:1.5"><b>${esc(S.hotelName)}</b>${S.hotelStreet?'<br>'+esc(S.hotelStreet):''}${S.hotelCity?'<br>'+esc(S.hotelCity):''}${S.roomRate?'<br>'+esc(S.roomRate):''}</p>`;
+  if(ticket)h+=`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border:2px solid ${G};border-radius:14px;overflow:hidden;margin:22px 0 4px"><tr><td style="background:${G};color:#fff;padding:14px 18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${GOLD};font-weight:bold">${esc([S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' '))}</div>${S.theme?`<div style="font-family:Georgia,serif;font-size:22px;line-height:1.2;margin-top:4px">${esc(S.theme)}</div>`:''}</td></tr>
+    <tr><td style="padding:16px 18px 6px"><table role="presentation" width="100%"><tr><td style="vertical-align:top">${lab('Admit')}<div style="font-size:20px;font-weight:bold;color:${G};margin:2px 0 10px">The Davis Family</div>${lab('Confirmation #')}<div style="font-size:22px;font-weight:bold;letter-spacing:.05em;margin:2px 0 10px">${code}</div>${lab('Who’s coming ('+ppl.length+')')}<div style="margin-top:3px;line-height:1.5">${ppl.join('<br>')}</div></td>
+    <td style="vertical-align:top;text-align:center;width:132px;padding-left:10px"><img src="${qr}" width="124" height="124" alt="Sample check-in code" style="display:block;border:1px solid ${LINE};border-radius:8px"><div style="font-size:11px;color:${MUTED};margin-top:5px">Check-in code</div></td></tr></table></td></tr>
+    <tr><td style="padding:0 18px"><div style="border-top:2px dashed #cfd6cf;margin:10px 0"></div></td></tr>
+    <tr><td style="padding:2px 18px 14px"><table role="presentation" width="100%"><tr>${when.length?`<td style="vertical-align:top;padding-right:8px">${lab('When')}<b>${esc(when[0])}</b>${when[1]?`<br><span style="color:${MUTED}">${esc(when.slice(1).join(' · '))}</span>`:''}</td>`:''}${S.hotelName?`<td style="vertical-align:top">${lab('Where')}<b>${esc(S.hotelName)}</b>${S.hotelCity?`<br><span style="color:${MUTED}">${esc(S.hotelCity)}</span>`:''}</td>`:''}</tr></table>
+    <div style="margin-top:12px;background:#fbf3d9;border-radius:8px;padding:9px 12px;font-size:13px;color:#5a4a12">Show this at check-in. <b>No ticket? No problem.</b> Just tell us your name.</div></td></tr></table>`;
+  h+=`<p style="margin:22px 0 0">Questions? Just reply to this email.</p><p style="margin:6px 0 0;color:${MUTED}">${esc(S.senderName||'PSR Host Family Committee')}</p>`;
+  return`<div class="mini" style="margin-bottom:10px">Example email (sample family)</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1f2a24;line-height:1.45;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;max-width:560px">${h}</div>`}
+
 function renderSetup(){
   const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
   $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
@@ -1737,9 +1770,9 @@ function renderSetup(){
 }
 $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   if(el.dataset.alert!==undefined){readAlertRows();persistSettings();return}
-  if(el.id==='sEmailStyle'&&!$('exBox').hidden)$('exBox').innerHTML=EX_HTML[el.value]||'';
-  if(el.id==='sRegOpen'&&el.checked&&!S.regOpen){if(!confirm('Are you sure? Opening registration lets families sign up, and it turns Test mode off for good.')){el.checked=false;return}
-    S.testRetired=true;S.showTest=false;if(isTest())setTest(false)}
+  if(el.id==='sSchedule'&&!$('schedExBox').hidden)setTimeout(()=>{const bx=$('schedExBox');bx.innerHTML='<div class="mini" style="margin-bottom:8px">What families will see</div>'+schedHTML(parseSched(D.S.schedule))},0);
+  if(el.id==='sEmailStyle'&&!$('exBox').hidden)$('exBox').innerHTML=exEmail(el.value);
+  if(el.id==='sRegOpen'&&el.checked&&!S.regOpen&&!confirm('Open registration? Families can sign up right away. Once the first family registers, Test mode turns off for good. You can still switch this back to Closed before then.')){el.checked=false;return}
   if(el.id==='sShowTest'&&!el.checked&&S.showTest!==false){if(!confirm('Are you sure? The Test mode button will be hidden, and everything you enter will go into the real reunion records.')){el.checked=true;return}
     if(isTest())setTest(false)}
   if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
@@ -1753,7 +1786,9 @@ $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
 $('tab-setup').addEventListener('click',e=>{
   const ad=e.target.closest('[data-alertdel]');if(ad){ad.closest('.alert-row').remove();readAlertRows();renderAlertRows();persistSettings();return}
   if(e.target.closest('#alertAdd')){const box=$('alertRows'),n=box.querySelectorAll('[data-alert]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-alert="${n}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${n+1}"><button class="trash" type="button" data-alertdel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-alert="${n}"]`).focus();return}
-  if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':EX_HTML[st]||'';e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
+  if(e.target.closest('#schedEx')){const bx=$('schedExBox'),b=e.target.closest('#schedEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';
+    if(!bx.hidden)bx.innerHTML='<div class="mini" style="margin-bottom:8px">What families will see'+(String(D.S.schedule||'').trim()?'':' (sample)')+'</div>'+schedHTML(parseSched(String(D.S.schedule||'').trim()||$('sSchedule').placeholder.replace(/&#10;/g,'\n')));return}
+  if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':exEmail(st);e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
   const b=e.target.closest('[data-adel]');if(!b)return;
   if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
   D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
