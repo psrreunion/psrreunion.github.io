@@ -426,6 +426,9 @@ body.viewer #tab-setup .savebar{display:none}
 .savebar.bottom{position:static;box-shadow:none}
 .savebar.dirty{background:#fdf1c7;border-color:#e3b318}
 .savestate{font-size:16px;font-weight:600}
+.toggle{display:flex;align-items:center;gap:14px;font-size:17px;font-weight:600;color:var(--ink);cursor:pointer}.toggle input{appearance:none;-webkit-appearance:none;flex:none;width:52px!important;height:30px!important;border-radius:999px;background:#c8c8c4;border:0!important;padding:0!important;position:relative;cursor:pointer;transition:background .2s;margin:0}.toggle input::before{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .2s}.toggle input:checked{background:var(--ok)}.toggle input:checked::before{left:25px}.toggle input:disabled{opacity:.5;cursor:not-allowed}.toggle .st{font-weight:700}.toggle input:checked+span .st{color:var(--ok)}
+.alert-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.ex-pick{display:flex;gap:10px;flex-wrap:wrap}.ex-shot{border:1px solid var(--line);border-radius:12px;padding:16px;background:#faf8f2;font-size:15px;line-height:1.5}
 .dollar{position:relative;display:block;min-width:0}
 .dollar::before{content:"$";position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);opacity:.65;font:600 16px var(--f-mono);pointer-events:none}
 .dollar input{padding-left:30px!important}
@@ -569,9 +572,9 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
   </div>
   <div class="grid2">
     <div class="panel"><div class="panel-head"><div><h2>Budget vs. spent</h2><p class="muted small">Budgets are set in Setup.</p></div></div><div class="bars" id="budgetBars"></div></div>
-    <div class="panel"><div class="panel-head"><div><h2>Orders to place</h2><p class="muted small">Totals from every registration, ready for the vendor.</p></div></div><div class="stack" id="orders"></div></div>
+    <div class="panel"><div class="panel-head"><div><h2>Orders received</h2><p class="muted small">How many of each item families have ordered, so you know what to order from the vendor.</p></div></div><div class="stack" id="orders"></div></div>
   </div>
-  <div class="panel"><div class="panel-head"><div><h2>What the system did by itself</h2><p class="muted small">Every automatic action is logged here, so the committee can see it working.</p></div></div><ul class="feed" id="feed"></ul></div>
+  <div class="panel"><div class="panel-head"><div><h2>What the system did by itself</h2><p class="muted small">Every automatic action is listed here, so the hosting committee can see it working.</p></div></div><ul class="feed" id="feed"></ul></div>
 </section>
 
 <!-- PAYMENTS -->
@@ -709,8 +712,8 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
 </section>
 
 <section role="tabpanel" id="tab-setup" hidden>
-  <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the host committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
-  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save. <span class="small" style="opacity:.7">Page version: Nov 13, 4:55 PM</span></p>
+  <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
+  <p class="muted" style="font-size:17px">Change anything here, then click <b>Save changes</b>. Nothing changes for families until you save. <span class="small" style="opacity:.7">Page version: Nov 13, 7:10 PM</span></p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="setcols">
     <div class="setcol">
@@ -719,8 +722,9 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
         <div class="stack" style="gap:12px">
           <div class="fields">
             <label class="f">Which reunion<input id="sEdition" data-k="edition"></label>
-            <label class="f">Seats available<input id="sCapacity" data-k="capacity" type="number" min="1"></label>
+            <label class="f">Most people your venue can hold<input id="sCapacity" data-k="capacity" type="number" min="1" placeholder="Leave blank for no limit"></label>
           </div>
+          <p class="tip">This fills the bar families see at the top of the registration page. It can also stop registration once that many people sign up (turn that on under Registration &amp; payment). Leave it blank if there’s no limit.</p>
           <label class="f">Theme<input id="sTheme" data-k="theme"></label>
           <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
           <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
@@ -750,73 +754,77 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
     </div>
     <div class="setcol">
       <div class="panel">
-        <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment.</p></div></div>
+        <div class="panel-head"><div><h2>Registration &amp; payment</h2><p class="muted small">Families pay online through Zeffy. Everything else is recorded with Manual payment, for example Cash App, cash, Zelle or checks.</p></div></div>
         <div class="stack" style="gap:12px">
-          <label class="check"><input type="checkbox" id="sRegOpen" data-k="regOpen"> Registration is open to the family</label>
-          <p class="tip">While this is off, the family link shows "Registration opens soon." The committee can still register people.</p>
+          <label class="toggle"><input type="checkbox" role="switch" id="sRegOpen" data-k="regOpen"><span>Registration: <span class="st" id="sRegOpenTxt">Closed</span></span></label>
+          <p class="tip">When this is Closed, families see "Registration opens soon." Opening registration turns Test mode off for good.</p>
           <div class="fields">
-            <label class="f">Opens on its own on<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
+            <label class="f">Open registration on this date<input id="sRegOpensOn" data-k="regOpensOn" type="date"></label>
             <label class="f">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"></label>
           </div>
-          <p class="tip">Leave "Opens on" blank to open it with the checkbox. Registration closes by itself the day after the last reunion day, so families can still sign up at the door.</p>
+          <p class="tip">Or leave the date blank and switch registration to Open when you’re ready. Registration stays open through the last reunion day, so people can still sign up at the door.</p>
           <label class="f">Close registration early on (optional)<input id="sRegClosesOn" data-k="regClosesOn" type="date"></label>
-          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when "Seats available" is reached</label>
+          <label class="check"><input type="checkbox" id="sCapStop" data-k="capStop"> Stop registration when the venue is full (uses "Most people your venue can hold")</label>
           <label class="f">Zeffy payment form link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy form link here"></label>
           <p class="tip">Until this is filled in, families see "Online payment opens soon" after they register.</p>
-          <label class="check"><input type="checkbox" id="sShowTest" data-k="showTest"> Show the Test mode button</label>
-          <p class="tip">Test mode lets the committee try things out. Everything goes to the red Test tabs in the sheet, not the real ones. Uncheck this when testing is done to hide the button.</p>
+          <label class="toggle"><input type="checkbox" role="switch" id="sShowTest" data-k="showTest"><span>Show Test mode button: <span class="st" id="sShowTestTxt">Off</span></span></label>
+          <p class="tip" id="testTip">Test mode lets the hosting committee practice without touching real records. Anything entered goes to the red Test tabs in the sheet. Turn this on to show the Test mode button on the home screen, or off to hide it. When this is off, everything you enter goes into the real reunion records.</p>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, and a daily check that watches for problems.</p></div></div>
+        <div class="panel-head"><div><h2>Check-in &amp; alerts</h2><p class="muted small">For the reunion weekend, plus a daily check that watches for problems.</p></div></div>
         <div class="stack" style="gap:12px">
-          <label class="f">Check-in code for helpers<input id="sCiCode" data-k="checkinCode" placeholder="Make one up, like Faison27" autocomplete="off"></label>
-          <p class="tip" id="ciExpired" hidden style="border-left-color:var(--bad);background:var(--bad-bg);color:var(--bad)!important"></p>
-          <p class="tip">Codes stop working on January 1 every year, so make up a new one for each reunion. Helpers open <b id="ciLinkTxt"></b> on their phone or tablet and type this code. They can check people in, but can’t see money or the committee pages.</p>
+          <label class="f">Check-in code for helpers<input id="sCiCode" readonly placeholder="Made automatically" autocomplete="off" style="font-family:var(--f-mono);font-weight:700;letter-spacing:.08em"></label>
+          <p class="tip" id="ciStatus" hidden style="border-left-color:var(--bad);background:var(--bad-bg);color:var(--bad)!important"></p>
+          <p class="tip">Helpers open <b id="ciLinkTxt"></b> and type this code to check people in. They can’t see money or the hosting committee pages. A new code is made automatically each year, and it stops working the day after the last reunion day.</p>
           <div><button class="btn sm" type="button" id="ciLinkCopy">Copy helper link</button></div>
-          <label class="f">Also email alerts to<input id="sAlert" data-k="alertEmails" placeholder="name@gmail.com" autocomplete="off"></label>
-          <p class="tip">The daily check always emails the reunion account. Add more emails here, separated by commas.</p>
+          <div class="f" style="display:grid;gap:8px"><span>Add an email where you want alerts to go</span><div class="stack" id="alertRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="alertAdd">+ Add another email</button></div></div>
+          <p class="tip">We’ll email you if something looks wrong, like a missed payment or an email that didn’t send.</p>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-head"><div><h2>Emails</h2><p class="muted small">Set who emails come from, where replies go, and how the confirmation email looks. The reunion name, dates and hotel fill in automatically from above.</p></div></div>
+        <div class="panel-head"><div><h2>Setting up emails to and from families</h2><p class="muted small">This is used to send families things like Save the Dates and confirmations, and to get their replies. The reunion name, dates and hotel are added to each email automatically.</p></div></div>
         <div class="stack" style="gap:12px">
-          <label class="f">Emails come from<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
+          <label class="f">Sender name families will see<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
           <label class="f">Replies go to (the host's email)<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
           <p class="tip">When a family hits Reply, it goes straight to this email. No forwarding needed.</p>
-          <label class="f">Confirmation email style<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Ticket (with a check-in code)</option><option value="regular">Regular</option></select></label>
+          <label class="f">What families get after they register<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">Email with a check-in pass to show at the door</option><option value="regular">Simple thank-you email</option></select></label>
+          <div><button class="btn sm" type="button" id="exBtn">See example</button></div>
+          <div id="exBox" hidden></div>
         </div>
       </div>
     </div>
   </div>
   <div class="panel">
-    <div class="panel-head"><div><h2>Ages and prices</h2><p class="muted small">Set the same way as the 2026 reunion. Change anything once the family decides.</p></div>
+    <div class="panel-head"><div><h2>Ages and prices</h2><p class="muted small">Set the age range and price for each group. Click any box to change it.</p></div>
       <label class="f" style="min-width:200px">Early-bird deadline<input id="sEarly" data-k="earlyBird" type="date"></label></div>
     <div class="set-groups" id="setGroups"></div>
   </div>
   <div class="panel">
-    <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Check the box to offer an extra. Change names and prices, or add new ones when events are decided.</p></div>
+    <div class="panel-head"><div><h2>Extras</h2><p class="muted small">Items families can add when they register. Click the box to show it on the form.</p></div>
       <button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
     <div class="set-groups" id="setAddons"></div>
   </div>
   <div class="panel">
-    <div class="panel-head"><div><h2>Money</h2><p class="muted small">Starting balances are carried over from the 2026 financial summary.</p></div></div>
+    <div class="panel-head"><div><h2>Money</h2><p class="muted small">Enter how much is already in the reunion account and the scholarship fund. Put 0 if you’re not sure.</p></div></div>
     <div class="fields" style="margin-bottom:16px">
+      <p class="tip" id="balTestTip" hidden style="grid-column:1/-1">Starting balances count as $0 in Test mode, so they’re hidden here. Turn Test mode off to see or change them.</p>
       <label class="f">Reunion account starting balance<input data-money id="sBegin" data-k="begin" type="number" step="0.01"></label>
       <label class="f">Scholarship fund starting balance<input data-money id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
     </div>
-    <div class="mini" style="margin-bottom:8px">Hotel commitment</div>
+    <div class="mini" style="margin-bottom:8px">Venue and catering costs</div>
+    <p class="tip" style="margin-bottom:14px!important">If your venue or caterer has a minimum, service charge or tax, enter it here. If not, put 0.</p>
     <div class="fields" style="margin-bottom:12px">
       <label class="f">Catering minimum<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
-      <label class="f">Food money per paying person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
-      <label class="f">PSR reunion deposit<input data-money id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
-      <label class="f">Faison reunion deposit<input data-money id="sDepFaison" data-k="depFaison" type="number" step="1"></label>
+      <label class="f">Registration fee per person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
+      <label class="f">Hotel/venue deposit<input data-money id="sDepPSR" data-k="depPSR" type="number" step="1"></label>
       <label class="f">Service charge (%)<input id="sSvc" data-k="serviceCharge" type="number" step="0.01"></label>
       <label class="f">Sales tax (%)<input id="sTax" data-k="salesTax" type="number" step="0.01"></label>
     </div>
-    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with the hotel)</label>
+    <p class="tip" style="margin-bottom:12px!important">Your registration fees are based on the total cost of the reunion. The more people who register, the less each person has to pay.</p>
+    <label class="check" style="margin-bottom:20px"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering minimum (confirm with your venue or caterer)</label>
     <div class="mini" style="margin-bottom:8px">Planned budget by category</div>
-    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent.</p>
+    <p class="tip" style="margin-bottom:14px!important">What you plan to spend on each one. This is not money already spent. Catering and Venue &amp; deposits fill in from the boxes above.</p>
     <div class="fields" id="setBudgets"></div>
   </div>
 </section>
@@ -835,6 +843,7 @@ body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!impor
 (function(){
 const GUEST='Guest spending at hotel';
 const realExps=()=>D.exps.filter(e=>e.category!==GUEST);
+const catName=c=>c==='Hotel catering & bar'?'Catering':c;
 const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
 const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
 const FOODS=['','Vegetarian','Vegan','No pork','Diabetic','Gluten-free','Food allergy'];
@@ -1011,7 +1020,7 @@ function ledger(){
       bal+=o;op+=o;schol+=s;
       rows.push({t:'in',date:e.date,desc:r?`${e.via} · ${regName(r)} (${r.code})`:`${e.via} · ${e.from}`,cat:r?'Registration & extras':'Unmatched payment',inA:o,bal,note:s>0?`${money(s)} went to the scholarship fund`:'' ,flag:!r});
     }else if(e.t==='cin'){bal+=+e.amount;op+=+e.amount;contrib+=+e.amount;rows.push({t:'in',date:e.date,desc:`${e.via} · ${e.name}`,cat:e.type||'Committee contribution',inA:+e.amount,bal,note:e.receivedBy?`Received by ${e.receivedBy}`:''});
-    }else{bal-=+e.amount;out+=+e.amount;rows.push({t:'out',date:e.date,desc:e.vendor+(e.note?` · ${e.note}`:''),cat:e.category,outA:+e.amount,bal})}
+    }else{bal-=+e.amount;out+=+e.amount;rows.push({t:'out',date:e.date,desc:e.vendor+(e.note?` · ${e.note}`:''),cat:catName(e.category),outA:+e.amount,bal})}
   });
   const owed=D.regs.reduce((s,r)=>s+balOf(r),0);
   return{rows,op,schol,out,contrib,end:bal,gross:op+schol,owed};
@@ -1083,7 +1092,7 @@ function renderHero(){
   $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family ${people===1?'member':'members'} registered · ${hh} ${hh===1?'household':'households'}`;
   const days=Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5);
   $('hEarly').textContent=days>=0?`Early-bird pricing ends in ${days} days`:'Early-bird pricing has ended';
-  $('hBar').style.width=Math.min(100,people/cap*100)+'%';
+  $('hBar').style.width=(+S.capacity>0?Math.min(100,people/cap*100):0)+'%';
 }
 
 const cashLink=amt=>{const tag=String(D.S.cashapp||'').replace(/^\$/,'').trim();const a=Math.round(amt*100)/100;return`https://cash.app/$${encodeURIComponent(tag)}/${a%1?a.toFixed(2):a}`};
@@ -1101,7 +1110,8 @@ function renderHotel(){const S=D.S,c=$('hotelCard');
 }
 function caterSpent(){return D.exps.filter(e=>e.category==='Hotel catering & bar').reduce((s,e)=>s+(+e.amount),0)}
 function guestSpent(){return D.exps.filter(e=>e.category===GUEST).reduce((s,e)=>s+(+e.amount),0)}
-function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=+S.depFaison||0,dep=depPSR+depF;
+function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,dep=depPSR;
+  $('commit').hidden=!min&&!dep;if(!min&&!dep)return;
   const f=(1+(+S.serviceCharge||0)/100)*(1+(+S.salesTax||0)/100);
   const billed=caterSpent(),counted=billed/f+guestSpent()+(S.depositCounts?depPSR:0),left=Math.max(0,min-counted),pct=min?Math.min(100,counted/min*100):0;
   const heads=D.regs.reduce((s,r)=>s+r.people.length,0);
@@ -1109,19 +1119,19 @@ function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,depF=
   const steps=[75,100,125,150,200];
   const foodPer=+S.foodPer||0,paying=D.regs.reduce((s,r)=>s+r.people.filter(p=>{const g=grp(p.group);return g&&((+g.early||0)>0||(+g.late||0)>0)}).length,0);
   const need=min*f,foodIn=paying*foodPer,still=Math.max(0,need-foodIn),more=foodPer?Math.ceil(still/foodPer):0;
-  $('commit').innerHTML=`<div class="panel-head"><div><h2>Hotel commitment</h2><p class="muted small">Order ${money0(min)} in hotel food and drinks and the event space is free. The hotel adds a ${+S.serviceCharge||0}% service charge and ${+S.salesTax||0}% tax on top, so the real bill for the minimum is about <b>${money0(min*f)}</b>.</p></div>
+  $('commit').innerHTML=`<div class="panel-head"><div><h2>Venue and catering costs</h2><p class="muted small">Your venue or caterer's food and drink minimum is ${money0(min)}.${(+S.serviceCharge||0)||(+S.salesTax||0)?` With the ${+S.serviceCharge||0}% service charge and ${+S.salesTax||0}% tax, the real bill is about <b>${money0(min*f)}</b>.`:''}</p></div>
     <span class="chip ${still<=0?'ok':'warn'}">${still<=0?'Covered by registrations':money0(still)+' still needed'}</span></div>
   <div class="kpis" style="margin-bottom:16px">
-    <div class="kpi"><div class="l">Counted toward ${money0(min)}</div><div class="v">${money(counted)}</div><div class="h">Hotel food and bar billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
+    <div class="kpi"><div class="l">Counted toward ${money0(min)}</div><div class="v">${money(counted)}</div><div class="h">Food and drinks billed so far, before charges${S.depositCounts?', plus deposit':''}</div></div>
     <div class="kpi"><div class="l">Still needed from registrations</div><div class="v">${money(still)}</div><div class="h">${paying} ${paying===1?'person':'people'} registered${still>0&&foodPer?` · about ${more} more needed`:' · covered ✓'}</div></div>
-    <div class="kpi"><div class="l">Hotel bills paid</div><div class="v">${money(billed)}</div><div class="h">Catering and bar, charges included</div></div>
-    <div class="kpi"><div class="l">Deposit</div><div class="v">${money(dep)}</div><div class="h">${money0(depPSR)} PSR · ${money0(depF)} Faison<br>${(()=>{const raised=D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0),gap=dep-raised;return gap>0?`<b style="color:var(--red)">−${money0(gap)} to go</b>`:'<b style="color:var(--ok)">Raised ✓</b>'})()}<br>${dep&&depPaid>=dep?'<b style="color:var(--ok)">Paid ✓</b>':depPaid>0?`${money0(depPaid)} of ${money0(dep)} paid`:'Not yet paid'}</div></div>
+    <div class="kpi"><div class="l">Catering bills paid</div><div class="v">${money(billed)}</div><div class="h">Charges included</div></div>
+    <div class="kpi"><div class="l">Hotel/venue deposit</div><div class="v">${money(dep)}</div><div class="h">${(()=>{const raised=D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0),gap=dep-raised;return gap>0?`<b style="color:var(--red)">−${money0(gap)} to go</b>`:'<b style="color:var(--ok)">Raised ✓</b>'})()}<br>${dep&&depPaid>=dep?'<b style="color:var(--ok)">Paid ✓</b>':depPaid>0?`${money0(depPaid)} of ${money0(dep)} paid`:'Not yet paid'}</div></div>
   </div>
   <div class="track" style="margin-bottom:16px"><i class="${left<=0?'':'g2'}" style="width:${pct}%"></i></div>
-  <div class="tw"><table class="ctable"><thead><tr><th>If this many come</th><th class="r">Food per person</th><th class="r">With service + tax</th></tr></thead><tbody>
+  <div class="tw"><table class="ctable"><thead><tr><th>If this many come</th><th class="r">Cost per person</th><th class="r">With service + tax</th></tr></thead><tbody>
     ${steps.map(n=>`<tr><td>${n} people</td><td class="num">${money(min/n)}</td><td class="num"><b>${money(min*f/n)}</b></td></tr>`).join('')}
     ${heads?`<tr class="now"><td>Registered now: ${heads}</td><td class="num">${money(min/heads)}</td><td class="num">${money(min*f/heads)}</td></tr>`:''}</tbody></table></div>
-  <p class="muted small" style="margin-top:10px">Each person's share of the minimum. Seniors and tots register free, so adult and child fees cover their share. A private bar adds $150 per bartender. Friday's outside food is allowed once the minimum is met.</p>`;
+  <p class="muted small" style="margin-top:10px">Your registration fees are based on the total cost of the reunion. The more people who register, the less each person has to pay.</p>`;
 }
 
 /* ---------- Register ---------- */
@@ -1399,7 +1409,7 @@ function summaryHTML(){
   const foods=FOODS.filter(Boolean).map(f=>[f,all.filter(p=>p.food===f).length]).filter(x=>x[1]>0);
   const byVia={};D.pays.forEach(p=>{const k=p.via||p.method||'Other';byVia[k]=(byVia[k]||0)+(+p.amount||0)});
   const contrib=isViewer()?0:sum(D.contribs||[],c=>c.amount);
-  const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[c,b,sp]}).filter(x=>x[1]||x[2]);
+  const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[catName(c),b,sp]}).filter(x=>x[1]||x[2]);
   const exps=realExps().slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
   const tbl=(head,rows,foot,num=1)=>`<table><thead><tr>${head.map((h,i)=>`<th${i>=num?' class="n"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr>`).join('')}</tbody>${foot?`<tfoot><tr>${foot.map((c,i)=>`<td${i>=num?' class="n"':''}>${c}</td>`).join('')}</tr></tfoot>`:''}</table>`;
   const kpi=(l,v)=>`<div class="k"><div class="l">${l}</div><div class="v">${v}</div></div>`;
@@ -1419,7 +1429,7 @@ function summaryHTML(){
   <div>${shirts.length?tbl(['T-shirt size','Count'],shirts,['Total',sum(shirts,x=>x[1])]):'<p style="color:#5b6660">No t-shirts ordered yet.</p>'}${extras.length?'<div style="height:12px"></div>'+tbl(['Extras','Count'],extras):''}${foods.length?'<div style="height:12px"></div>'+tbl(['Food needs (for the caterer)','People'],foods):''}</div></div>
   <h2>Money in</h2>${tbl(['Paid through','Amount'],Object.keys(byVia).map(k=>[e(k),money(byVia[k])]).concat(contrib?[['Committee contributions',money(contrib)]]:[]),['Total',money(sum(D.pays,p=>p.amount)+contrib)])}
   <h2>Expenses by category</h2>${tbl(['Category','Budget','Spent','Left'],cats.map(([c,b,sp])=>[e(c),money(b),money(sp),`<span class="${sp>b&&b?'over':''}">${money(b-sp)}</span>`]),['Total',money(sum(cats,x=>x[1])),money(sum(cats,x=>x[2])),money(sum(cats,x=>x[1]-x[2]))])}
-  ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(x.category||''),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
+  ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(catName(x.category||'')),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
   <div class="ft">Prepared by the ${e(S.senderName||'PSR Host Family Committee')} · ${today}</div></body></html>`}
 // Paper backup for check-in: every household A–Z with a box for each person and what they owe.
 function checkinListHTML(){const S=D.S,e=esc;const title=[S.edition,'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
@@ -1448,11 +1458,11 @@ document.addEventListener('click',e=>{if(e.target.closest('#printSum'))printSumm
 function renderOverview(){
   const Lg=ledger(),S=D.S;
   {const f=$('firsts'),num=r=>parseInt(String(r.code).replace(/\D/g,''),10)||0,top=D.regs.slice().sort((a,b)=>num(a)-num(b)).slice(0,3);
-   f.hidden=!top.length;f.innerHTML=top.length?`<div class="panel-head"><div><h2>First to register</h2><p class="muted small">For a shout-out at the reunion. Only the committee sees this.</p></div></div><ol>${top.map((r,i)=>`<li><b>${i+1}. The ${esc(r.last)} family</b> <span class="muted small">· ${esc(r.code)}${r.created?' · '+esc(r.created):r.date?' · '+esc(r.date):''}${r.city?' · '+esc(r.city)+(r.state?', '+esc(r.state):''):''}</span></li>`).join('')}</ol>`:''}
+   f.hidden=!top.length;f.innerHTML=top.length?`<div class="panel-head"><div><h2>First to register</h2><p class="muted small">For a shout-out at the reunion. Only the hosting committee sees this.</p></div></div><ol>${top.map((r,i)=>`<li><b>${i+1}. The ${esc(r.last)} family</b> <span class="muted small">· ${esc(r.code)}${r.created?' · '+esc(r.created):r.date?' · '+esc(r.date):''}${r.city?' · '+esc(r.city)+(r.state?', '+esc(r.state):''):''}</span></li>`).join('')}</ol>`:''}
   const schFund=startSchol()+Lg.schol;
   $('kpis').innerHTML=[
-    ['hl','Reunion balance',money(Lg.end),'Money on hand right now'],
-    ['','Collected',money(Lg.gross),`${money(D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0))} from committee`],
+    ['hl','Reunion balance',money(Lg.end),'Starting balance + collected − spent'],
+    ['','Collected',money(Lg.gross),`Includes ${money(D.contribs.filter(c=>!c.type||c.type==='Committee contribution').reduce((s,c)=>s+(+c.amount||0),0))} from the hosting committee`],
     ['','Spent',money(Lg.out),`${realExps().length} expenses logged`],
     ['','Still owed',money(Lg.owed),`${D.regs.filter(r=>statusOf(r)!=='paid').length} households with a balance`],
     ['','Scholarship fund',money(schFund),`${money(Lg.schol)} donated this year`]
@@ -1463,7 +1473,7 @@ function renderOverview(){
   const hh=D.regs.length||1;
   $('statusBars').innerHTML=['paid','partial','waiting'].map(s=>{const n=D.regs.filter(r=>statusOf(r)===s).length;return bar(`<span class="chip ${ST[s][0]}">${ST[s][1]}</span>`,`${n} of ${D.regs.length}`,n/hh*100,s==='paid'?'':'g2')}).join('');
   $('budgetBars').innerHTML=CATS.map(c=>{const sp=D.exps.filter(e=>e.category===c).reduce((s,e)=>s+(+e.amount),0),b=+S.budgets[c]||0;
-    return bar(esc(c),`${money0(sp)} of ${money0(b)}`,b?sp/b*100:(sp?100:0),b&&sp>b?'over':'')}).join('');
+    return bar(esc(catName(c)),`${money0(sp)} of ${money0(b)}`,b?sp/b*100:(sp?100:0),b&&sp>b?'over':'')}).join('');
   const shirts=SIZES.map(k=>[k,D.regs.reduce((s,r)=>s+(+r.shirts?.[k]||0),0)]),stot=shirts.reduce((s,x)=>s+x[1],0);
   const tsh=S.addons.find(a=>a.sized);
   $('orders').innerHTML=(tsh?`<div><div class="spread" style="margin-bottom:8px"><h3>${esc(tsh.label)}s</h3><span class="muted small">${stot} total</span></div>
@@ -1627,7 +1637,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-del]');
 
 /* ---------- Expenses ---------- */
 let rcImg=null;
-function catOptions(sel){return [...CATS,GUEST].map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('')}
+function catOptions(sel){return [...CATS,GUEST].map(c=>`<option value="${esc(c)}"${c===sel?' selected':''}>${esc(catName(c))}</option>`).join('')}
 function renderExpenses(){
   const tot=realExps().reduce((s,e)=>s+(+e.amount),0);
   $('expSub').textContent=`${realExps().length} expenses · ${money(tot)} total. Change a category any time.`;
@@ -1648,7 +1658,7 @@ $('rcptForm').addEventListener('submit',e=>{e.preventDefault();
   const v=$('rcVendor').value.trim(),a=parseFloat($('rcAmount').value),er=$('rcErr');
   if(!v||!(a>0)){er.textContent='Add the store and the total from the receipt.';er.hidden=false;return}er.hidden=true;
   const ex={id:uid(),date:$('rcDate').value||TODAY,vendor:v,category:$('rcCat').value,amount:Math.round(a*100)/100,source:rcImg?(rcImg.kind==='pdf'?'Invoice upload':'Receipt photo'):'Typed in',note:$('rcNote').value.trim()};
-  const logx={k:'info',x:`Logged a ${money(a)} expense from ${v} under ${ex.category}${rcImg?' with the receipt attached':''}.`};
+  const logx={k:'info',x:`Logged a ${money(a)} expense from ${v} under ${catName(ex.category)}${rcImg?' with the receipt attached':''}.`};
   const clear=()=>{['rcVendor','rcAmount','rcNote','rcDate'].forEach(i=>$(i).value='');rcImg=null;$('rcptFile').value='';
     $('dropTxt').innerHTML='<b>Tap to add a receipt or invoice</b><br><span class="muted small">Photo or PDF</span>';$('rcCat').value=CATS[4];rcHint()};
   if(LIVE){busy($('rcSave'),'Saving…',async()=>{await api('addExpense',{...ex,receipt:rcImg?rcImg.dataUrl:'',receiptName:rcImg?rcImg.name:''},logx);await refreshLive();clear();renderAll();toast('Receipt added to the ledger.')}).catch(()=>{});return}
@@ -1689,6 +1699,26 @@ $('ledFilters').addEventListener('click',e=>{const b=e.target.closest('.filter')
 
 /* ---------- Setup ---------- */
 const TRASH='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6"/></svg>';
+
+const AUTO_B={'Hotel catering & bar':'caterMin','Venue & deposits':'depPSR'};
+function syncBudgets(){const S=D.S;Object.entries(AUTO_B).forEach(([c,k])=>{S.budgets[c]=+S[k]||0;const el=document.querySelector(`[data-b="${CSS.escape(c)}"]`);if(el)el.value=S.budgets[c]})}
+function renderCiCode(){const S=D.S,el=$('sCiCode'),st=$('ciStatus');if(!el)return;el.value=S.checkinCode||'';
+  const past=S.lastDay&&todayISO()>S.lastDay;st.hidden=!(S.checkinCode&&past);
+  if(!st.hidden)st.textContent='This code stopped working after the last reunion day ('+niceDate(S.lastDay)+'). A new code is made automatically each year.';
+  if(!S.checkinCode)el.placeholder='Made automatically. Refresh the page if it’s blank.'}
+function alertList(){return String(D.S.alertEmails||'').split(/[,;\s]+/).filter(Boolean)}
+function renderAlertRows(){const box=$('alertRows');if(!box)return;const l=alertList();if(!l.length)l.push('');
+  box.innerHTML=l.map((v,i)=>`<div class="alert-row"><input type="email" data-alert="${i}" value="${esc(v)}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${i+1}"><button class="trash" type="button" data-alertdel="${i}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`).join('')}
+function readAlertRows(){D.S.alertEmails=[...document.querySelectorAll('[data-alert]')].map(i=>i.value.trim()).filter(Boolean).join(', ')}
+function setupExtras(){const S=D.S;
+  const ro=$('sRegOpenTxt');if(ro)ro.textContent=S.regOpen?'Open':'Closed';
+  const tt=$('sShowTestTxt');if(tt)tt.textContent=S.showTest===false?'Off':'On';
+  const ts=$('sShowTest');if(ts&&!ts.dataset.vd)ts.disabled=!!S.testRetired;
+  const tip=$('testTip');if(tip&&S.testRetired)tip.textContent='Test mode was turned off for good when registration opened. Everything you enter now goes into the real reunion records.';
+  const t=isTest(),bt=$('balTestTip');if(bt)bt.hidden=!t;['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l&&!isViewer())l.hidden=t});
+}
+const EX_HTML={ticket:`<div class="ex-shot"><div style="border:2px dashed var(--green-2);border-radius:10px;padding:14px;text-align:center;margin-bottom:12px"><div class="mini">Check-in pass</div><div style="font:700 22px var(--f-mono);margin:6px 0">PSR-1042</div><div>The Smith family · 4 people</div><div class="muted small">Show this at check-in. No pass? Just tell us your name.</div></div><b>Thank you, Jane!</b><br>You’re registered. Who’s coming, what you ordered, your balance and the hotel are listed below the pass.</div>`,
+ regular:`<div class="ex-shot"><b>Thank you, Jane!</b><br>You’re registered for the reunion. Your confirmation number is <b>PSR-1042</b>.<br><br><b>Who’s coming:</b> Jane, John, Amy, Ben Smith<br><b>Balance:</b> $0.00, paid in full<br><br>Hotel details and a booking reminder are at the bottom.</div>`};
 function renderSetup(){
   const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
   $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
@@ -1700,18 +1730,31 @@ function renderSetup(){
     <input data-money aria-label="Price" type="number" min="0" data-a="${i}" data-af="price" value="${a.price}">
     <button class="trash" type="button" data-adel="${i}" aria-label="Remove ${esc(a.label)}">${TRASH}<span>Remove</span></button></div>`).join('')||'<p class="muted small">No extras yet.</p>';
   if($('ciLinkTxt'))$('ciLinkTxt').textContent=helperLink();
-  {const yr=new Date().getFullYear(),cy=+S.checkinCodeYear||yr,ex=$('ciExpired');if(ex){const bad=!!String(S.checkinCode||'').trim()&&cy<yr;ex.hidden=!bad;if(bad)ex.textContent='This code was made in '+cy+' and no longer works. Type a new code for '+yr+' (it can’t be last year’s code), then click Save changes.'}}
-  $('setBudgets').innerHTML=CATS.map(c=>`<label class="f">${esc(c)}<input data-money type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"></label>`).join('');
+  renderCiCode();
+  syncBudgets();
+  $('setBudgets').innerHTML=CATS.map(c=>{const auto=AUTO_B[c];return`<label class="f">${esc(catName(c))}<input data-money type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"${auto?' readonly title="Fills in from the box above" style="background:#f3f2ee"':''}></label>`}).join('');
+  renderAlertRows();setupExtras();
 }
 $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
+  if(el.dataset.alert!==undefined){readAlertRows();persistSettings();return}
+  if(el.id==='sEmailStyle'&&!$('exBox').hidden)$('exBox').innerHTML=EX_HTML[el.value]||'';
+  if(el.id==='sRegOpen'&&el.checked&&!S.regOpen){if(!confirm('Are you sure? Opening registration lets families sign up, and it turns Test mode off for good.')){el.checked=false;return}
+    S.testRetired=true;S.showTest=false;if(isTest())setTest(false)}
+  if(el.id==='sShowTest'&&!el.checked&&S.showTest!==false){if(!confirm('Are you sure? The Test mode button will be hidden, and everything you enter will go into the real reunion records.')){el.checked=true;return}
+    if(isTest())setTest(false)}
   if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.g!==undefined){const g=S.groups[+el.dataset.g],f=el.dataset.gf;g[f]=(f==='early'||f==='late')?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.a!==undefined){const a=S.addons[+el.dataset.a],f=el.dataset.af;a[f]=f==='on'?el.checked:f==='price'?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.b){S.budgets[el.dataset.b]=parseFloat(el.value)||0}
   else return;
-  persistSettings();renderAll(true);
+  if(el.dataset.k==='caterMin'||el.dataset.k==='depPSR')syncBudgets();
+  persistSettings();renderAll(true);setupExtras();
 });
-$('tab-setup').addEventListener('click',e=>{const b=e.target.closest('[data-adel]');if(!b)return;
+$('tab-setup').addEventListener('click',e=>{
+  const ad=e.target.closest('[data-alertdel]');if(ad){ad.closest('.alert-row').remove();readAlertRows();renderAlertRows();persistSettings();return}
+  if(e.target.closest('#alertAdd')){const box=$('alertRows'),n=box.querySelectorAll('[data-alert]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-alert="${n}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${n+1}"><button class="trash" type="button" data-alertdel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-alert="${n}"]`).focus();return}
+  if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':EX_HTML[st]||'';e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
+  const b=e.target.closest('[data-adel]');if(!b)return;
   if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
   D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
 $('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
@@ -1929,7 +1972,7 @@ $('tab-checkin').addEventListener('submit',e=>{e.preventDefault();const id=e.tar
 });
 function renderCiOverview(){const el=$('ciOverview');if(!el)return;const st=ciLocalStats();
   const reg=D.regs.reduce((s,r)=>s+r.people.length,0);
-  el.innerHTML=`<div class="panel-head"><div><h2>Check-in</h2><p class="muted small">Who actually came, compared with who registered.</p></div><button class="btn sm" type="button" id="ciOpenTab">Open check-in</button></div>
+  el.innerHTML=`<div class="panel-head"><div><h2>Check-in</h2><p class="muted small">How many people have checked in so far, compared with how many registered.</p></div><button class="btn sm" type="button" id="ciOpenTab">Open check-in</button></div>
     <div class="ci-kpis"><div><b>${reg}</b><span>Registered</span></div><div><b>${st.total}</b><span>Checked in</span></div><div><b>${st.Friday}</b><span>Arrived Friday</span></div><div><b>${st.Saturday}</b><span>Arrived Saturday</span></div><div><b>${st.walkins}</b><span>Walk-ins</span></div></div>`;
   $('ciOpenTab').onclick=()=>{openTab('checkin');window.scrollTo({top:0})};
 }
