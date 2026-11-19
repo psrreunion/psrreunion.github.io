@@ -29,6 +29,11 @@
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
+#loadingScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--ink);font:600 20px/1.4 var(--f-body);text-align:center;padding:16px}
+#loadingScreen[hidden]{display:none}
+#loadingScreen .spin{width:46px;height:46px;border-radius:50%;border:5px solid rgba(0,0,0,.12);border-top-color:currentColor;animation:psrspin 1s linear infinite}
+@keyframes psrspin{to{transform:rotate(360deg)}}
+@media print{#loadingScreen{display:none!important}}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1,h2,h3{text-wrap:balance;margin:0}
@@ -652,6 +657,7 @@ input[type=date]{cursor:pointer}
 </div></nav>
 
 <div class="backbar" id="backBar" hidden><div class="wrap"><button class="btn" type="button" id="backHome">← Back to Home</button></div></div>
+<div id="loadingScreen" role="status" aria-live="polite"><div class="spin" aria-hidden="true"></div><div id="loadingMsg">Loading…</div></div>
 <main class="wrap">
 
 <!-- REGISTER -->
@@ -899,7 +905,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 18, 2026 (b)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 19, 2026</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1199,15 +1205,17 @@ const isReadOnly=()=>isViewer()||isCommittee();
 const isTech=()=>LIVE&&D.role==='tech';      // the tech PIN: the only one that can use Test mode
 const isTest=()=>LIVE&&!inPractice()&&(isViewer()||(testOn&&isTech()));
 const startBal=()=>isTest()?0:(+D.S.begin||0),startSchol=()=>isTest()?0:(+D.S.scholStart||0);
+function showLoading(on,msg){const el=$('loadingScreen');if(!el)return;if(on){$('loadingMsg').textContent=msg||'Loading…';el.hidden=false}else el.hidden=true}
 function setTest(on){testOn=!!on;try{on?localStorage.setItem('psr-test-mode','1'):localStorage.removeItem('psr-test-mode')}catch(e){}
   if(!$('confirm').hidden){$('confirm').hidden=true;$('regWrap').hidden=false}
   renderAll();
-  refreshLive().then(()=>{renderSetup();renderAll(true)}).catch(e=>toast(e.message));
+  showLoading(true,on?'Opening test mode…':'Closing test mode…');
+  refreshLive().then(()=>{renderSetup();renderAll(true)}).catch(e=>toast(e.message)).finally(()=>showLoading(false));
   toast(on?'Test mode on. Everything saves to the test sheet.':'Test mode off. Back to the real records.')}
 const uid=()=>Date.now()+Math.floor(Math.random()*1000);
 async function api(action,data,log){
   let res;
-  try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),practice:inPractice(),data:data||{},log:log||null})})}
+  try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest()||(LIVE&&testOn&&!inPractice()&&!D.role),practice:inPractice(),data:data||{},log:log||null})})}
   catch(e){throw new Error('Could not reach the reunion system. Check your internet connection and try again.')}
   let j;try{j=await res.json()}catch(e){throw new Error('The reunion system sent back an unexpected answer. Try again in a minute.')}
   if(j.auth===false){signOut(true);throw new Error('Please sign in again.')}
@@ -1457,10 +1465,10 @@ function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep
   return {...b,regOpen:false,setupDone:false,setupStep:0,showTest:true,askFood:false,earlyBanner:true}}
 function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing}
 // Practice runs against its own practice sheet. It remembers where you were, even after signing out or closing the page.
-async function practiceStart(){if(practicing)return;
-  practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}prShow();setDirty=false;wStep=1;
-  try{await loadAll()}catch(e){toast(e.message)}
-  renderSetup();renderPeople();renderAddonFields();
+async function practiceStart(loaded){if(practicing)return;
+  practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
+  if(!loaded){try{await loadAll()}catch(e){toast(e.message)}}
+  renderSetup();renderPeople();renderAddonFields();showLoading(false);
   if(prStage==='handoff'){document.body.classList.add('previewing');delete $('handoffBox').dataset.step;openTab('register');renderAll(true)}
   else{renderAll(true);openTab('home');showWelcome()}
   window.scrollTo({top:0})}
@@ -1470,10 +1478,10 @@ function practiceSignedUp(name){prStage='setup';document.body.classList.remove('
   api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved')}).catch(e=>toast(e.message));
   toast('You’re set up as host.');showWelcome()}
 async function practiceExit(){if(!practicing)return;practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}
-  setDirty=false;prShow();document.body.classList.remove('previewing');$('welcomeModal').hidden=true;
+  showLoading(true,'Closing practice…');setDirty=false;prShow();document.body.classList.remove('previewing');$('welcomeModal').hidden=true;
   $('handoffBox').hidden=true;delete $('handoffBox').dataset.step;if(previewing)setPreview(false);
   try{await refreshLive()}catch(e){toast(e.message)}
-  renderSetup();renderPeople();renderAddonFields();renderAll(true);openTab('home');window.scrollTo({top:0});toast('Practice is closed. Your practice is saved for next time.')}
+  showLoading(false);renderSetup();renderPeople();renderAddonFields();renderAll(true);openTab('home');window.scrollTo({top:0});toast('Practice is closed. Your practice is saved for next time.')}
 $('practiceGo').addEventListener('click',()=>{practiceStart();try{history.pushState({pr:1},'',location.href)}catch(e){}});
 let wipeArm=0;$('practiceWipe').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-wipeArm>4000){wipeArm=Date.now();b.textContent='Tap again to erase the practice';setTimeout(()=>{if(Date.now()-wipeArm>=4000)b.textContent='Start practice over'},4100);return}
@@ -2776,23 +2784,26 @@ $('adminLink').addEventListener('click',()=>{$('pinForm').hidden=false;$('adminL
 $('pinCancel').addEventListener('click',()=>{$('pinForm').hidden=true;$('adminLink').hidden=false;$('pinIn').value=''});
 $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn').value.trim(),er=$('pinErr');
   if(!pin){er.textContent='Enter the committee PIN.';er.hidden=false;return}
-  busy($('pinGo'),'Checking…',async()=>{PIN=pin;
-    try{await loadAll()}catch(err){PIN='';er.textContent=/no longer works|wrong tries/i.test(err.message)?err.message:/sign in|PIN/i.test(err.message)?'That PIN is not right.':err.message;er.hidden=false;return}
+  busy($('pinGo'),'Checking…',async()=>{PIN=pin;showLoading(true,'Signing in…');
+    let wasPr=false;try{wasPr=localStorage.getItem('psr-practicing')==='1'}catch(_){}
+    practicing=wasPr;   // ask for the practice records right away, so the page loads once, not twice
+    try{await loadAll()}catch(err){practicing=false;showLoading(false);PIN='';er.textContent=/no longer works|wrong tries/i.test(err.message)?err.message:/sign in|PIN/i.test(err.message)?'That PIN is not right.':err.message;er.hidden=false;return}
     try{sessionStorage.setItem('psr-pin',pin)}catch(_){}
     $('pinIn').value='';$('pinForm').hidden=true;$('adminLink').hidden=false;
-    let wasPr=false;try{wasPr=localStorage.getItem('psr-practicing')==='1'}catch(_){}
-    if(wasPr&&!isReadOnly()){practicing=false;await practiceStart();toast('Signed in. You’re back in practice.');return}
-    renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');window.scrollTo({top:0});toast('Signed in.');showWelcome()}).catch(()=>{});
+    if(wasPr&&!isReadOnly()){practicing=false;await practiceStart(true);toast('Signed in. You’re back in practice.');return}
+    if(wasPr){practicing=false;prStage='';try{await loadAll()}catch(_){}}
+    renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');showLoading(false);window.scrollTo({top:0});toast('Signed in.');showWelcome()}).catch(()=>showLoading(false));
 });
 loadDraft();renderSetup();renderPeople();renderAddonFields();renderAll();
 openTab(PAYQ||PAIDQ||PRPUB?'register':CIHELP?'checkin':(location.hash||'').slice(1));showPayPage();showPaidPage();
+if(!LIVE)showLoading(false);
 if(LIVE){
   if(location.hash==='#committee'&&!isAdmin())$('adminLink').click();
   refreshLive().then(()=>{renderSetup();renderPeople();renderAddonFields();renderAll();if(PAYQ||PAIDQ){openTab('register');showPayPage();showPaidPage()}
       else if(CIHELP){openTab('checkin')}else if(PRPUB){openTab('register')}
       else if(practicing&&prStage==='handoff'){document.body.classList.add('previewing');openTab('register');gateReg()}
       else{openTab((location.hash||'').slice(1)||'home');showWelcome()}})
-    .catch(()=>{D.loadErr=true;if(PIN){signOut(true)}renderAll()});
+    .catch(()=>{D.loadErr=true;if(PIN){signOut(true)}renderAll()}).finally(()=>showLoading(false));
 }
 })();
 </script>
