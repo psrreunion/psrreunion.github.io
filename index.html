@@ -652,7 +652,7 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink">Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><span class="pvseg" id="pvSeg" hidden role="group" aria-label="Which page to look at"><button type="button" data-pv="now">Before it opens</button><button type="button" data-pv="open">After it opens</button></span><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -924,7 +924,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (b)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (c)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1957,8 +1957,7 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
   if(ho){$('regClosed').hidden=true;$('hotelClosed').hidden=true;$('regWrap').hidden=true;$('ebBanner').innerHTML='';if(!hb.dataset.step)renderHandoff();return}
   const st=regState();
   // Preview always shows the sign-up form, so the host can check it before registration opens.
-  if(previewing){const sg=$('pvSeg');sg.hidden=st==='open';sg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.pv==='now')===pvNow)));
-    $('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':'<b>Preview of what families see.</b> Registration isn’t open yet. Click to see the page before or after it opens.'}
+  if(previewing)$('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':'<b>Preview.</b> This is how the page will look to families once you open registration. Nothing you do here is sent.';
   const closed=previewing?(pvNow&&st!=='open'):LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;$('hotelClosed').hidden=true;return}
   box.hidden=!closed;$('regWrap').hidden=closed;$('hotelClosed').hidden=!(closed&&D.loaded&&!D.loadErr&&!!D.S.hotelName&&st==='soon');
@@ -1973,7 +1972,7 @@ function setPreview(on){previewing=!!on;pvNow=false;document.body.classList.togg
   if(previewing){const id=PV_TARGET[wStep],el=id&&$(id);if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash');setTimeout(()=>box.classList.remove('pvflash'),2600)},60)}}
   else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
 $('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
-$('pvSeg').addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!b)return;pvNow=b.dataset.pv==='now';gateReg();window.scrollTo({top:0})});
+
 $('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
 
