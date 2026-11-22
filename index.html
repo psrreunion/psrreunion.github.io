@@ -33,7 +33,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
 #loadingScreen[hidden]{display:none}
 #loadingScreen .spin{width:46px;height:46px;border-radius:50%;border:5px solid rgba(0,0,0,.12);border-top-color:currentColor;animation:psrspin 1s linear infinite}
 @keyframes psrspin{to{transform:rotate(360deg)}}
-.pvstep{margin-top:10px}
+.optl{margin-left:6px;font:600 12px var(--f-body);color:var(--muted)}
+.pvnote{margin-top:22px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}.pvnote p{margin:0 0 12px}
 .pvflash{box-shadow:0 0 0 4px var(--gold),0 6px 18px rgba(0,0,0,.12)!important;transition:box-shadow .4s}
 @media print{#loadingScreen{display:none!important}}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
@@ -461,7 +462,7 @@ input[data-money]::-webkit-inner-spin-button,input[data-money]::-webkit-outer-sp
 .pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#1c5a34;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .pvbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;font-size:16px}
 .pvbar .btn{background:#e3b318;border-color:#e3b318;color:#2a2100;font-size:16px;min-height:44px}
-.pvbar #pvNow{background:transparent;border-color:rgba(255,255,255,.6);color:#fff}.pvbar #pvNow:hover{background:rgba(255,255,255,.12)}
+.pvseg{display:inline-flex;border:1.5px solid rgba(255,255,255,.6);border-radius:10px;overflow:hidden}.pvseg button{background:transparent;color:#fff;border:0;padding:10px 16px;font:600 15px var(--f-body);cursor:pointer}.pvseg button+button{border-left:1.5px solid rgba(255,255,255,.6)}.pvseg button[aria-pressed=true]{background:#fff;color:var(--green)}.pvseg button:not([aria-pressed=true]):hover{background:rgba(255,255,255,.12)}
 body.previewing{padding-top:68px}
 body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!important}
 /* ===== Step-by-step Setup (Nov 14) ===== */
@@ -651,7 +652,7 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink">Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost" type="button" id="pvNow" hidden></button><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><span class="pvseg" id="pvSeg" hidden role="group" aria-label="Which page to look at"><button type="button" data-pv="now">Before it opens</button><button type="button" data-pv="open">After it opens</button></span><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -923,7 +924,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (b)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -941,24 +942,24 @@ input[type=date]{cursor:pointer}
     </nav>
     <div class="wmain panel">
     <div class="wstep" data-step="1" hidden>
-      <div class="whead"><div class="wcount">Step 1 of 10</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p><button class="btn sm pvstep" type="button" data-pvstep="1">See how the top of the page looks to families →</button></div>
+      <div class="whead"><div class="wcount">Step 1 of 10</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p></div>
       <div class="stack">
-            <label class="f"><span>Family reunion name <span class="req">(required)</span></span><input id="sFamily" data-k="family"><span class="ex">For example: Johnson-Carter Family Reunion</span></label>
-          <label class="f" style="max-width:320px"><span>Reunion number <span class="req">(required)</span></span><input id="sEdition" data-k="edition"><span class="ex">For example: 54th</span></label>
+            <label class="f"><span>Family reunion name</span><input id="sFamily" data-k="family"><span class="ex">For example: Johnson-Carter Family Reunion</span></label>
+          <label class="f" style="max-width:320px"><span>Reunion number <span class="optl">(optional)</span></span><input id="sEdition" data-k="edition"><span class="ex">For example: 54th</span></label>
           <label class="f"><span>Theme <span class="req">(required)</span></span><input id="sTheme" data-k="theme"></label>
           <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
           <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
-          <div class="fields">
-          <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
-          <label class="f"><span>Reunion dates <span class="req">(required)</span></span><input id="sWhen" data-k="when" placeholder="For example: July 16 to 18, 2027"></label>
-          </div>
+          <label class="f" style="max-width:420px">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
+          <div class="f"><span>Reunion dates <span class="req">(required)</span></span>
+            <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><input id="sStart" data-k="startDay" type="date" aria-label="First day of the reunion" style="max-width:220px"><span>to</span><input id="sLastDay" data-k="lastDay" type="date" aria-label="Last day of the reunion" style="max-width:220px"></div>
+            <span class="ex">Pick the first and last day on the calendar. Families will see: <b id="whenShow">—</b>. The check-in link stops working the day after the last day.</span></div>
           <label class="f"><span>Hosting family <span class="req">(required)</span></span><input id="sHost" data-k="host" placeholder="the Greensboro family"></label>
           <p class="tip">Type only the family’s name, like <b>the Greensboro family</b>. The page adds “Hosted by” in front of it at the top of the registration page.</p>
-          <label class="f" style="max-width:320px"><span>Last day of the reunion <span class="req">(required)</span></span><input id="sLastDay" data-k="lastDay" type="date"><span class="ex">Pick it on the calendar. The check-in link stops working the day after this date.</span></label>
+          <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="1">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="2" hidden>
-      <div class="whead"><div class="wcount">Step 2 of 10</div><h2>Weekend schedule</h2><p>Show families what is happening each day of the reunion. The schedule is optional.</p><button class="btn sm pvstep" type="button" data-pvstep="2">See how the schedule looks to families →</button></div>
+      <div class="whead"><div class="wcount">Step 2 of 10</div><h2>Weekend schedule</h2><p>Show families what is happening each day of the reunion. The schedule is optional.</p></div>
       <div class="stack">
           <div class="sched-pair">
           <label class="f">Reunion weekend schedule (optional)<textarea id="sSchedule" data-k="schedule" rows="8" placeholder="Friday - Meet and greet, 6–9 PM&#10;Saturday - Picnic, 12–3 PM&#10;Saturday - Banquet, 6 PM&#10;Sunday - Church and farewell"></textarea></label>
@@ -966,10 +967,11 @@ input[type=date]{cursor:pointer}
           </div>
           <p class="tip">Type the day and each event. Click <b>See example</b> to see how it looks. If you leave this blank, families won’t see a schedule.</p>
           <div><button class="btn sm" type="button" id="schedEx">See example</button></div>
+          <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="2">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="3" hidden>
-      <div class="whead"><div class="wcount">Step 3 of 10</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p><button class="btn sm pvstep" type="button" data-pvstep="3">See how the hotel looks to families →</button></div>
+      <div class="whead"><div class="wcount">Step 3 of 10</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p></div>
       <div class="stack">
           <label class="f"><span>Hotel name <span class="req">(required)</span></span><input id="sHotel" data-k="hotelName"></label>
           <label class="f"><span>Street address <span class="req">(required)</span></span><input id="sStreet" data-k="hotelStreet"></label>
@@ -983,10 +985,11 @@ input[type=date]{cursor:pointer}
           </div>
           <label class="f">Note for families (optional)<textarea id="sHNote" data-k="hotelNote" rows="5"></textarea></label>
           <p class="tip">The booking link puts a <b>Book your room</b> button on the registration page. Until you add it, the button won’t show.</p>
+          <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="3">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="4" hidden>
-      <div class="whead"><div class="wcount">Step 4 of 10</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p><button class="btn sm pvstep" type="button" data-pvstep="4">See how the ages and prices looks to families →</button></div>
+      <div class="whead"><div class="wcount">Step 4 of 10</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p></div>
       <div class="stack">
           <div class="set-groups" id="setGroups"></div>
           <label class="f" style="max-width:320px">Early-bird prices end on<input id="sEarly" data-k="earlyBird" type="date"></label>
@@ -995,10 +998,11 @@ input[type=date]{cursor:pointer}
           <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder during the last 2 weeks of early-bird pricing.</label>
           <div><button class="btn sm" type="button" id="ebEx">See example</button></div>
           <div id="ebExBox" hidden></div>
+          <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="4">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="5" hidden>
-      <div class="whead"><div class="wcount">Step 5 of 10</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p><button class="btn sm pvstep" type="button" data-pvstep="5">See how the extras looks to families →</button></div>
+      <div class="whead"><div class="wcount">Step 5 of 10</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p></div>
       <div class="stack">
           <div class="set-groups" id="setAddons"></div>
           <div><button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
@@ -1006,6 +1010,7 @@ input[type=date]{cursor:pointer}
           <p class="tip bad-tip" id="addonWarn" hidden></p>
           <label class="check" style="margin-top:6px"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask families about food needs</label>
           <p class="tip">Families will be asked if anyone is vegetarian, vegan, or doesn’t eat pork. This helps you plan meals so everyone has something to eat.</p>
+          <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="5">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="6" hidden>
@@ -1582,7 +1587,7 @@ $('wNext').addEventListener('click',async()=>{if(!isReadOnly()&&!stepOK(wStep))r
   if(wStep===10&&!D.S.setupDone&&!isReadOnly()){D.S.setupDone=true;persistSettings()}
   if(!D.S.setupDone&&!isReadOnly()&&wStep<10&&(+D.S.setupStep||0)<wStep+1){D.S.setupStep=wStep+1;persistSettings()}if(setDirty&&!isReadOnly()){await saveSettingsNow(false);if(setDirty)return}goStep(wStep+1)});
 // Boxes that must be filled in before the host can move past a step (or open registration).
-const REQ={1:[['sFamily','family','Family reunion name'],['sEdition','edition','Reunion number'],['sTheme','theme','Theme'],['sWhen','when','Reunion dates'],['sHost','host','Hosting family'],['sLastDay','lastDay','Last day of the reunion']],
+const REQ={1:[['sTheme','theme','Theme'],['sStart','startDay','First day of the reunion'],['sLastDay','lastDay','Last day of the reunion'],['sHost','host','Hosting family']],
   3:[['sHotel','hotelName','Hotel name'],['sStreet','hotelStreet','Street address'],['sCity','hotelCity','City, state and zip code'],['sRate','roomRate','Room rate']],
   6:[['sReplyTo','replyTo','Your email for replies and alerts']]};
 const STEP_NAME={1:'About your reunion',3:'Hotel',4:'Ages and prices',6:'Emails'};
@@ -1952,8 +1957,8 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
   if(ho){$('regClosed').hidden=true;$('hotelClosed').hidden=true;$('regWrap').hidden=true;$('ebBanner').innerHTML='';if(!hb.dataset.step)renderHandoff();return}
   const st=regState();
   // Preview always shows the sign-up form, so the host can check it before registration opens.
-  if(previewing){const pn=$('pvNow');pn.hidden=st==='open';pn.textContent=pvNow?'Show the sign-up page':'Show what families see now';
-    $('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':pvNow?'<b>Preview.</b> This is what families see right now, before registration opens.':'<b>Preview.</b> This is the sign-up page once registration opens. Families can’t see it yet.'}
+  if(previewing){const sg=$('pvSeg');sg.hidden=st==='open';sg.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String((b.dataset.pv==='now')===pvNow)));
+    $('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':'<b>Preview of what families see.</b> Registration isn’t open yet. Click to see the page before or after it opens.'}
   const closed=previewing?(pvNow&&st!=='open'):LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;$('hotelClosed').hidden=true;return}
   box.hidden=!closed;$('regWrap').hidden=closed;$('hotelClosed').hidden=!(closed&&D.loaded&&!D.loadErr&&!!D.S.hotelName&&st==='soon');
@@ -1968,7 +1973,7 @@ function setPreview(on){previewing=!!on;pvNow=false;document.body.classList.togg
   if(previewing){const id=PV_TARGET[wStep],el=id&&$(id);if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash');setTimeout(()=>box.classList.remove('pvflash'),2600)},60)}}
   else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
 $('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
-$('pvNow').addEventListener('click',()=>{pvNow=!pvNow;gateReg();window.scrollTo({top:0})});
+$('pvSeg').addEventListener('click',e=>{const b=e.target.closest('[data-pv]');if(!b)return;pvNow=b.dataset.pv==='now';gateReg();window.scrollTo({top:0})});
 $('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
 
@@ -2421,10 +2426,15 @@ function phoneFmt(p){p=String(p||'').trim();const d=p.replace(/\D/g,'').replace(
 // Name on the emails: what the host typed, or else "Hosted by …" from step 1.
 function senderLine(S){S=S||D.S;return String(S.senderName||'').trim()||hostLine(S.host)||'PSR Host Family Committee'}
 function preparedBy(S){const n=String(S.senderName||'').trim();if(n)return 'Prepared by the '+n.replace(/^the\s+/i,'');const h=String(S.host||'').trim().replace(/^hosted by\s+/i,'');return h?'Prepared by '+h:'Prepared by the PSR Host Family Committee'}
+// "July 16–18, 2027" (or "July 30 – August 1, 2027") from the two calendar dates.
+function whenText(a,b){const ok=v=>/^\d{4}-\d\d-\d\d$/.test(v||'');if(!ok(a)&&!ok(b))return '';const d=v=>new Date(v+'T12:00:00'),M=v=>d(v).toLocaleDateString('en-US',{month:'long'}),Dn=v=>d(v).getDate(),Y=v=>d(v).getFullYear();
+  if(!ok(a)||!ok(b)||a===b){const v=ok(a)?a:b;return M(v)+' '+Dn(v)+', '+Y(v)}
+  if(Y(a)!==Y(b))return M(a)+' '+Dn(a)+', '+Y(a)+' – '+M(b)+' '+Dn(b)+', '+Y(b);
+  return M(a)===M(b)?M(a)+' '+Dn(a)+'–'+Dn(b)+', '+Y(a):M(a)+' '+Dn(a)+' – '+M(b)+' '+Dn(b)+', '+Y(a)}
 function hostLine(h){h=String(h||'').trim();return !h?'':/^hosted by\b/i.test(h)?h:'Hosted by '+h}
 function renderSetup(){
   const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
-  $('sHost').value=String(S.host||'').trim().replace(/^hosted by\s+/i,'');if(!String(S.senderName||'').trim())$('sSender').value=hostLine(S.host)||'PSR Host Family Committee';
+  $('sHost').value=String(S.host||'').trim().replace(/^hosted by\s+/i,'');$('whenShow').textContent=S.when||'—';$('sLastDay').min=S.startDay||'';if(!String(S.senderName||'').trim())$('sSender').value=hostLine(S.host)||'PSR Host Family Committee';
   $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
     <input aria-label="Group name" data-g="${i}" data-gf="label" value="${esc(g.label)}"><input aria-label="Ages" data-g="${i}" data-gf="ages" value="${esc(g.ages)}">
     <input data-money aria-label="Early-bird price" type="number" min="0" data-g="${i}" data-gf="early" value="${g.early}"><input data-money aria-label="Regular price" type="number" min="0" data-g="${i}" data-gf="late" value="${g.late}"></div>`).join('');
@@ -2449,13 +2459,14 @@ $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   if(el.id==='sRegOpen'&&!el.checked&&S.regOpen&&!confirm('Turn registration off? Families won’t be able to sign up until you turn it back on.')){el.checked=true;return}
   if(el.id==='sZeffy')S._setZeffy=true;
   if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
-  {const rw=$('reqWarn');if(rw&&!rw.hidden){setTimeout(()=>{const m=reqMissing(wStep);if(!m.length)rw.hidden=true;else rw.innerHTML='<b>Please fill in before you go on:</b><ul style="margin:6px 0 0;padding-left:20px">'+m.map(x=>'<li>'+esc(x[1])+'</li>').join('')+'</ul>'},0)}}
-  if(el.id==='sHost'&&!String(S.senderName||'').trim())$('sSender').value=hostLine(el.value)||'PSR Host Family Committee';
   else if(el.dataset.g!==undefined){const g=S.groups[+el.dataset.g],f=el.dataset.gf;g[f]=(f==='early'||f==='late')?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.a!==undefined){const a=S.addons[+el.dataset.a],f=el.dataset.af;a[f]=f==='on'?el.checked:f==='price'?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.b){S.budgets[el.dataset.b]=parseFloat(el.value)||0}
   else return;
+  {const rw=$('reqWarn');if(rw&&!rw.hidden){setTimeout(()=>{const m=reqMissing(wStep);if(!m.length)rw.hidden=true;else rw.innerHTML='<b>Please fill in before you go on:</b><ul style="margin:6px 0 0;padding-left:20px">'+m.map(x=>'<li>'+esc(x[1])+'</li>').join('')+'</ul>'},0)}}
+  if(el.id==='sHost'&&!String(S.senderName||'').trim())$('sSender').value=hostLine(el.value)||'PSR Host Family Committee';
   if(el.dataset.k==='caterMin'||el.dataset.k==='depPSR')syncBudgets();
+  if(el.dataset.k==='startDay'||el.dataset.k==='lastDay'){if(S.startDay&&S.lastDay&&S.lastDay<S.startDay&&el.dataset.k==='startDay'){S.lastDay=S.startDay;$('sLastDay').value=S.startDay}const w=whenText(S.startDay,S.lastDay);if(w)S.when=w;$('whenShow').textContent=S.when||'—';$('sLastDay').min=S.startDay||'';}
   if(el.dataset.k==='earlyBird'||el.dataset.k==='lastDay')ebCheck();
   if(el.dataset.a!==undefined)$('addonWarn').hidden=true;
   persistSettings();renderAll(true);setupExtras();
