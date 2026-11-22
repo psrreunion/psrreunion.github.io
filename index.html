@@ -33,6 +33,8 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
 #loadingScreen[hidden]{display:none}
 #loadingScreen .spin{width:46px;height:46px;border-radius:50%;border:5px solid rgba(0,0,0,.12);border-top-color:currentColor;animation:psrspin 1s linear infinite}
 @keyframes psrspin{to{transform:rotate(360deg)}}
+.pvstep{margin-top:10px}
+.pvflash{box-shadow:0 0 0 4px var(--gold),0 6px 18px rgba(0,0,0,.12)!important;transition:box-shadow .4s}
 @media print{#loadingScreen{display:none!important}}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -51,7 +53,7 @@ p{margin:0}
 .hero{background:var(--green);color:var(--on-green);position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;right:-120px;top:-120px;width:420px;height:420px;border-radius:50%;border:1px solid rgba(248,243,226,.12);box-shadow:0 0 0 40px rgba(248,243,226,.03),0 0 0 90px rgba(248,243,226,.025)}
 .hero-in{padding-block:28px 26px;display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;position:relative;z-index:1}
-.crest{width:64px;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
+.crest{width:88px;height:auto;align-self:start;margin-top:2px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.25))}
 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
 .hero h1{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,5.2vw,46px);line-height:1.08;margin-top:6px}
 .hero .sub{font-style:italic;opacity:.9;margin-top:6px;font-size:16px}
@@ -65,7 +67,9 @@ p{margin:0}
 .hero-progress{grid-column:1/-1;display:grid;grid-template-columns:1fr auto;gap:6px 16px;align-items:end;margin-top:4px}
 .hero-progress .track{grid-column:1/-1;height:8px;border-radius:999px;background:rgba(248,243,226,.15);overflow:hidden}
 .hero-progress .track i{display:block;height:100%;background:var(--gold);border-radius:999px;transition:width .5s}
-@media (max-width:560px){.hero-in{grid-template-columns:1fr}.crest{width:52px}}
+@media (max-width:560px){.hero-in{grid-template-columns:1fr}.crest{width:60px}}
+/* Logo sits centered in the space between the banner's left edge and the writing */
+@media (min-width:561px){.crest{position:relative;left:calc(10px - max(16px, (100vw - 1100px) / 2 + 16px) / 2)}}
 .tristripe{display:grid;grid-template-columns:repeat(3,1fr);height:6px}
 .tristripe i:nth-child(1){background:#2c8a4a}.tristripe i:nth-child(2){background:#c4313a}.tristripe i:nth-child(3){background:#e9bb1c}
 
@@ -296,7 +300,10 @@ ul.feed{margin:0;padding:0}
 .lines{font-size:16px}
 .hero .sub{font-size:18px}
 .hero-meta .mi{font-size:15px}
-.hero-meta .mi-hotel{align-items:flex-start}.hero-meta .mi-hotel svg{margin-top:3px;flex-shrink:0}
+.hero-meta .mi-hotel{align-items:flex-start}.hero-meta .addrln{opacity:.85;font-size:.92em}
+#hCount,#hEarly{font-size:16px}#hCount b{color:var(--gold);font-size:22px}#hEarly b{color:var(--gold)}
+@media (max-width:560px){.hero-progress{grid-template-columns:1fr;gap:10px}#hEarly{text-align:left!important}}
+.hero-meta .mi-hotel svg{margin-top:3px;flex-shrink:0}
 .dirlink{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:14px;font-weight:600;color:var(--gold);text-decoration:underline;text-underline-offset:3px}.dirlink.dark{color:var(--green-2)}
 .maplink{color:inherit;text-decoration:underline;text-underline-offset:3px}
 .bookbtn{margin:10px auto 0;width:fit-content;display:flex;justify-content:center;min-width:170px;text-decoration:none;font-size:15px;padding:11px 24px}
@@ -367,8 +374,8 @@ body.ci-only .hero-meta,body.ci-only #hCount,body.ci-only .track,body.ci-only #h
 @media (max-width:560px){.ci-find{flex-direction:column;align-items:stretch}.ci-start{grid-template-columns:1fr}.ci-prow{grid-template-columns:1fr 1fr 36px}}
 .empty{padding:18px;text-align:center;color:var(--muted);font-size:14px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-.homebtn{display:block;width:max-content;margin:16px 16px 0 auto;background:#fff;color:var(--green);font-weight:700;font-size:17px;text-decoration:none;padding:12px 22px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.18);position:relative;z-index:2}
-.homebtn:hover{background:#f3f7f2}
+.homebtn{display:block;width:max-content;margin:16px 16px 0 auto;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55);font-weight:600;font-size:15px;text-decoration:none;padding:8px 16px;border-radius:10px;position:relative;z-index:2}
+.homebtn:hover{background:rgba(255,255,255,.12);border-color:#fff}
 @media (min-width:1000px){.homebtn{position:absolute;top:18px;right:24px;margin:0}}
 @media (max-width:520px){.homebtn{width:auto;margin:14px 16px 0;text-align:center}}
 body.ci-only .homebtn{display:none}
@@ -446,11 +453,15 @@ body.viewer #tab-setup .savebar{display:none}
 .trash.armed{color:#fff;background:var(--bad);border-color:var(--bad)}
 @media (max-width:560px){.set-addon{grid-template-columns:30px minmax(0,1fr) auto;row-gap:8px;padding-bottom:12px;border-bottom:1px solid var(--line)}.set-addon>input[data-af=label]{grid-column:2/4}.set-addon>.dollar{grid-column:2/3}.set-addon .trash{grid-column:3/4}.set-addon.mini{display:none}.set-row{grid-template-columns:1fr 1fr}
 .savebar{padding:10px 12px;gap:8px;top:calc(env(safe-area-inset-top,0px) + 52px)}.savebar .savestate{flex:1 0 100%;font-size:15px}.savebar .btn{flex:1;min-height:42px!important;font-size:15px!important;padding:8px 10px!important}}
+/* Money boxes: no up/down arrows, and the mouse wheel can't change the amount by accident */
+input[data-money]::-webkit-inner-spin-button,input[data-money]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}input[data-money]{-moz-appearance:textfield;appearance:textfield}
+.req{display:inline;margin-left:6px;font:600 12px var(--f-body);color:var(--red);letter-spacing:.02em}
 .opt{display:inline-block;vertical-align:middle;margin-left:10px;font:700 12.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:var(--ok-bg);border:1px solid #b9dcc4;border-radius:999px;padding:3px 10px;position:relative;top:-2px}
 #tab-register .panel-head p{color:var(--note-ink)}
 .pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#1c5a34;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .pvbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;font-size:16px}
 .pvbar .btn{background:#e3b318;border-color:#e3b318;color:#2a2100;font-size:16px;min-height:44px}
+.pvbar #pvNow{background:transparent;border-color:rgba(255,255,255,.6);color:#fff}.pvbar #pvNow:hover{background:rgba(255,255,255,.12)}
 body.previewing{padding-top:68px}
 body.previewing :is(#adminBar,#tabsNav,#testStrip,#demoStrip){display:none!important}
 /* ===== Step-by-step Setup (Nov 14) ===== */
@@ -619,7 +630,13 @@ input[type=date]{cursor:pointer}
   <div class="wcount">Welcome, host</div>
   <h2 id="wmTitle">Let’s set up your reunion registration</h2>
   <p id="wmText">It takes 10 short steps. Each step tells you what to type, and you can stop and come back at any time.</p>
-  <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="wmGo">Get started →</button><button class="btn" type="button" id="wmLater">Not now</button></div>
+  <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="wmGo">Get started →</button><button class="btn big" type="button" id="wmLater">Not now</button></div>
+</div></div>
+<div class="wmodal" id="nudgeModal" hidden><div class="wbox" role="dialog" aria-modal="true" aria-labelledby="nmTitle">
+  <div class="wcount">Reminder</div>
+  <h2 id="nmTitle">Registration isn’t open yet</h2>
+  <p id="nmText"></p>
+  <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="nmGo">Open registration now →</button><button class="btn big" type="button" id="nmLater">Remind me later</button></div>
 </div></div>
 <div class="wmodal" id="openModal" hidden><div class="wbox" role="dialog" aria-modal="true" aria-labelledby="omTitle">
   <div class="wcount">Last check</div>
@@ -634,7 +651,7 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink">Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><button class="btn" type="button" id="pvBack">← Back to Setup</button></div></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghost" type="button" id="pvNow" hidden></button><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -682,6 +699,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-register">
   <div class="panel handoff" id="handoffBox" hidden></div>
   <div class="panel confirm" id="regClosed" hidden></div>
+  <div class="panel hotel" id="hotelClosed" hidden style="max-width:560px;margin:16px auto 0"></div>
   <div id="ebBanner"></div>
   <div class="reg-grid" id="regWrap">
     <form id="regForm" class="stack" novalidate>
@@ -905,7 +923,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 19, 2026</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 21, 2026</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg">Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -923,24 +941,24 @@ input[type=date]{cursor:pointer}
     </nav>
     <div class="wmain panel">
     <div class="wstep" data-step="1" hidden>
-      <div class="whead"><div class="wcount">Step 1 of 10</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p></div>
+      <div class="whead"><div class="wcount">Step 1 of 10</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p><button class="btn sm pvstep" type="button" data-pvstep="1">See how the top of the page looks to families →</button></div>
       <div class="stack">
-            <label class="f">Family reunion name<input id="sFamily" data-k="family"><span class="ex">For example: Johnson-Carter Family Reunion</span></label>
-          <label class="f" style="max-width:320px">Reunion number<input id="sEdition" data-k="edition"><span class="ex">For example: 54th</span></label>
-          <label class="f">Theme<input id="sTheme" data-k="theme"></label>
+            <label class="f"><span>Family reunion name <span class="req">(required)</span></span><input id="sFamily" data-k="family"><span class="ex">For example: Johnson-Carter Family Reunion</span></label>
+          <label class="f" style="max-width:320px"><span>Reunion number <span class="req">(required)</span></span><input id="sEdition" data-k="edition"><span class="ex">For example: 54th</span></label>
+          <label class="f"><span>Theme <span class="req">(required)</span></span><input id="sTheme" data-k="theme"></label>
           <label class="f">Theme subtitle<input id="sSubtitle" data-k="subtitle"></label>
           <label class="f">Scripture<textarea id="sVerse" data-k="verse" rows="2"></textarea></label>
           <div class="fields">
           <label class="f">Scripture reference<input id="sVerseRef" data-k="verseRef"></label>
-          <label class="f">Reunion dates<input id="sWhen" data-k="when" placeholder="For example: July 16 to 18, 2027"></label>
+          <label class="f"><span>Reunion dates <span class="req">(required)</span></span><input id="sWhen" data-k="when" placeholder="For example: July 16 to 18, 2027"></label>
           </div>
-          <label class="f">Hosted by<input id="sHost" data-k="host"></label>
-          <p class="tip">This is the banner families see at the top of the registration page and in every email. You can change it any time.</p>
-          <label class="f" style="max-width:320px">Last day of the reunion<input id="sLastDay" data-k="lastDay" type="date"><span class="ex">Pick it on the calendar. The check-in link stops working the day after this date.</span></label>
+          <label class="f"><span>Hosting family <span class="req">(required)</span></span><input id="sHost" data-k="host" placeholder="the Greensboro family"></label>
+          <p class="tip">Type only the family’s name, like <b>the Greensboro family</b>. The page adds “Hosted by” in front of it at the top of the registration page.</p>
+          <label class="f" style="max-width:320px"><span>Last day of the reunion <span class="req">(required)</span></span><input id="sLastDay" data-k="lastDay" type="date"><span class="ex">Pick it on the calendar. The check-in link stops working the day after this date.</span></label>
       </div>
     </div>
     <div class="wstep" data-step="2" hidden>
-      <div class="whead"><div class="wcount">Step 2 of 10</div><h2>Weekend schedule</h2><p>Show families what is happening each day of the reunion. The schedule is optional.</p></div>
+      <div class="whead"><div class="wcount">Step 2 of 10</div><h2>Weekend schedule</h2><p>Show families what is happening each day of the reunion. The schedule is optional.</p><button class="btn sm pvstep" type="button" data-pvstep="2">See how the schedule looks to families →</button></div>
       <div class="stack">
           <div class="sched-pair">
           <label class="f">Reunion weekend schedule (optional)<textarea id="sSchedule" data-k="schedule" rows="8" placeholder="Friday - Meet and greet, 6–9 PM&#10;Saturday - Picnic, 12–3 PM&#10;Saturday - Banquet, 6 PM&#10;Sunday - Church and farewell"></textarea></label>
@@ -951,16 +969,16 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="3" hidden>
-      <div class="whead"><div class="wcount">Step 3 of 10</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p></div>
+      <div class="whead"><div class="wcount">Step 3 of 10</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p><button class="btn sm pvstep" type="button" data-pvstep="3">See how the hotel looks to families →</button></div>
       <div class="stack">
-          <label class="f">Hotel name<input id="sHotel" data-k="hotelName"></label>
-          <label class="f">Street address<input id="sStreet" data-k="hotelStreet"></label>
+          <label class="f"><span>Hotel name <span class="req">(required)</span></span><input id="sHotel" data-k="hotelName"></label>
+          <label class="f"><span>Street address <span class="req">(required)</span></span><input id="sStreet" data-k="hotelStreet"></label>
           <div class="fields">
-            <label class="f">City, state and zip code<input id="sCity" data-k="hotelCity" placeholder="For example: Greensboro, NC 27409"></label>
+            <label class="f"><span>City, state and zip code <span class="req">(required)</span></span><input id="sCity" data-k="hotelCity" placeholder="For example: Greensboro, NC 27409"></label>
             <label class="f">Phone number (optional)<input id="sHPhone" data-k="hotelPhone"></label>
           </div>
           <div class="fields">
-          <label class="f">Room rate (per night)<input data-money id="sRate" data-k="roomRate" inputmode="decimal" placeholder="129"></label>
+          <label class="f"><span>Room rate (per night) <span class="req">(required)</span></span><input data-money id="sRate" data-k="roomRate" inputmode="decimal" placeholder="129"></label>
           <label class="f">Hotel booking link<input id="sBook" data-k="bookUrl" type="url" placeholder="Paste the link the hotel gave you"></label>
           </div>
           <label class="f">Note for families (optional)<textarea id="sHNote" data-k="hotelNote" rows="5"></textarea></label>
@@ -968,7 +986,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="4" hidden>
-      <div class="whead"><div class="wcount">Step 4 of 10</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p></div>
+      <div class="whead"><div class="wcount">Step 4 of 10</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p><button class="btn sm pvstep" type="button" data-pvstep="4">See how the ages and prices looks to families →</button></div>
       <div class="stack">
           <div class="set-groups" id="setGroups"></div>
           <label class="f" style="max-width:320px">Early-bird prices end on<input id="sEarly" data-k="earlyBird" type="date"></label>
@@ -980,7 +998,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="5" hidden>
-      <div class="whead"><div class="wcount">Step 5 of 10</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p></div>
+      <div class="whead"><div class="wcount">Step 5 of 10</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p><button class="btn sm pvstep" type="button" data-pvstep="5">See how the extras looks to families →</button></div>
       <div class="stack">
           <div class="set-groups" id="setAddons"></div>
           <div><button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
@@ -991,22 +1009,20 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="6" hidden>
-      <div class="whead"><div class="wcount">Step 6 of 10</div><h2>Emails</h2><p>Pick the email address you’ll use to send emails to families. When families reply, it comes to this address, so you can answer them. Then choose how your emails look.</p></div>
+      <div class="whead"><div class="wcount">Step 6 of 10</div><h2>Emails</h2><p>Emails to families go out for you automatically. Pick the email where you want families’ replies and any alerts to come. Then choose how your emails look.</p></div>
       <div class="stack">
         <div class="sched-pair ex-pair">
           <div class="stack">
-          <label class="f">Name families see on your emails<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"></label>
-          <label class="f">Your email<input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
-          <p class="tip">Every reply is also saved on the <b>Records</b> page. The reunion name, dates and hotel are added to every email for you.</p>
+          <label class="f">Name families see on your emails<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"><span class="ex">This fills in from the hosting family in step 1. You can change it.</span></label>
+          <div class="f" style="display:grid;gap:8px"><label class="f"><span>Your email for replies and alerts <span class="req">(required)</span></span><input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+            <div class="stack" id="alertRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="alertAdd">+ Add another person for alerts</button></div></div>
+          <div class="tip">When families reply, it comes to this email. We’ll also email you here if something looks wrong, such as:<ul style="margin:6px 0 0;padding-left:20px"><li>A payment we can’t match</li><li>A double payment</li><li>An email that didn’t send</li></ul><div style="margin-top:6px">Every reply is also saved on the <b>Records</b> page.</div></div>
           <label class="f">What families get after they register<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">An email with a check-in pass to show at the door</option><option value="regular">A simple thank-you email</option></select></label>
           <div><button class="btn sm" type="button" id="exBtn">See example</button></div>
           </div>
           <div id="exBox" class="side-ex email-ex" hidden></div>
         </div>
-          <div class="f" style="display:grid;gap:8px"><span>Who else should get alerts (optional)</span><div class="stack" id="alertRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="alertAdd">+ Add another email</button></div></div>
-          <p class="tip">We’ll email you if something looks wrong, such as a payment we couldn’t match or an email that didn’t send.</p>
-          <div class="f" style="display:grid;gap:8px"><span>Reunion committee email</span><div class="stack" id="boardRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="boardAdd">+ Add another email</button></div></div>
-          <p class="tip">After the reunion, when the next host signs up, we email the reunion committee here so they know who it is. Use the committee’s shared email if it has one. If this email is ever changed, the old address gets a notice.</p>
+          <div id="boardBox"></div>
       </div>
     </div>
     <div class="wstep" data-step="7" hidden>
@@ -1017,7 +1033,16 @@ input[type=date]{cursor:pointer}
       <label class="f">Reunion account starting balance<input data-money id="sBegin" data-k="begin" type="number" step="0.01"></label>
       <label class="f">Scholarship fund starting balance<input data-money id="sSchol" data-k="scholStart" type="number" step="0.01"></label>
           </div>
-          <p class="tip">If you’re not sure, put 0. You can change these numbers later.</p>
+          <p class="tip">If you’re not sure, leave it blank. You can change these numbers later.</p>
+          <div class="panel" style="background:var(--surface-2);box-shadow:none">
+            <h3 style="font-size:17px;margin:0 0 6px">Where you’ll keep track of money</h3>
+            <p class="muted" style="margin:0 0 10px">After setup, these pages at the top keep track of the money for you.</p>
+            <div class="stack" style="gap:10px">
+              <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center"><span><b>Payments:</b> money families pay you</span><button class="btn sm" type="button" data-swho="payments">Show me →</button></div>
+              <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center"><span><b>Expenses:</b> what you spend. Add a receipt when you have one, so the records are complete for the next host and the board.</span><button class="btn sm" type="button" data-swho="expenses">Show me →</button></div>
+              <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center"><span><b>Ledger:</b> all money in and out, your balance and the report</span><button class="btn sm" type="button" data-swho="ledger">Show me →</button></div>
+            </div>
+          </div>
       </div>
     </div>
     <div class="wstep" data-step="8" hidden>
@@ -1030,7 +1055,7 @@ input[type=date]{cursor:pointer}
       <label class="f">Sales tax<span class="pct"><input id="sTax" data-k="salesTax" type="number" step="0.01"></span></label>
       <label class="f">Registration fee per person<input data-money id="sFoodPer" data-k="foodPer" type="number" step="1"></label>
           </div>
-          <p class="tip">If something doesn’t apply to your reunion, put 0. Registration fees are based on the total cost of the reunion, so the more people who register, the less each person pays.</p>
+          <p class="tip">If something doesn’t apply to your reunion, leave it blank. Registration fees are based on the total cost of the reunion, so the more people who register, the less each person pays.</p>
           <label class="check"><input type="checkbox" id="sDepCounts" data-k="depositCounts"> The deposit counts toward the catering cost. (Check with your venue or caterer.)</label>
           <h3 style="margin:10px 0 0">Planned budget</h3>
           <p class="tip">This is what you plan to spend on each item, not money already spent. Catering and the deposit fill in for you from the boxes above.</p>
@@ -1051,7 +1076,8 @@ input[type=date]{cursor:pointer}
       <div class="stack">
           <div class="regrange"><span>Registration is open from</span><label class="f"><span class="sr">Opens on</span><input id="sRegOpensOn" data-k="regOpensOn" type="date" aria-label="Registration opens on"></label><span>to</span><label class="f"><span class="sr">Closes on</span><input id="sRegClosesOn" data-k="regClosesOn" type="date" aria-label="Registration closes on"></label></div>
           <label class="toggle"><input type="checkbox" role="switch" id="sRegOpen" data-k="regOpen"><span>Registration: <span class="st" id="sRegOpenTxt">Closed</span></span></label>
-          <p class="tip">Nothing opens or closes by itself. When you’re ready, turn registration on. While it’s off, families see when it opens. On the closing date, you’ll get an email reminding you to turn it off.</p>
+          <p class="tip">Registration opens only when you turn this switch on. Until then, families see “Registration opens” with the start date you pick above (or “Registration opens soon” if there’s no date). On the closing date, we’ll email you a reminder to turn it off.</p>
+          <p class="small muted" id="zeffySet" hidden style="margin-top:4px">The Zeffy payment link is set. <button class="linkbtn" type="button" id="zeffyEdit" data-bd style="background:none;border:0;padding:0;color:var(--green-2);text-decoration:underline;cursor:pointer;font:inherit">Change it</button></p>
           <div class="adminonly" id="adminOnly" hidden>
             <div class="mini" style="margin-bottom:8px">Only you see this box (tech PIN)</div>
             <label class="f">Zeffy payment link<input id="sZeffy" data-k="zeffyUrl" type="url" placeholder="Paste the Zeffy link here"></label>
@@ -1082,6 +1108,7 @@ input[type=date]{cursor:pointer}
       </div>
       <div class="row" style="gap:12px;flex-wrap:wrap"><button class="btn primary" type="button" data-wpreview>Preview registration page</button><button class="btn" type="button" data-home="home">Go to Home page</button></div>
     </div>
+      <p class="tip bad-tip" id="reqWarn" hidden style="margin-bottom:14px!important"></p>
       <div class="wfoot" id="wFoot"><button class="btn" type="button" id="wBack" data-wnav>← Back</button><button class="btn primary" type="button" id="wNext" data-wnav>Save and continue →</button></div>
     </div>
   </div>
@@ -1128,10 +1155,10 @@ const nice=iso=>{if(!iso)return'';const[y,m,d]=iso.split('-').map(Number);return
 const norm=s=>String(s||'').toLowerCase().replace(/[^a-z\s]/g,' ').replace(/\s+/g,' ').trim();
 
 function defaults(){return{
-  edition:'101st',family:'Porter-Sanford-Reid Family Reunion',
-  theme:'The Next Hundred Starts With Us',subtitle:'Three Families, One Tree, Growing Together',verse:'Tell ye your children of it, and let your children tell their children, and their children another generation.',verseRef:'Joel 1:3',
+  edition:'54th',family:'Porter-Sanford-Reid Family Reunion',
+  theme:'This Century Starts With Us',subtitle:'Three Families, One Tree, Growing Together',verse:'Tell ye your children of it, and let your children tell their children, and their children another generation.',verseRef:'Joel 1:3',
   when:'Summer 2027 · dates to be set',hotelName:'DoubleTree by Hilton Greensboro Airport',hotelStreet:'6426 Burnt Poplar Road',hotelCity:'Greensboro, NC 27409',hotelPhone:'',roomRate:'$129 per night (group rate)',hotelNote:'Breakfast included · Free airport shuttle and parking · Pet-free rooms · Reunion events are inside the hotel. Book at least 30 days before the reunion to get the group rate.',bookUrl:'',
-  caterMin:6000,foodPer:40,depPSR:1500,depFaison:500,deposit:1500,depositCounts:false,serviceCharge:23,salesTax:6.75,host:'Hosted by the Greensboro family',capacity:120,
+  caterMin:6000,foodPer:40,depPSR:1500,depFaison:500,deposit:1500,depositCounts:false,serviceCharge:23,salesTax:6.75,host:'the Greensboro family',capacity:120,
   earlyBird:'2027-06-30',
   groups:[
     {id:'adult',label:'Adult',ages:'13 & up',early:125,late:150},
@@ -1142,7 +1169,7 @@ function defaults(){return{
     {id:'tshirt',label:'Reunion T-shirt',price:10,on:true,sized:true},
     {id:'lunch',label:'Saturday boxed lunch',price:36,on:true},
     {id:'outing',label:'Family outing pass',price:25,on:true}],
-  regOpen:false,regOpensOn:'',regClosesOn:'',lastDay:'',capStop:false,replyTo:'',schedule:'',askFood:true,earlyBanner:true,showTest:true,emailStyle:'ticket',senderName:'PSR Host Family Committee',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
+  regOpen:false,regOpensOn:'',regClosesOn:'',lastDay:'',capStop:false,replyTo:'',schedule:'',askFood:true,earlyBanner:true,showTest:true,emailStyle:'ticket',senderName:'',checkinCode:'',alertEmails:'',zeffyUrl:'',zelle:'',zelleName:'PSR Family Reunion',paypal:'',cardPct:3.49,cardFixed:0.49,cashapp:'',
   begin:0,scholStart:0,
   budgets:{'Hotel catering & bar':6000,'Venue & deposits':1500,'Activities':800,'T-shirts & merchandise':600,'Printing & postage':350,'Food & hospitality':250,'Supplies & decor':200,'Card processing fees':200}
 }}
@@ -1223,7 +1250,10 @@ async function api(action,data,log){
   if(!j.ok)throw new Error(j.error||'Something went wrong. Try again.');
   return j;
 }
-async function loadPublic(){const j=await api('public');D.S=mergeSettings(j.settings);D.pub={people:j.people||0,households:j.households||0};D.handoff=j.handoff||null;D.loaded=true}
+async function loadPublic(){const j=await api('public');D.S=mergeSettings(j.settings);D.pub={people:j.people||0,households:j.households||0};D.handoff=j.handoff||null;
+  // Practice family link before the practice host has signed up: show what families see after a reunion ("Is your family hosting the next reunion?")
+  if(PRPUB&&!(j.settings&&j.settings.practiceHost)){D.S=mergeSettings(blankSettings());const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}
+  D.loaded=true}
 async function loadAll(again){
   const j=await api('all');
   if(!again&&testOn&&j.role==='tech'&&!j.test&&!inPractice()){D.role='tech';return loadAll(true)}   // signed in with the tech PIN and Test mode was on
@@ -1232,7 +1262,7 @@ async function loadAll(again){
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
   D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
-  D.emails=j.emails||[];D.contacts=j.contacts||[];D.isTestData=!!j.test;
+  D.emails=j.emails||[];D.board=j.board||'';D.contacts=j.contacts||[];D.isTestData=!!j.test;
   if(practicing){if(!D.S.practiceHost&&!setDirty){D.S=mergeSettings({...blankSettings(),checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear});prStage='handoff';const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}else{prStage='setup';D.handoff={open:false}}}
   D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
   D.checkins=j.checkins||[];D.alerts=j.alerts||[];ciStats=null;
@@ -1434,6 +1464,7 @@ document.addEventListener('submit',e=>{if(e.target.id!=='hoForm')return;e.preven
   if(!/^20\d\d$/.test(year))return err('Please type the year of the reunion you’re hosting, like 2028.');
   const bad=pinRule(pin);if(bad)return err(bad);if(pin!==v('hoPin2'))return err('The two PINs don’t match. Please type them again.');
   if(practicing){practiceSignedUp(name);return}
+  if(PRPUB)return err('This is the practice copy of the page that families see, so signing up as host doesn’t work here. To practice that part, sign in and click Practice as a new host.');
   busy($('hoGo'),'Setting you up…',async()=>{
     try{await api('newHost',{name,email,year,pin})}catch(x){return err(x.message)}
     PIN=pin;try{sessionStorage.setItem('psr-pin',pin)}catch(_){}
@@ -1458,7 +1489,7 @@ $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin
 
 /* ---------- Practice as a new host (Test mode only; nothing is saved) ---------- */
 // A new host's Setup: the family name, email look and age groups stay; everything else starts empty.
-function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep=['emailStyle','senderName','family'];
+function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep=['emailStyle','family'];
   Object.keys(b).forEach(k=>{if(keep.includes(k))return;const v=b[k];if(typeof v==='string')b[k]='';else if(typeof v==='number')b[k]=0});
   Object.keys(b.budgets||{}).forEach(k=>b.budgets[k]=0);
   b.groups=d.groups.map(g=>({...g,early:0,late:0}));b.addons=d.addons.map(a=>({...a,price:0,on:false}));
@@ -1492,7 +1523,7 @@ window.addEventListener('popstate',()=>{if(!practicing)return;try{history.pushSt
   if(prStage==='setup'&&$('tab-setup')&&!$('tab-setup').hidden&&wStep>1)goStep(wStep-1);else toast('To leave practice, click Exit practice at the top.')});
 $('prExit').addEventListener('click',practiceExit);
 /* ---------- Shortcuts: go straight to the right spot, with a Back to Home button ---------- */
-function showBack(on){$('backBar').hidden=!on}
+function showBack(on){$('backBar').hidden=!on;if(!on&&typeof backTo!=='undefined'){backTo='home';$('backHome').textContent='← Back to Home'}}
 function spot(el,focus){if(!el)return;setTimeout(()=>{const y=el.getBoundingClientRect().top+window.scrollY-($('backBar').offsetHeight||0)-(document.body.classList.contains('practicing')?70:0)-12;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});if(focus)setTimeout(()=>focus.focus({preventScroll:true}),350)},30)}
 function setFilter(boxId,f,attr){const b=$(boxId);if(!b)return;b.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.f===f)))}
 function jump(k){
@@ -1505,14 +1536,31 @@ function jump(k){
   showBack(true)}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g&&!e.target.closest('button,a,select,input'))jump(g.dataset.go)});
 document.addEventListener('keydown',e=>{const g=e.target.closest&&e.target.closest('[data-go]');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();jump(g.dataset.go)}});
-$('backHome').addEventListener('click',()=>{showBack(false);openTab('home');window.scrollTo({top:0})});
+let backTo='home';
+$('backHome').addEventListener('click',()=>{const t=backTo;showBack(false);openTab(t);window.scrollTo({top:0})});
+// Setup step 7: a quick look at the money pages, with a button back to Setup
+document.addEventListener('click',e=>{if(e.target.closest('#zeffyEdit')){const ao=$('adminOnly');ao.dataset.open='1';ao.hidden=false;$('zeffySet').hidden=true;$('sZeffy').focus();return}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-swho]');if(!b)return;const k=b.dataset.swho;
+  if(setDirty&&!isReadOnly())saveSettingsNow(false);
+  jump(k==='payments'?'who':k==='expenses'?'spent':'ledger');backTo='setup';$('backHome').textContent='← Back to Setup'});
 /* ---------- Home screen and first-time welcome ---------- */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-home]');if(!b)return;const k=b.dataset.home;
   if(k==='home'){showBack(false);openTab('home');window.scrollTo({top:0});return}
   if(k==='setup'){openTab('setup');goStep(D.S.setupDone?wStep:1);showBack(true);return}
   if(k==='overview'){openTab('overview');window.scrollTo({top:0});showBack(true);return}
   jump(k)});
-function showWelcome(){if(!isAdmin()||isCommittee()||D.S.setupDone||(practicing&&prStage!=='setup'))return;
+// Registration still closed as the early-bird date (or the reunion) gets close: a pop-up for the host. The same reminder goes by email.
+// With an early-bird date it starts 60 days before it ends; without one, 120 days before the last day of the reunion.
+function nudgeInfo(){const S=D.S;if(!LIVE||S.regOpen||!isAdmin()||isCommittee()||(isTech()&&!practicing)||(D.handoff&&D.handoff.open))return null;
+  const ok=v=>/^\d{4}-\d\d-\d\d$/.test(v||''),eb=ok(S.earlyBird)?S.earlyBird:'',ref=eb||(ok(S.lastDay)?S.lastDay:'');if(!ref||TODAY>ref)return null;
+  const days=Math.ceil((new Date(ref+'T23:59:59')-new Date())/864e5);   // same count as the bannerif(days>(eb?60:120))return null;
+  const nice=new Date(ref+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  return eb?`Early-bird pricing ends ${nice}, only ${days} day${days===1?'':'s'} away. Families need time to sign up before prices go up.`:`The reunion is ${days} days away (the last day is ${nice}). Families need time to sign up.`}
+function showNudge(){const t=nudgeInfo();if(!t)return;try{if(sessionStorage.getItem('psr-nudge-later'))return}catch(e){}$('nmText').textContent=t+' When you’re ready, open registration in Setup, step 10.';$('nudgeModal').hidden=false}
+$('nmGo').addEventListener('click',()=>{$('nudgeModal').hidden=true;openTab('setup');goStep(10)});
+$('nmLater').addEventListener('click',()=>{$('nudgeModal').hidden=true;try{sessionStorage.setItem('psr-nudge-later','1')}catch(e){}});
+function showWelcome(){if(isAdmin()&&!isCommittee()&&D.S.setupDone&&!(practicing&&prStage!=='setup')){showNudge();return}
+  if(!isAdmin()||isCommittee()||D.S.setupDone||(practicing&&prStage!=='setup'))return;
   const at=+D.S.setupStep||0;
   if(at>1&&at<=10){$('wmTitle').textContent='Welcome back! Pick up where you left off';$('wmText').textContent='You stopped at step '+at+'. Everything you saved is still there.';$('wmGo').textContent='Continue at step '+at+' →';$('wmGo').dataset.step=at}
   else{$('wmTitle').textContent='Let’s set up your reunion registration';$('wmText').textContent='It takes 10 short steps. Each step tells you what to type, and you can stop and come back at any time.';$('wmGo').textContent='Get started →';$('wmGo').dataset.step=1}try{if(sessionStorage.getItem('psr-welcome-later'+(practicing?'-pr':'')))return}catch(e){}$('welcomeModal').hidden=false;$('wmGo').focus()}
@@ -1520,7 +1568,7 @@ $('wmGo').addEventListener('click',()=>{$('welcomeModal').hidden=true;openTab('s
 $('wmLater').addEventListener('click',()=>{$('welcomeModal').hidden=true;try{sessionStorage.setItem('psr-welcome-later'+(practicing?'-pr':''),'1')}catch(e){}});
 /* ---------- Setup, one step at a time ---------- */
 let wStep=1;try{wStep=+sessionStorage.getItem('psr-wstep')||1}catch(e){}
-function showStep(n){wStep=Math.max(1,Math.min(11,n));try{sessionStorage.setItem('psr-wstep',wStep)}catch(e){}
+function showStep(n){wStep=Math.max(1,Math.min(11,n));{const rw=$('reqWarn');if(rw)rw.hidden=true}try{sessionStorage.setItem('psr-wstep',wStep)}catch(e){}
   document.querySelectorAll('#tab-setup .wstep').forEach(el=>el.hidden=+el.dataset.step!==wStep);
   document.querySelectorAll('#tab-setup .wnav').forEach(b=>{const k=+b.dataset.wgo;if(k===wStep)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');b.classList.toggle('done',k<wStep||wStep===11);b.querySelector('.wnum').textContent=(k<wStep||wStep===11)?'✓':String(k)});
   $('wFoot').hidden=wStep===11;$('wBack').hidden=wStep===1;
@@ -1528,20 +1576,38 @@ function showStep(n){wStep=Math.max(1,Math.min(11,n));try{sessionStorage.setItem
   $('wBar').style.width=(wStep===11?100:Math.round((wStep-1)/10*100))+'%'}
 function wLabel(){const b=$('wNext');if(!b)return;b.textContent=isReadOnly()||(!setDirty&&!(wStep===10&&!D.S.setupDone))?(wStep===10?'Finish':'Next →'):(wStep===10?'Save and finish':'Save and continue →')}
 function goStep(n){showStep(n);const t=$('tab-setup');if(t&&t.scrollIntoView)t.scrollIntoView({block:'start'});else window.scrollTo({top:0})}
-$('wBack').addEventListener('click',()=>goStep(wStep-1));
+$('wBack').addEventListener('click',()=>{$('reqWarn').hidden=true;goStep(wStep-1)});
 $('wNext').addEventListener('click',async()=>{if(!isReadOnly()&&!stepOK(wStep))return;
   if(wStep===10&&!D.S.setupDone&&!isReadOnly()){D.S.setupDone=true;persistSettings()}
   if(!D.S.setupDone&&!isReadOnly()&&wStep<10&&(+D.S.setupStep||0)<wStep+1){D.S.setupStep=wStep+1;persistSettings()}if(setDirty&&!isReadOnly()){await saveSettingsNow(false);if(setDirty)return}goStep(wStep+1)});
+// Boxes that must be filled in before the host can move past a step (or open registration).
+const REQ={1:[['sFamily','family','Family reunion name'],['sEdition','edition','Reunion number'],['sTheme','theme','Theme'],['sWhen','when','Reunion dates'],['sHost','host','Hosting family'],['sLastDay','lastDay','Last day of the reunion']],
+  3:[['sHotel','hotelName','Hotel name'],['sStreet','hotelStreet','Street address'],['sCity','hotelCity','City, state and zip code'],['sRate','roomRate','Room rate']],
+  6:[['sReplyTo','replyTo','Your email for replies and alerts']]};
+const STEP_NAME={1:'About your reunion',3:'Hotel',4:'Ages and prices',6:'Emails'};
+function reqMissing(n){const S=D.S,out=[];
+  (REQ[n]||[]).forEach(([id,k,lab])=>{if(!String(S[k]??'').trim())out.push([id,lab])});
+  if(n===6&&String(S.replyTo||'').trim()&&!okEmail(String(S.replyTo).trim()))out.push(['sReplyTo','A real email address in “Your email”']);
+  if(n===4){(S.groups||[]).forEach((g,i)=>{if(!String(g.label||'').trim())out.push([null,'A name for each age group'])});
+    if((S.groups||[]).some(g=>+g.early!==+g.late)&&!S.earlyBird)out.push(['sEarly','Early-bird prices end on'])}
+  return out.filter((x,i,a)=>a.findIndex(y=>y[1]===x[1])===i)}
+function reqShow(n){const m=reqMissing(n),w=$('reqWarn');if(!m.length){w.hidden=true;return true}
+  w.innerHTML='<b>Please fill in before you go on:</b><ul style="margin:6px 0 0;padding-left:20px">'+m.map(x=>'<li>'+esc(x[1])+'</li>').join('')+'</ul>';w.hidden=false;
+  const f=m[0][0]&&$(m[0][0]);if(f){f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus({preventScroll:true}),350)}else w.scrollIntoView({block:'center',behavior:'smooth'});return false}
+function firstIncomplete(upTo){for(const n of [1,3,4,6])if(n<upTo&&reqMissing(n).length)return n;return 0}
 // Checks before leaving a step. Extras need a name and a price; the early-bird date has to come before the reunion.
-function stepOK(n){
+function stepOK(n){if(!reqShow(n))return false;
   if(n===5){const bad=D.S.addons.find(a=>a.on&&(!String(a.label||'').trim()||/^new extra$/i.test(String(a.label).trim())||!(+a.price>0)));const w=$('addonWarn');
     if(bad){w.textContent=`Please give “${String(bad.label||'').trim()||'this extra'}” a name and a price, or remove it.`;w.hidden=false;w.scrollIntoView({block:'center',behavior:'smooth'});return false}w.hidden=true}
   return true}
 function ebCheck(){const w=$('ebWarn');if(!w)return;const S=D.S,eb=S.earlyBird,ld=S.lastDay;
   const bad=eb&&ld&&eb>ld;w.hidden=!bad;if(bad)w.textContent=`The early-bird date (${niceDate(eb)}, ${eb.slice(0,4)}) is after the last day of the reunion (${niceDate(ld)}, ${ld.slice(0,4)}). Please check the year.`}
-document.addEventListener('click',e=>{const g=e.target.closest('[data-wgo]');if(g&&g.closest('#tab-setup'))goStep(+g.dataset.wgo);if(e.target.closest('[data-wpreview]'))$('previewReg').click()});
+document.addEventListener('click',e=>{const g=e.target.closest('[data-wgo]');if(g&&g.closest('#tab-setup')){const to=+g.dataset.wgo,f=isReadOnly()?0:firstIncomplete(to);if(f){goStep(f);reqShow(f);toast('Please finish step '+f+' first.')}else{$('reqWarn').hidden=true;goStep(to)}}if(e.target.closest('[data-wpreview]'))$('previewReg').click();if(e.target.closest('[data-pvstep]'))$('previewReg').click()});
 showStep(wStep);
 /* ---------- $ in money boxes ---------- */
+// Clicking into a number box selects what's there, so typing replaces it.
+document.addEventListener('focusin',e=>{const el=e.target;if(el&&el.matches&&el.matches('input[data-money],input[type=number]')&&el.value!==''){setTimeout(()=>{try{el.select()}catch(_){}},0)}});
+document.addEventListener('wheel',e=>{const el=e.target;if(el&&el.matches&&el.matches('input[type=number]')&&document.activeElement===el)el.blur()},{passive:true});
 document.addEventListener('input',e=>{const el=e.target;if(el&&el.matches&&el.matches('input[data-money]')&&el.type!=='number'&&/[$,]/.test(el.value)){const v=el.value.replace(/[$,\s]/g,'');el.value=v}},true);
 function dollarize(root){(root||document).querySelectorAll('input[data-money]').forEach(i=>{if(i.parentElement.classList.contains('dollar'))return;const w=document.createElement('span');w.className='dollar';i.parentElement.insertBefore(w,i);w.appendChild(i)})}
 new MutationObserver(()=>dollarize()).observe(document.querySelector('main'),{childList:true,subtree:true});dollarize();
@@ -1565,11 +1631,12 @@ function renderHero(){
   const ico=k=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[k]}</svg>`;
   const maps=mapsLink();
   const hotelMi=S.hotelName?`<span class="mi mi-hotel">${ico('pin')}<span><a class="maplink" href="${esc(maps)}" target="_blank" rel="noopener">${esc(S.hotelName)}</a>${S.roomRate?`<br><span class="rateln">${esc(rateText(S.roomRate))}</span>`:''}<br><a class="btn gold sm bookbtn" data-book href="${/^https?:\/\//i.test(S.bookUrl||'')?esc(S.bookUrl):'#'}" target="_blank" rel="noopener">Book your room</a></span></span>`:`<span class="mi">${ico('pin')}Location to be announced</span>`;
-  $('hMeta').innerHTML=[S.when?`<span class="mi">${ico('cal')}${esc(S.when)}</span>`:'',hotelMi,S.host?`<span class="mi">${ico('home')}${esc(S.host)}</span>`:''].join('');wireBook($('hMeta'));
+  $('hMeta').innerHTML=[S.when?`<span class="mi">${ico('cal')}${esc(S.when)}</span>`:'',hotelMi,S.host?`<span class="mi">${ico('home')}${esc(hostLine(S.host))}</span>`:''].join('');wireBook($('hMeta'));
   const people=LIVE?D.pub.people:D.regs.reduce((s,r)=>s+r.people.length,0),hh=LIVE?D.pub.households:D.regs.length,cap=Math.max(1,+S.capacity||1);
-  $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family ${people===1?'member':'members'} registered · ${hh} ${hh===1?'household':'households'}`;
+  $('hCount').innerHTML=LIVE&&!D.loaded?'Loading…':`<b>${people}</b> family ${people===1?'member':'members'} registered · <b>${hh}</b> ${hh===1?'household':'households'}`;
   const days=Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5);
-  $('hEarly').textContent=days>=0?`Early-bird pricing ends in ${days} days`:'Early-bird pricing has ended';
+  const ebd=S.earlyBird?new Date(S.earlyBird+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):'';
+  $('hEarly').innerHTML=!S.earlyBird?'':days>=0?`Early-bird pricing ends <b>${ebd}</b><br><span style="opacity:.75">${days===0?'Today is the last day':days===1?'1 day left':days+' days left'}</span>`:'Early-bird pricing has ended';
   $('hBar').style.width=(+S.capacity>0?Math.min(100,people/cap*100):0)+'%';
 }
 
@@ -1583,10 +1650,11 @@ function renderHotel(){const S=D.S,c=$('hotelCard');
   if(!S.hotelName){c.hidden=true;return}c.hidden=false;
   c.innerHTML=`<div class="ic" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l9-4 9 4v14"/><path d="M9 21v-6h6v6"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></div>
   <div class="stack" style="gap:6px"><div class="mini">Where we're staying</div><h2 style="font-size:20px">${esc(S.hotelName)}</h2>
-  <div class="addr">${esc(S.hotelStreet)}${S.hotelStreet&&S.hotelCity?'<br>':''}${esc(S.hotelCity)}${S.hotelPhone?`<br><span class="mono">${esc(S.hotelPhone)}</span>`:''}</div>
+  <div class="addr">${esc(S.hotelStreet)}${S.hotelStreet&&S.hotelCity?'<br>':''}${esc(S.hotelCity)}${S.hotelPhone?`<br><a href="tel:${esc(String(S.hotelPhone).replace(/[^\d+]/g,''))}" style="color:inherit">${esc(phoneFmt(S.hotelPhone))}</a>`:''}</div>
   ${S.roomRate?`<div class="rate">${esc(rateText(S.roomRate))}</div>`:''}${S.hotelNote?`<p class="small">${esc(S.hotelNote)}</p>`:''}
   <p style="font-weight:700">Rooms are booked directly with the hotel and are not part of your registration total.</p>
   <p class="small">Use the <b>Book your room</b> button at the top of the page.</p></div>`;
+  $('hotelClosed').innerHTML=c.innerHTML;
 }
 function caterSpent(){return D.exps.filter(e=>e.category==='Hotel catering & bar').reduce((s,e)=>s+(+e.amount),0)}
 function guestSpent(){return D.exps.filter(e=>e.category===GUEST).reduce((s,e)=>s+(+e.amount),0)}
@@ -1877,20 +1945,29 @@ function parseSched(txt){const out=[];let cur=null;
     if(!cur){cur={day:'',items:[]};out.push(cur)}cur.items.push(l)});
   return out}
 function schedHTML(days){return days.length?`<h2>Reunion weekend</h2>${days.map(d=>`<div class="wk-row">${d.day?`<span class="wk-day">${esc(d.day)}</span>`:'<span></span>'}<div class="wk-items">${d.items.map(t=>`<div>${esc(t)}</div>`).join('')||'<div class="muted">Details coming soon</div>'}</div></div>`).join('')}`:''}
-let previewing=false;
+let previewing=false,pvNow=false;
 function handoffShown(){return LIVE&&!!(D.handoff&&D.handoff.open)&&(previewing||!isAdmin()||prStage==='handoff')}
 function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();hb.hidden=!ho;
-  if(ho){$('regClosed').hidden=true;$('regWrap').hidden=true;$('ebBanner').innerHTML='';if(!hb.dataset.step)renderHandoff();return}
-  const st=regState(),closed=previewing?st!=='open':LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
-  if(!$('confirm').hidden){box.hidden=true;return}
-  box.hidden=!closed;$('regWrap').hidden=closed;
+  if(ho){$('regClosed').hidden=true;$('hotelClosed').hidden=true;$('regWrap').hidden=true;$('ebBanner').innerHTML='';if(!hb.dataset.step)renderHandoff();return}
+  const st=regState();
+  // Preview always shows the sign-up form, so the host can check it before registration opens.
+  if(previewing){const pn=$('pvNow');pn.hidden=st==='open';pn.textContent=pvNow?'Show the sign-up page':'Show what families see now';
+    $('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':pvNow?'<b>Preview.</b> This is what families see right now, before registration opens.':'<b>Preview.</b> This is the sign-up page once registration opens. Families can’t see it yet.'}
+  const closed=previewing?(pvNow&&st!=='open'):LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
+  if(!$('confirm').hidden){box.hidden=true;$('hotelClosed').hidden=true;return}
+  box.hidden=!closed;$('regWrap').hidden=closed;$('hotelClosed').hidden=!(closed&&D.loaded&&!D.loadErr&&!!D.S.hotelName&&st==='soon');
   if(closed)box.innerHTML=D.loadErr?`<h2>We can't reach the registration system</h2><p class="muted" style="margin-top:8px">Please refresh this page in a minute. If it keeps happening, reply to the email you got from the committee.</p>`
     :!D.loaded?`<p class="muted">Loading…</p>`
     :regMsg(st);
 }
-function setPreview(on){previewing=!!on;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
-  openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0})}
+// Preview opens at the part of the page the host is working on in Setup, and Back to Setup returns to that step.
+const PV_TARGET={2:'weekendCard',3:'hotelCard',4:'peopleList',5:'addonFields'};
+function setPreview(on){previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
+  openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0});
+  if(previewing){const id=PV_TARGET[wStep],el=id&&$(id);if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash');setTimeout(()=>box.classList.remove('pvflash'),2600)},60)}}
+  else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
 $('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
+$('pvNow').addEventListener('click',()=>{pvNow=!pvNow;gateReg();window.scrollTo({top:0})});
 $('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
 
@@ -1929,7 +2006,7 @@ function summaryHTML(){
   <h2>Money in</h2>${tbl(['Paid through','Amount'],Object.keys(byVia).map(k=>[e(k),money(byVia[k])]).concat(contrib?[['Committee contributions',money(contrib)]]:[]),['Total',money(sum(D.pays,p=>p.amount)+contrib)])}
   <h2>Expenses by category</h2>${tbl(['Category','Budget','Spent','Left'],cats.map(([c,b,sp])=>[e(c),money(b),money(sp),(b&&sp>b?`<b class="over">${money(sp-b)} over</b>`:money(b-sp))]),['Total',money(sum(cats,x=>x[1])),money(sum(cats,x=>x[2])),money(sum(cats,x=>x[1]-x[2]))])}
   ${exps.length?`<h2>Expense details</h2>${tbl(['Date','Paid to','Category','Amount'],exps.map(x=>[e(x.date||''),e(x.vendor||''),e(catName(x.category||'')),money(x.amount)]),['Total','','',money(sum(exps,x=>x.amount))],3)}`:''}
-  <div class="ft">Prepared by the ${e(S.senderName||'PSR Host Family Committee')} · ${today}</div></body></html>`}
+  <div class="ft">${e(preparedBy(S))} · ${today}</div></body></html>`}
 // Paper backup for check-in: every household A–Z with a box for each person and what they owe.
 function checkinListHTML(){const S=D.S,e=esc;const title=[S.edition,S.family||'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' ');
   const regs=D.regs.slice().sort((a,b)=>(a.last+a.first).localeCompare(b.last+b.first));
@@ -1996,7 +2073,7 @@ function reportHTML(){
   .rcs{display:grid;grid-template-columns:1fr 1fr;gap:16px}.rc{border:1px solid #dfe4de;border-radius:10px;padding:10px}.rc img{width:100%;max-height:420px;object-fit:contain;display:block;margin-top:8px;background:#fafafa}
   .ft{margin-top:26px;padding-top:10px;border-top:1px solid #dfe4de;color:#5b6660;font-size:10.5px;display:flex;justify-content:space-between}
   .test{background:#fde8e8;color:#7a1414;border-radius:6px;padding:6px 10px;margin-top:10px;font-size:11.5px}</style></head><body>
-  <div class="hd"><div><div class="ey">Financial report</div><div class="t">${e(title)}</div><div class="sub">${[S.when,S.hotelName,S.host].filter(Boolean).map(e).join(' · ')}</div></div><div class="asof">As of<b>${today}</b></div></div>
+  <div class="hd"><div><div class="ey">Financial report</div><div class="t">${e(title)}</div><div class="sub">${[S.when,S.hotelName,hostLine(S.host)].filter(Boolean).map(e).join(' · ')}</div></div><div class="asof">As of<b>${today}</b></div></div>
   ${isTest()?'<div class="test"><b>TEST DATA:</b> practice records, not real numbers.</div>':''}
   <div class="note">This report is for family and reunion planning. It is not an audited financial statement. It shows what was recorded in the reunion system on the date it was printed, and it may change if more information comes in.</div>
   <div class="ks">${box('Money collected',money(Lg.gross),'Registrations and other money in')}${box('Expenses paid',money(Lg.out),`${exps.length} expenses`)}${box('Reunion balance',money(endNow),'Starting balance + collected − spent')}${box('Final balance (when all is paid)',money(proj),`Includes the ${money(Lg.owed)} still owed`)}</div>
@@ -2027,7 +2104,7 @@ function reportHTML(){
 
   ${rcpts.length?`<div class="pb"></div>${H('Receipts')}<div class="rcs">${rcpts.map(x=>{const id=driveId(x.receiptUrl),src=x.img||(id?'https://drive.google.com/thumbnail?id='+id+'&sz=w1200':'');
     return`<div class="rc"><b>${e(x.vendor||'')}</b> · ${money(x.amount)}<div class="small">${e(nice(x.date))} · ${e(catName(x.category||''))}</div>${src?`<img src="${e(src)}" alt="Receipt from ${e(x.vendor||'')}" onerror="this.outerHTML='<p class=small>Picture couldn’t load. Open it here: ${e(x.receiptUrl||'')}</p>'">`:`<p class="small">Open it here: ${e(x.receiptUrl||'')}</p>`}</div>`}).join('')}</div>`:''}
-  <div class="ft"><span>Prepared by the ${e(S.senderName||'host family committee')}</span><span>${e(title)} · Financial report · ${today}</span></div>
+  <div class="ft"><span>${e(preparedBy(S))}</span><span>${e(title)} · Financial report · ${today}</span></div>
   </body></html>`}
 document.addEventListener('click',e=>{if(e.target.closest('#printReport'))printHTML(reportHTML())});
 document.addEventListener('click',e=>{if(e.target.closest('#ciPrintList'))printHTML(checkinListHTML())});
@@ -2295,20 +2372,20 @@ function renderCiCode(){const S=D.S,el=$('sCiLink'),st=$('ciStatus');if(!el)retu
   const past=S.lastDay&&todayISO()>S.lastDay;st.hidden=!(S.checkinCode&&past);
   if(!st.hidden)st.textContent='This link stopped working after the last reunion day ('+niceDate(S.lastDay)+'). A new link is made automatically each year.'}
 function alertList(){return String(D.S.alertEmails||'').split(/[,;\s]+/).filter(Boolean)}
-function renderAlertRows(){const box=$('alertRows');if(!box)return;const l=alertList();if(!l.length)l.push('');
+function renderAlertRows(){const box=$('alertRows');if(!box)return;const l=alertList();box.hidden=!l.length;
   box.innerHTML=l.map((v,i)=>`<div class="alert-row"><input type="email" data-alert="${i}" value="${esc(v)}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${i+1}"><button class="trash" type="button" data-alertdel="${i}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`).join('')}
-function boardList(){return String(D.S.boardEmails||'').split(/[,;\s]+/).filter(Boolean)}
-function renderBoardRows(){const box=$('boardRows');if(!box)return;const l=boardList();if(!l.length)l.push('');
-  box.innerHTML=l.map((v,i)=>`<div class="alert-row"><input type="email" data-board="${i}" value="${esc(v)}" placeholder="committee@gmail.com" autocomplete="off" aria-label="Committee email ${i+1}"><button class="trash" type="button" data-boarddel="${i}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`).join('')}
-function readBoardRows(){D.S.boardEmails=[...document.querySelectorAll('[data-board]')].map(i=>i.value.trim()).filter(Boolean).join(', ')}
+// PSR Reunion Board email: hosts only see it. The board (board PIN) or the tech PIN can change it.
+function renderBoardRows(){const box=$('boardBox');if(!box)return;const b=D.board||'portersanfordreid@gmail.com',can=LIVE&&(isCommittee()||isTech());
+  box.innerHTML=can?`<label class="f">PSR Reunion Board email<input id="boardIn" data-bd type="email" value="${esc(b)}" autocomplete="off"></label><div class="row" style="margin-top:8px"><button class="btn sm" type="button" id="boardSave" data-bd>Save board email</button></div><p class="tip" style="margin-top:10px!important">New-host notices go here. Only the PSR Reunion Board can change this. If it changes, the old address gets a notice.</p>`
+    :`<div class="f"><span>PSR Reunion Board email</span><div style="padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)"><b>${esc(b)}</b></div></div><p class="tip" style="margin-top:10px!important">This is the PSR Reunion Board, not your hosting committee. After the reunion, when the next host signs up, the board is told who it is. Only the board can change this email.</p>`}
 function readAlertRows(){D.S.alertEmails=[...document.querySelectorAll('[data-alert]')].map(i=>i.value.trim()).filter(Boolean).join(', ')}
 function setupExtras(){const S=D.S;
   const ro=$('sRegOpenTxt');if(ro)ro.textContent=S.regOpen?'Open':'Closed';
-  const ao=$('adminOnly');if(ao)ao.hidden=!isTech();ebCheck();
+  const ao=$('adminOnly'),zs=$('zeffySet'),zOn=isTech()&&!inPractice(),zHas=/^https:\/\//i.test(S.zeffyUrl||'');if(ao&&!ao.dataset.open)ao.hidden=!zOn||zHas;if(zs)zs.hidden=!zOn||!zHas||(ao&&!ao.hidden);ebCheck();
   const ro2=$('sRegOpen');if(ro2)ro2.checked=!!S.regOpen;
   const t=isTest()&&!isViewer(),bt=$('balTestTip');if(bt)bt.hidden=!t;['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l&&!isViewer())l.hidden=t});
 }
-function openAsk(){const m=$('openModal');m.querySelectorAll('[data-om]').forEach(c=>c.checked=false);$('omYes').disabled=true;m.hidden=false}
+function openAsk(){const f=firstIncomplete(11);if(f){goStep(f);reqShow(f);toast('Registration can’t open until step '+f+' ('+STEP_NAME[f]+') is filled in.');return}const m=$('openModal');m.querySelectorAll('[data-om]').forEach(c=>c.checked=false);$('omYes').disabled=true;m.hidden=false}
 $('openModal').addEventListener('change',()=>{$('omYes').disabled=![...$('openModal').querySelectorAll('[data-om]')].every(c=>c.checked)});
 $('omNo').addEventListener('click',()=>{$('openModal').hidden=true});
 $('omYes').addEventListener('click',()=>{$('openModal').hidden=true;D.S.regOpen=true;persistSettings();setupExtras();renderAll(true);saveSettingsNow(false).then(()=>{if(!setDirty)toast('Registration is open. Families can sign up now.')})});
@@ -2323,19 +2400,30 @@ function exEmail(style){const S=D.S,G='#1c5a34',MUTED='#5b6660',LINE='#e3e6e1',G
   let h=`<p style="margin:0 0 12px">Hi Jane,</p><p style="margin:0 0 16px">Thank you for registering for the ${esc(ed)}${esc(S.family||'Porter-Sanford-Reid Family Reunion')}!</p>`;
   if(!ticket)h+=`<div style="background:#f3f7f2;border:1px solid #cfe0d2;border-radius:10px;padding:14px 16px;text-align:center"><div style="font-size:12px;color:${MUTED};text-transform:uppercase;letter-spacing:.08em">Confirmation number</div><div style="font-size:26px;font-weight:bold;color:${G};letter-spacing:.04em;margin-top:2px">${code}</div></div>`+sec('Who’s coming')+`<ul style="margin:0;padding-left:20px">${ppl.map(p=>`<li>${p}</li>`).join('')}</ul>`;
   h+=sec('Your order')+`<table style="width:100%;border-collapse:collapse">${row(`${esc(ad.label||'Adult')} <span style="color:${MUTED}">× ${ppl.length}</span>`,money(total))}${row('Total',money(total),true)}</table>`;
-  h+=sec('Payment')+`<p style="margin:0 0 10px">Amount due: <b>${money(total)}</b></p><p style="margin:0 0 10px"><span style="display:inline-block;background:${G};color:#fff;font-weight:bold;padding:10px 20px;border-radius:8px">Pay online</span></p><p style="margin:0;color:${MUTED}">The payment page shows your amount and walks you through each step.</p>`;
-  if(S.hotelName)h+=sec('Hotel')+`<p style="margin:0;line-height:1.5"><b>${esc(S.hotelName)}</b>${S.hotelStreet?'<br>'+esc(S.hotelStreet):''}${S.hotelCity?'<br>'+esc(S.hotelCity):''}${S.roomRate?'<br>'+esc(rateText(S.roomRate)):''}</p>`;
+  h+=sec('Payment')+`<p style="margin:0 0 10px">Amount due: <b>${money(total)}</b></p><p style="margin:0 0 10px"><span style="display:inline-block;background:${G};color:#fff;font-weight:bold;padding:12px 22px;border-radius:8px">Pay online</span></p><p style="margin:0;color:${MUTED}">The payment page shows your amount and walks you through each step.</p>`;
+  // Hotel: matches the real email word for word (Code.gs regEmail_)
+  if(S.hotelName){const addr=[S.hotelStreet,S.hotelCity].filter(Boolean).map(esc).join('<br>'),book=/^https?:\/\//i.test(S.bookUrl||'');
+    h+=sec('Hotel')+`<p style="margin:0;line-height:1.5"><b>${esc(S.hotelName)}</b>${addr?`<br><span style="color:${G};text-decoration:underline"><img src="https://psrreunion.github.io/pin.png" width="16" height="16" alt="" style="vertical-align:-2px;margin-right:4px;border:0">${addr}</span>`:''}${S.roomRate?'<br>'+esc(rateText(S.roomRate)):''}</p>`
+      +`<p style="margin:14px 0 6px">Haven’t booked your room yet?</p>`
+      +(book?`<p style="margin:0"><span style="display:inline-block;background:#e3b318;color:#1f2a24;font-weight:bold;padding:12px 22px;border-radius:8px">Book your room</span></p>`:`<p style="margin:0;color:${MUTED}">Hotel booking link coming soon.</p>`)
+      +`<p style="margin:8px 0 0;color:${MUTED}">Rooms are paid to the hotel, not the reunion.</p>`}
   if(ticket)h+=`<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border:2px solid ${G};border-radius:14px;overflow:hidden;margin:22px 0 4px"><tr><td style="background:${G};color:#fff;padding:14px 18px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${GOLD};font-weight:bold">${esc([S.edition,S.family||'Porter-Sanford-Reid Family Reunion'].filter(Boolean).join(' '))}</div>${S.theme?`<div style="font-family:Georgia,serif;font-size:22px;line-height:1.2;margin-top:4px">${esc(S.theme)}</div>`:''}</td></tr>
     <tr><td style="padding:16px 18px 6px"><table role="presentation" width="100%"><tr><td style="vertical-align:top">${lab('Admit')}<div style="font-size:20px;font-weight:bold;color:${G};margin:2px 0 10px">The Davis Family</div>${lab('Confirmation #')}<div style="font-size:22px;font-weight:bold;letter-spacing:.05em;margin:2px 0 10px">${code}</div>${lab('Who’s coming ('+ppl.length+')')}<div style="margin-top:3px;line-height:1.5">${ppl.join('<br>')}</div></td>
     <td style="vertical-align:top;text-align:center;width:132px;padding-left:10px"><img src="${qr}" width="124" height="124" alt="Sample check-in code" style="display:block;border:1px solid ${LINE};border-radius:8px"><div style="font-size:11px;color:${MUTED};margin-top:5px">Check-in code</div></td></tr></table></td></tr>
     <tr><td style="padding:0 18px"><div style="border-top:2px dashed #cfd6cf;margin:10px 0"></div></td></tr>
     <tr><td style="padding:2px 18px 14px"><table role="presentation" width="100%"><tr>${when.length?`<td style="vertical-align:top;padding-right:8px">${lab('When')}<b>${esc(when[0])}</b>${when[1]?`<br><span style="color:${MUTED}">${esc(when.slice(1).join(' · '))}</span>`:''}</td>`:''}${S.hotelName?`<td style="vertical-align:top">${lab('Where')}<b>${esc(S.hotelName)}</b>${S.hotelCity?`<br><span style="color:${MUTED}">${esc(S.hotelCity)}</span>`:''}</td>`:''}</tr></table>
     <div style="margin-top:12px;background:#fbf3d9;border-radius:8px;padding:9px 12px;font-size:13px;color:#5a4a12">Show this at check-in. <b>No ticket? No problem.</b> Just tell us your name.</div></td></tr></table>`;
-  h+=`<p style="margin:22px 0 0">Questions? Just reply to this email.</p><p style="margin:6px 0 0;color:${MUTED}">${esc(S.senderName||'PSR Host Family Committee')}</p>`;
+  h+=`<p style="margin:22px 0 0">Questions? Just reply to this email.</p><p style="margin:6px 0 0;color:${MUTED}">${esc(senderLine(S))}</p>`;
   return`<div class="mini" style="margin-bottom:10px">Example email (sample family)</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1f2a24;line-height:1.45;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;max-width:560px">${h}</div>`}
 
+function phoneFmt(p){p=String(p||'').trim();const d=p.replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'');return d.length===10?`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`:p}
+// Name on the emails: what the host typed, or else "Hosted by …" from step 1.
+function senderLine(S){S=S||D.S;return String(S.senderName||'').trim()||hostLine(S.host)||'PSR Host Family Committee'}
+function preparedBy(S){const n=String(S.senderName||'').trim();if(n)return 'Prepared by the '+n.replace(/^the\s+/i,'');const h=String(S.host||'').trim().replace(/^hosted by\s+/i,'');return h?'Prepared by '+h:'Prepared by the PSR Host Family Committee'}
+function hostLine(h){h=String(h||'').trim();return !h?'':/^hosted by\b/i.test(h)?h:'Hosted by '+h}
 function renderSetup(){
   const S=D.S;document.querySelectorAll('[data-k]').forEach(i=>{if(i.type==='checkbox')i.checked=!!S[i.dataset.k];else i.value=S[i.dataset.k]??''});
+  $('sHost').value=String(S.host||'').trim().replace(/^hosted by\s+/i,'');if(!String(S.senderName||'').trim())$('sSender').value=hostLine(S.host)||'PSR Host Family Committee';
   $('setGroups').innerHTML=`<div class="set-row mini"><span>Group</span><span>Ages</span><span>Early-bird price</span><span>Price after</span></div>`+S.groups.map((g,i)=>`<div class="set-row">
     <input aria-label="Group name" data-g="${i}" data-gf="label" value="${esc(g.label)}"><input aria-label="Ages" data-g="${i}" data-gf="ages" value="${esc(g.ages)}">
     <input data-money aria-label="Early-bird price" type="number" min="0" data-g="${i}" data-gf="early" value="${g.early}"><input data-money aria-label="Regular price" type="number" min="0" data-g="${i}" data-gf="late" value="${g.late}"></div>`).join('');
@@ -2349,16 +2437,19 @@ function renderSetup(){
   syncBudgets();
   $('setBudgets').innerHTML=CATS.map(c=>{const auto=AUTO_B[c];return`<label class="f">${esc(catName(c))}<input data-money type="number" min="0" data-b="${esc(c)}" value="${S.budgets[c]||0}"${auto?' readonly title="Fills in from the box above" style="background:#f3f2ee"':''}></label>`}).join('');
   renderAlertRows();renderBoardRows();setupExtras();
+  // Number boxes start blank (with a light 0 hint) instead of a real 0, so a typed amount doesn't end up as 0200.
+  document.querySelectorAll('#tab-setup input[data-money],#tab-setup input[type=number]').forEach(i=>{if(i.dataset.g!==undefined)return;if(i.value!==''&&+i.value===0&&document.activeElement!==i)i.value='';if(!i.placeholder)i.placeholder='0'});
 }
 $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   if(el.dataset.alert!==undefined){readAlertRows();persistSettings();return}
-  if(el.dataset.board!==undefined){readBoardRows();persistSettings();return}
   if(el.id==='sSchedule'&&!$('schedExBox').hidden)setTimeout(schedEx,0);
   if(el.id==='sEmailStyle'&&!$('exBox').hidden)$('exBox').innerHTML=exEmail(el.value);
   if(el.id==='sRegOpen'&&el.checked&&!S.regOpen){el.checked=false;openAsk();return}
   if(el.id==='sRegOpen'&&!el.checked&&S.regOpen&&!confirm('Turn registration off? Families won’t be able to sign up until you turn it back on.')){el.checked=true;return}
   if(el.id==='sZeffy')S._setZeffy=true;
   if(el.dataset.k){const k=el.dataset.k;S[k]=el.type==='checkbox'?el.checked:el.type==='number'?(parseFloat(el.value)||0):el.value}
+  {const rw=$('reqWarn');if(rw&&!rw.hidden){setTimeout(()=>{const m=reqMissing(wStep);if(!m.length)rw.hidden=true;else rw.innerHTML='<b>Please fill in before you go on:</b><ul style="margin:6px 0 0;padding-left:20px">'+m.map(x=>'<li>'+esc(x[1])+'</li>').join('')+'</ul>'},0)}}
+  if(el.id==='sHost'&&!String(S.senderName||'').trim())$('sSender').value=hostLine(el.value)||'PSR Host Family Committee';
   else if(el.dataset.g!==undefined){const g=S.groups[+el.dataset.g],f=el.dataset.gf;g[f]=(f==='early'||f==='late')?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.a!==undefined){const a=S.addons[+el.dataset.a],f=el.dataset.af;a[f]=f==='on'?el.checked:f==='price'?(parseFloat(el.value)||0):el.value}
   else if(el.dataset.b){S.budgets[el.dataset.b]=parseFloat(el.value)||0}
@@ -2369,10 +2460,9 @@ $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   persistSettings();renderAll(true);setupExtras();
 });
 $('tab-setup').addEventListener('click',e=>{
-  const bd=e.target.closest('[data-boarddel]');if(bd){bd.closest('.alert-row').remove();readBoardRows();renderBoardRows();persistSettings();return}
-  if(e.target.closest('#boardAdd')){const box=$('boardRows'),n=box.querySelectorAll('[data-board]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-board="${n}" placeholder="committee@gmail.com" autocomplete="off" aria-label="Committee email ${n+1}"><button class="trash" type="button" data-boarddel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-board="${n}"]`).focus();return}
+  if(e.target.closest('#boardSave')){const v=$('boardIn').value.trim();busy($('boardSave'),'Saving…',async()=>{try{const j=await api('saveBoard',{emails:v});D.board=j.board;renderBoardRows();toast('Board email saved.')}catch(x){toast(x.message)}});return}
   const ad=e.target.closest('[data-alertdel]');if(ad){ad.closest('.alert-row').remove();readAlertRows();renderAlertRows();persistSettings();return}
-  if(e.target.closest('#alertAdd')){const box=$('alertRows'),n=box.querySelectorAll('[data-alert]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-alert="${n}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${n+1}"><button class="trash" type="button" data-alertdel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-alert="${n}"]`).focus();return}
+  if(e.target.closest('#alertAdd')){const box=$('alertRows');box.hidden=false;const n=box.querySelectorAll('[data-alert]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-alert="${n}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${n+1}"><button class="trash" type="button" data-alertdel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-alert="${n}"]`).focus();return}
   if(e.target.closest('#schedEx')){const bx=$('schedExBox'),b=$('schedEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';if(!bx.hidden)schedEx();return}
   if(e.target.closest('#ebEx')){const bx=$('ebExBox'),b=$('ebEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';if(!bx.hidden)bx.innerHTML=ebExample();return}
   if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':exEmail(st);e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
@@ -2763,10 +2853,10 @@ function applyMode(){const adm=isAdmin();
   // Test PIN: Test mode only, no Setup, no committee contributions.
   const v=isViewer(),co=isCommittee(),ro=v||co;if(ro){tb.hidden=true;$('testClear').hidden=true}
   $('testOff').hidden=ro;$('contribPanel').hidden=false;document.body.classList.toggle('viewer',ro);document.body.classList.toggle('committee',co);
-  document.querySelectorAll('#tab-setup input,#tab-setup select,#tab-setup textarea,#tab-setup button:not([data-wnav]):not([data-wgo])').forEach(el=>{if(ro&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!ro&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
+  document.querySelectorAll('#tab-setup input:not([data-bd]),#tab-setup select,#tab-setup textarea,#tab-setup button:not([data-wnav]):not([data-wgo]):not([data-bd])').forEach(el=>{if(ro&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!ro&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
   ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
-  const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the committee PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
-  const hh=$('homeHi');if(hh)hh.textContent=co?'Reunion committee home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;
+  const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the PSR Reunion Board PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
+  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;
   const ctp=$('ctOpen');if(ctp&&ro)ctp.hidden=true;
 }
 $('testBtn').addEventListener('click',()=>setTest(!isTest()));
