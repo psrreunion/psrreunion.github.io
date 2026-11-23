@@ -35,6 +35,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
 @keyframes psrspin{to{transform:rotate(360deg)}}
 .optl{margin-left:6px;font:600 12px var(--f-body);color:var(--muted)}
 .startbox{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 18px;padding:18px 20px;border:2px solid var(--gold);border-radius:14px;background:var(--gold-bg,#fbf3d6)}.startbox b{font-size:19px}
+.trybox{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
 .pvnote{margin-top:22px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}.pvnote p{margin:0 0 12px}
 .pvflash{box-shadow:0 0 0 4px var(--gold),0 6px 18px rgba(0,0,0,.12)!important;transition:box-shadow .4s}
 @media print{#loadingScreen{display:none!important}}
@@ -652,7 +653,7 @@ input[type=date]{cursor:pointer}
   </div>
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
-<div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink">Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
+<div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span id="prMsg"><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink" hidden>Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
 <div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
@@ -696,6 +697,10 @@ input[type=date]{cursor:pointer}
     <div class="practice" id="practiceBox" hidden>
       <div><h3>Practice as a new host</h3><p>Shows exactly what a new host sees: the “hosting next?” message, the short sign-up, the welcome and the setup steps. Practice saves to its own practice sheet, so your real reunion records are never touched. If you stop partway, it picks up where you left off.</p></div>
       <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn primary big" type="button" id="practiceGo">Practice as a new host</button><button class="btn" type="button" id="practiceWipe">Start practice over</button></div>
+      <div class="trybox"><h3 style="font-size:17px;margin:0 0 4px">Invite someone to try it</h3>
+        <p style="margin:0 0 10px">The link expires in 10 days. Type their name and email, and we’ll email them a link and a PIN to try the page.</p>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end"><label class="f" style="flex:1 1 200px">Their name<input id="tryName" autocomplete="off"></label><label class="f" style="flex:1 1 240px">Their email<input id="tryEmail" type="email" autocomplete="off"></label><button class="btn primary" type="button" id="tryGo">Send invite</button></div>
+        <div id="tryList" style="margin-top:12px"></div></div>
     </div>
   </div>
 </section>
@@ -926,7 +931,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (e)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (l)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -967,7 +972,7 @@ input[type=date]{cursor:pointer}
           <label class="f">Reunion weekend schedule (optional)<textarea id="sSchedule" data-k="schedule" rows="8" placeholder="Friday - Meet and greet, 6–9 PM&#10;Saturday - Picnic, 12–3 PM&#10;Saturday - Banquet, 6 PM&#10;Sunday - Church and farewell"></textarea></label>
           <div id="schedExBox" class="card wk-card side-ex" hidden style="padding:18px"></div>
           </div>
-          <p class="tip">Type the day and each event. Click <b>See example</b> to see how it looks. If you leave this blank, families won’t see a schedule.</p>
+          <p class="tip">Type each day and what’s happening, one line at a time, like “Friday - Meet and greet, 6–9 PM.” Click <b>See example</b> to see a made-up schedule laid out the way families will see it, and <b>Hide example</b> to put it away. To see your own schedule, use the button at the bottom of this page. If you leave this blank, families won’t see a schedule.</p>
           <div><button class="btn sm" type="button" id="schedEx">See example</button></div>
           <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="2">See how it looks to families →</button></div>
       </div>
@@ -1231,11 +1236,13 @@ const isAdmin=()=>!LIVE||!!PIN;
 let testOn=false;try{testOn=localStorage.getItem('psr-test-mode')==='1'}catch(e){}
 let practicing=false,prStage='',prSnap=null;try{practicing=localStorage.getItem('psr-practicing')==='1'&&!!PIN}catch(e){}
 // A practice sign-up link (#practice) or practice check-in link (&p=1) works in the practice sheet, looking exactly like the real page.
-const PRPUB=/^#practice\b|[#&]p=1\b/.test(location.hash||'');
+const TRYID=((location.hash||'').match(/[#&]try=([a-z0-9]+)/i)||[])[1]||'';   // a tester's family sign-up link
+const PRPUB=!!TRYID||/^#practice\b|[#&]p=1\b/.test(location.hash||'');
 const inPractice=()=>practicing||PRPUB;
 const isViewer=()=>LIVE&&D.role==='viewer';
 const isCommittee=()=>LIVE&&D.role==='committee';
 const isReadOnly=()=>isViewer()||isCommittee();
+const isTrial=()=>LIVE&&D.role==='trial';   // the practice PIN: practice only, never the real reunion
 const isTech=()=>LIVE&&D.role==='tech';      // the tech PIN: the only one that can use Test mode
 const isTest=()=>LIVE&&!inPractice()&&(isViewer()||(testOn&&isTech()));
 const startBal=()=>isTest()?0:(+D.S.begin||0),startSchol=()=>isTest()?0:(+D.S.scholStart||0);
@@ -1249,10 +1256,11 @@ function setTest(on){testOn=!!on;try{on?localStorage.setItem('psr-test-mode','1'
 const uid=()=>Date.now()+Math.floor(Math.random()*1000);
 async function api(action,data,log){
   let res;
-  try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest()||(LIVE&&testOn&&!inPractice()&&!D.role),practice:inPractice(),data:data||{},log:log||null})})}
+  try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest()||(LIVE&&testOn&&!inPractice()&&!D.role),practice:inPractice(),try:TRYID||undefined,data:data||{},log:log||null})})}
   catch(e){throw new Error('Could not reach the reunion system. Check your internet connection and try again.')}
   let j;try{j=await res.json()}catch(e){throw new Error('The reunion system sent back an unexpected answer. Try again in a minute.')}
   if(j.auth===false){signOut(true);throw new Error('Please sign in again.')}
+  if(j.tryEnded){showTryEnded();throw new Error(j.error)}
   if(!j.ok&&(j.testOff||/Test mode is turned off/.test(j.error||''))&&testOn){testOn=false;try{localStorage.removeItem('psr-test-mode')}catch(e){}return api(action,data,log)}
   if(!j.ok)throw new Error(j.error||'Something went wrong. Try again.');
   return j;
@@ -1268,7 +1276,7 @@ async function loadAll(again){
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
-  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
+  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';D.tryEnds=j.tryEnds||'';if(j.tryouts)D.tryouts=j.tryouts;if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
   D.emails=j.emails||[];D.board=j.board||'';D.contacts=j.contacts||[];D.isTestData=!!j.test;
   if(practicing){if(!D.S.practiceHost&&!setDirty){D.S=mergeSettings({...blankSettings(),checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear});prStage='handoff';const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}else{prStage='setup';D.handoff={open:false}}}
   D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
@@ -1501,7 +1509,8 @@ function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep
   Object.keys(b.budgets||{}).forEach(k=>b.budgets[k]=0);
   b.groups=d.groups.map(g=>({...g,early:0,late:0}));b.addons=d.addons.map(a=>({...a,price:0,on:false}));
   return {...b,regOpen:false,setupDone:false,setupStep:0,showTest:true,askFood:false,earlyBanner:true}}
-function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing}
+function showTryEnded(){showLoading(false);[...document.body.children].forEach(el=>{if(el.tagName!=='SCRIPT'&&el.tagName!=='MAIN')el.hidden=true});const m=document.querySelector('main.wrap');if(m)m.innerHTML='<div class="panel confirm" style="margin-top:40px"><h2>This practice link has ended</h2><p>Thank you for trying the PSR reunion page! If you’d like to try it again, ask the person who sent you the link for a new one.</p></div>'}
+function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing;$('prExit').textContent=isTrial()?'Sign out':'Exit practice';$('prMsg').innerHTML=isTrial()?'<b>Your tryout.</b> This is practice only. Nothing is real.'+(D.tryEnds?' It ends '+niceDate(D.tryEnds)+'.':''):'<b>Practice as a new host.</b> Your real reunion isn’t touched.'}
 // Practice runs against its own practice sheet. It remembers where you were, even after signing out or closing the page.
 async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
@@ -1515,7 +1524,7 @@ function practiceSignedUp(name){prStage='setup';document.body.classList.remove('
   renderSetup();renderAll(true);openTab('home');window.scrollTo({top:0});
   api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved')}).catch(e=>toast(e.message));
   try{sessionStorage.removeItem('psr-welcome-later-pr')}catch(e){}toast('You’re set up as host.');showWelcome()}
-async function practiceExit(){if(!practicing)return;practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}
+async function practiceExit(){if(!practicing)return;if(isTrial()){practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}prShow();signOut();return}practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}
   showLoading(true,'Closing practice…');setDirty=false;prShow();document.body.classList.remove('previewing');$('welcomeModal').hidden=true;
   $('handoffBox').hidden=true;delete $('handoffBox').dataset.step;if(previewing)setPreview(false);
   try{await refreshLive()}catch(e){toast(e.message)}
@@ -1525,6 +1534,13 @@ let wipeArm=0;$('practiceWipe').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-wipeArm>4000){wipeArm=Date.now();b.textContent='Tap again to erase the practice';setTimeout(()=>{if(Date.now()-wipeArm>=4000)b.textContent='Start practice over'},4100);return}
   wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
 $('prLink').addEventListener('click',e=>copy(location.origin+location.pathname+'#practice',e.target));
+function renderTryouts(){const box=$('tryList');if(!box)return;const l=(D.tryouts||[]).filter(t=>t.live);
+  box.innerHTML=l.length?'<div class="mini" style="margin-bottom:6px">Practice links sent</div>'+l.map(t=>`<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><span><b>${esc(t.name)}</b> · ${esc(t.email)} · works until ${esc(niceDate(t.expires))}</span><button class="btn sm" type="button" data-tryend="${esc(t.id)}">Stop early</button></div>`).join(''):''}
+$('tryGo').addEventListener('click',()=>{const name=$('tryName').value.trim(),email=$('tryEmail').value.trim();
+  if(name.length<2){toast('Please type their name.');$('tryName').focus();return}if(!okEmail(email)){toast('Please type their email address.');$('tryEmail').focus();return}
+  busy($('tryGo'),'Sending…',async()=>{try{const j=await api('invite',{name,email});D.tryouts=j.tryouts;renderTryouts();$('tryName').value='';$('tryEmail').value='';toast(j.queued?'Invite saved. It will go out tomorrow (daily email limit).':'Invite sent to '+email+'.')}catch(x){toast(x.message)}})});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tryend]');if(!b)return;if(!confirm('Stop this practice link now? Their link and PIN will stop working.'))return;
+  busy(b,'Ending…',async()=>{try{const j=await api('endTryout',{id:b.dataset.tryend});D.tryouts=j.tryouts;renderTryouts();toast('Stopped.')}catch(x){toast(x.message)}})});
 // During practice, the browser's back arrow acts like the page's Back button instead of leaving the page.
 window.addEventListener('popstate',()=>{if(!practicing)return;try{history.pushState({pr:1},'',location.href)}catch(e){}
   if(prStage==='setup'&&$('tab-setup')&&!$('tab-setup').hidden&&wStep>1)goStep(wStep-1);else toast('To leave practice, click Exit practice at the top.')});
@@ -2455,7 +2471,6 @@ function renderSetup(){
 }
 $('tab-setup').addEventListener('input',e=>{const el=e.target,S=D.S;
   if(el.dataset.alert!==undefined){readAlertRows();persistSettings();return}
-  if(el.id==='sSchedule'&&!$('schedExBox').hidden)setTimeout(schedEx,0);
   if(el.id==='sEmailStyle'&&!$('exBox').hidden)$('exBox').innerHTML=exEmail(el.value);
   if(el.id==='sRegOpen'&&el.checked&&!S.regOpen){el.checked=false;openAsk();return}
   if(el.id==='sRegOpen'&&!el.checked&&S.regOpen&&!confirm('Turn registration off? Families won’t be able to sign up until you turn it back on.')){el.checked=true;return}
@@ -2483,8 +2498,8 @@ $('tab-setup').addEventListener('click',e=>{
   const b=e.target.closest('[data-adel]');if(!b)return;
   if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
   D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
-function schedEx(){const bx=$('schedExBox'),t=String(D.S.schedule||'').trim();
-  bx.innerHTML='<div class="mini" style="margin-bottom:8px">What families will see'+(t?'':' (sample)')+'</div>'+schedHTML(parseSched(t||$('sSchedule').placeholder))}
+// Always the made-up sample, never what the host typed (the button at the bottom of the step shows theirs).
+function schedEx(){$('schedExBox').innerHTML='<div class="mini" style="margin-bottom:8px">Example (a made-up schedule)</div>'+schedHTML(parseSched($('sSchedule').placeholder))}
 function ebExample(){const S=D.S,d=S.earlyBird?niceDate(S.earlyBird):'June 30';
   return`<div class="mini" style="margin:4px 0 8px">What families see at the top of the page in the last 2 weeks</div><div class="eb-banner" style="margin:0"><span><b>Only 5 days left for early-bird pricing!</b><br><span class="small">Early-bird ends ${esc(d)}.</span></span><span class="btn">Register now</span></div>`}
 $('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
@@ -2515,7 +2530,7 @@ function ciOfflineBar(){const el=$('ciOffline');if(!el)return;const n=ciQueue().
   el.hidden=!ciOffline&&!n;
   el.innerHTML=ciOffline?`<b>No internet right now.</b> Keep checking people in. Everything is saved on this device and will send by itself when the internet is back.${n?` (${n} waiting to send)`:''}`
     :`<b>Sending saved check-ins…</b> ${n} left to send.`}
-async function ciFetch(action,data){const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),practice:inPractice(),data:data||{}})});return res.json()}
+async function ciFetch(action,data){const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),practice:inPractice(),try:TRYID||undefined,data:data||{}})});return res.json()}
 async function ciRefreshCache(){if(!LIVE||Date.now()-ciCacheAt<120000)return;ciCacheAt=Date.now();
   try{const j=await ciFetch('ciFind',{all:true});if(j&&j.ok&&j.all)lsSet(CIC_KEY,{mode:ciMode(),at:Date.now(),all:j.all,stats:j.stats})}catch(e){}}
 function ciLocal(action,data){const c=ciCache()||{mode:ciMode(),all:[],stats:{total:0,Friday:0,Saturday:0,walkins:0}};const st=c.stats||(c.stats={total:0,Friday:0,Saturday:0,walkins:0});
@@ -2543,7 +2558,7 @@ async function ciApi(action,data){
   if(LIVE&&OFFLINE_OK.indexOf(action)>=0&&ciQueue().length){            // keep things in order while older items are still waiting
     if(action==='ciPay')data={...data,qid:Date.now()};const q=ciQueue();q.push({action,data,t:Date.now()});lsSet(CIQ_KEY,q);const r=ciLocal(action,data);ciOfflineBar();ciFlush();return r}
   if(action==='ciPay')data={...data,qid:Date.now()};
-  let res;try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),practice:inPractice(),data:data||{}})})}
+  let res;try{res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,pin:PIN,ci:CI,test:isTest(),practice:inPractice(),try:TRYID||undefined,data:data||{}})})}
   catch(e){
     if(LIVE&&ciCache()&&(action==='ciFind'||OFFLINE_OK.indexOf(action)>=0)){ciOffline=true;
       if(action!=='ciFind'){const q=ciQueue();q.push({action,data,t:Date.now()});lsSet(CIQ_KEY,q)}
@@ -2870,7 +2885,7 @@ function applyMode(){const adm=isAdmin();
   document.querySelectorAll('#tab-setup input:not([data-bd]),#tab-setup select,#tab-setup textarea,#tab-setup button:not([data-wnav]):not([data-wgo]):not([data-bd])').forEach(el=>{if(ro&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!ro&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
   ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
   const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the PSR Reunion Board PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
-  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
+  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;if(isTech())renderTryouts();{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
   {const sb=$('startBox');if(sb){const at=+D.S.setupStep||0,show=LIVE&&isAdmin()&&!isCommittee()&&!D.S.setupDone&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing);sb.hidden=!show;
     if(show){$('startTitle').textContent=at>1&&at<=10?'Pick up where you left off':'Set up your reunion';$('startText').textContent=at>1&&at<=10?'You stopped at step '+at+' of 10. Everything you saved is still there.':'It takes 10 short steps. Each step tells you what to type.';$('startGo').textContent=at>1&&at<=10?'Continue at step '+at+' →':'Get started →';$('startGo').dataset.step=at>1&&at<=10?at:1}}}
   const ctp=$('ctOpen');if(ctp&&ro)ctp.hidden=true;
@@ -2896,6 +2911,7 @@ $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn
     try{await loadAll()}catch(err){practicing=false;showLoading(false);PIN='';er.textContent=/no longer works|wrong tries/i.test(err.message)?err.message:/sign in|PIN/i.test(err.message)?'That PIN is not right.':err.message;er.hidden=false;return}
     try{sessionStorage.setItem('psr-pin',pin)}catch(_){}
     $('pinIn').value='';$('pinForm').hidden=true;$('adminLink').hidden=false;
+    if(isTrial()&&!wasPr){practicing=false;await practiceStart();toast('Signed in. This is practice only, so nothing real is touched.');return}
     if(wasPr&&!isReadOnly()){practicing=false;await practiceStart(true);toast('Signed in. You’re back in practice.');return}
     if(wasPr){practicing=false;prStage='';try{await loadAll()}catch(_){}}
     renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');showLoading(false);window.scrollTo({top:0});toast('Signed in.');showWelcome()}).catch(()=>showLoading(false));
