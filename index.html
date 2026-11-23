@@ -751,7 +751,7 @@ input[type=date]{cursor:pointer}
         </div>
       </div>
     </form>
-    <div class="side-col"><aside class="panel summary" id="summary" aria-live="polite"></aside><div class="panel wk-card" id="priceCard" hidden></div><div class="panel wk-card" id="weekendCard" hidden></div></div>
+    <div class="side-col"><aside class="panel summary" id="summary" aria-live="polite"></aside><div class="panel wk-card" id="weekendCard" hidden></div></div>
   </div>
   <div id="confirm" hidden></div>
 </section>
@@ -932,7 +932,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (o)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (t)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1006,6 +1006,8 @@ input[type=date]{cursor:pointer}
           <label class="check"><input type="checkbox" id="sEarlyBanner" data-k="earlyBanner"> Show a gold early-bird reminder during the last 2 weeks of early-bird pricing.</label>
           <div><button class="btn sm" type="button" id="ebEx">See example</button></div>
           <div id="ebExBox" hidden></div>
+          <label class="check" style="margin-top:6px"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask families about food needs</label>
+          <p class="tip">Under “Who’s coming,” families will be asked if anyone is vegetarian, vegan, or doesn’t eat pork. This helps you plan meals so everyone has something to eat.</p>
           <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="4">See how it looks to families →</button></div>
       </div>
     </div>
@@ -1016,22 +1018,21 @@ input[type=date]{cursor:pointer}
           <div><button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
           <p class="tip">Check the box to show an item on the registration form. Uncheck it to hide the item without deleting it.</p>
           <p class="tip bad-tip" id="addonWarn" hidden></p>
-          <label class="check" style="margin-top:6px"><input type="checkbox" id="sAskFood" data-k="askFood"> Ask families about food needs</label>
-          <p class="tip">Families will be asked if anyone is vegetarian, vegan, or doesn’t eat pork. This helps you plan meals so everyone has something to eat.</p>
           <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="5">See how it looks to families →</button></div>
       </div>
     </div>
     <div class="wstep" data-step="6" hidden>
-      <div class="whead"><div class="wcount">Step 5 of 9</div><h2>Emails</h2><p>Emails to families go out for you automatically. Pick the email where you want families’ replies and any alerts to come. Then choose how your emails look.</p></div>
+      <div class="whead"><div class="wcount">Step 5 of 9</div><h2>Emails</h2><p>Emails to families are sent for you automatically. Type the email where you want families’ replies and any alerts to come. Then pick the thank-you email families get.</p></div>
       <div class="stack">
         <div class="sched-pair ex-pair">
           <div class="stack">
-          <label class="f">Name families see on your emails<input id="sSender" data-k="senderName" placeholder="PSR Host Family Committee" autocomplete="off"><span class="ex">This fills in from the hosting family in step 1. You can change it.</span></label>
-          <div class="f" style="display:grid;gap:8px"><label class="f"><span>Your email for replies and alerts <span class="req">(required)</span></span><input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
+          <input id="sSender" data-k="senderName" type="hidden">
+          <div class="f" style="display:grid;gap:8px"><label class="f"><span>Your email <span class="req">(required)</span></span><input id="sReplyTo" data-k="replyTo" type="email" placeholder="host@example.com" autocomplete="off"></label>
             <div class="stack" id="alertRows" style="gap:10px"></div><div><button class="btn sm" type="button" id="alertAdd">+ Add another person for alerts</button></div></div>
-          <div class="tip">When families reply, it comes to this email. We’ll also email you here if something looks wrong, such as:<ul style="margin:6px 0 0;padding-left:20px"><li>A payment we can’t match</li><li>A double payment</li><li>An email that didn’t send</li></ul><div style="margin-top:6px">Every reply is also saved on the <b>Records</b> page.</div></div>
-          <label class="f">What families get after they register<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">An email with a check-in pass to show at the door</option><option value="regular">A simple thank-you email</option></select></label>
-          <div><button class="btn sm" type="button" id="exBtn">See example</button></div>
+          <div class="tip">Families’ replies come to this email. We’ll also email you here if something looks wrong, like a payment we can’t match. Anyone you add gets the alerts too.</div>
+          <label class="f">Thank-you email families get after they register<select id="sEmailStyle" data-k="emailStyle"><option value="ticket">An email with a check-in pass to show at the door</option><option value="regular">A simple thank-you email</option></select></label>
+          <p class="small muted" style="margin:-4px 0 0">There are two to choose from. Click <b>See example</b> to see the one you picked.</p>
+          <div><button class="btn gold" type="button" id="exBtn">See example</button></div>
           </div>
           <div id="exBox" class="side-ex email-ex" hidden></div>
         </div>
@@ -1454,38 +1455,32 @@ const PIN_NOTE='Your PIN must be at least 6 numbers. Pick something you’ll rem
 function pinRule(p){if(!/^\d+$/.test(p))return'Use numbers only for your PIN.';if(p.length<6)return'Your PIN must be at least 6 numbers.';
   if(/^(\d)\1+$/.test(p)||'01234567890'.includes(p)||'09876543210'.includes(p))return'That PIN is too easy to guess. Please pick a different one.';return''}
 function renderHandoff(){const h=D.handoff||{},yr=h.year||'',next=h.nextYear||'',box=$('handoffBox');delete box.dataset.step;
+  if(h.pending&&!practicing){box.innerHTML=`<h2>The ${esc(yr)} reunion is over. Thank you!</h2><p>Thank you to every family who came, and to everyone who helped make it happen.</p><p class="hq">A family has asked to host the next reunion.</p><p>The PSR Reunion Board is reviewing it. Please check back soon.</p>`;return}
   box.innerHTML=`<h2>The ${esc(yr)} reunion is over. Thank you!</h2>
     <p>Thank you to every family who came, and to everyone who helped make it happen.</p>
     <p class="hq">Is your family hosting the next reunion?</p>
     <p>Click below to get started. It only takes a minute.</p>
     <div style="margin-top:20px"><button class="btn primary big" type="button" id="hoStart">Get started</button></div>`}
 function renderHandoffForm(){const h=D.handoff||{},box=$('handoffBox');box.dataset.step='form';
-  box.innerHTML=`<h2>Set up as the new host</h2><p>Fill in these boxes. Then you can sign in and set up the reunion step by step.</p>
+  box.innerHTML=`<h2>Ask to host the next reunion</h2><p>Type your name and email. Your request goes to the PSR Reunion Board. When they approve it, you’ll get an email with a link to create your PIN and get started.</p>
     <form id="hoForm" class="stack" style="gap:16px" novalidate>
       <label class="f">Your first and last name<input id="hoName" autocomplete="name"></label>
       <label class="f">Your email<input id="hoEmail" type="email" autocomplete="email"></label>
-      <label class="f">The year of the reunion you’re hosting<input id="hoYear" inputmode="numeric" maxlength="4" value="${esc(h.nextYear||'')}"></label>
-      <label class="f">Create a PIN you will use to sign in as the host<input id="hoPin" type="password" inputmode="numeric" autocomplete="new-password"></label>
-      <label class="f">Type the same PIN again<input id="hoPin2" type="password" inputmode="numeric" autocomplete="new-password"></label>
-      <p class="tip">${PIN_NOTE}</p>
       <span class="err" id="hoErr" hidden></span>
-      <div class="row" style="gap:12px;flex-wrap:wrap"><button class="btn primary big" type="submit" id="hoGo">Set me up as host</button><button class="btn" type="button" id="hoBack">Back</button></div>
+      <div class="row" style="gap:12px;flex-wrap:wrap"><button class="btn primary big" type="submit" id="hoGo">Send my request</button><button class="btn" type="button" id="hoBack">Back</button></div>
     </form>`;$('hoName').focus()}
 document.addEventListener('click',e=>{if(e.target.closest('#hoStart'))renderHandoffForm();if(e.target.closest('#hoBack'))renderHandoff()});
 document.addEventListener('submit',e=>{if(e.target.id!=='hoForm')return;e.preventDefault();
   const v=id=>$(id).value.trim(),er=$('hoErr'),err=t=>{er.textContent=t;er.hidden=false};er.hidden=true;
-  const name=v('hoName'),email=v('hoEmail'),year=v('hoYear'),pin=v('hoPin');
+  const name=v('hoName'),email=v('hoEmail'),year=(D.handoff&&D.handoff.nextYear)||'';
   if(name.split(' ').length<2)return err('Please type your first and last name.');
   if(!okEmail(email))return err('Please type your email address.');
-  if(!/^20\d\d$/.test(year))return err('Please type the year of the reunion you’re hosting, like 2028.');
-  const bad=pinRule(pin);if(bad)return err(bad);if(pin!==v('hoPin2'))return err('The two PINs don’t match. Please type them again.');
   if(practicing){practiceSignedUp(name);return}
   if(PRPUB)return err('This is the practice copy of the page that families see, so signing up as host doesn’t work here. To practice that part, sign in and click Practice as a new host.');
-  busy($('hoGo'),'Setting you up…',async()=>{
-    try{await api('newHost',{name,email,year,pin})}catch(x){return err(x.message)}
-    PIN=pin;try{sessionStorage.setItem('psr-pin',pin)}catch(_){}
-    await loadAll();D.handoff={open:false};$('handoffBox').hidden=true;
-    renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');window.scrollTo({top:0});toast('You’re set up as host. Welcome!');showWelcome()}).catch(()=>{})});
+  busy($('hoGo'),'Sending…',async()=>{
+    try{await api('newHost',{name,email})}catch(x){return err(x.message)}
+    D.handoff={...(D.handoff||{}),pending:true};const box=$('handoffBox');delete box.dataset.step;
+    box.innerHTML=`<h2>Thank you, ${esc(name.split(' ')[0])}!</h2><p>Your request to host the ${year?esc(year)+' ':'next '}reunion was sent to the PSR Reunion Board.</p><p>When they approve it, you’ll get an email at <b>${esc(email)}</b> with a link to create your PIN and get started.</p>`;window.scrollTo({top:0})}).catch(()=>{})});
 /* Forgot your PIN? */
 $('forgotLink').addEventListener('click',()=>{$('pinForm').hidden=true;$('forgotForm').hidden=false;$('forgotErr').hidden=true;setTimeout(()=>$('forgotEmail').focus(),50)});
 $('forgotCancel').addEventListener('click',()=>{$('forgotForm').hidden=true;$('adminLink').hidden=false});
@@ -1493,14 +1488,19 @@ $('forgotForm').addEventListener('submit',e=>{e.preventDefault();const em=$('for
   if(!okEmail(em)){er.textContent='Please type your email address.';er.hidden=false;return}
   busy($('forgotGo'),'Sending…',async()=>{await api('forgotPin',{email:em});$('forgotForm').hidden=true;$('adminLink').hidden=false;
     toast('If that email matches the host’s email, a link is on its way. Check your inbox.')}).catch(x=>{er.textContent=x.message;er.hidden=false})});
-const RESETQ=(()=>{const m=(location.hash||'').match(/^#resetpin=([a-z0-9]+)/i);return m?m[1]:''})();
-if(RESETQ){$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
+const NEWHOSTQ=/^#newhost=/i.test(location.hash||'');
+const RESETQ=(()=>{const m=(location.hash||'').match(/^#(?:resetpin|newhost)=([a-z0-9]+)/i);return m?m[1]:''})();
+if(RESETQ){if(NEWHOSTQ){$('rsTitle').textContent='You’re approved! Create your PIN';$('resetModal').querySelector('.wcount').textContent='Welcome, new host';$('rsPin').closest('label').firstChild.textContent='Create a PIN';$('rsPin2').closest('label').firstChild.textContent='Type the same PIN again';$('rsGo').textContent='Create my PIN'}
+  $('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
 $('rsCancel').addEventListener('click',()=>{$('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(e){}});
 $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin').value.trim(),er=$('rsErr');er.hidden=true;
   const bad=pinRule(p);if(bad){er.textContent=bad;er.hidden=false;return}
   if(p!==$('rsPin2').value.trim()){er.textContent='The two PINs don’t match. Please type them again.';er.hidden=false;return}
   busy($('rsGo'),'Saving…',async()=>{try{await api('resetPin',{token:RESETQ,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
+    if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Signing in…');
+      try{await loadAll()}catch(x){showLoading(false);toast(x.message);return}
+      showLoading(false);renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');window.scrollTo({top:0});toast('Your PIN is saved. Welcome!');showWelcome();return}
     toast('Your new PIN is saved. Sign in with it now.');$('adminLink').click()}).catch(()=>{})});
 
 /* ---------- Practice as a new host (Test mode only; nothing is saved) ---------- */
@@ -1524,7 +1524,7 @@ function practiceSignedUp(name){prStage='setup';document.body.classList.remove('
   const keep={checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear};D.S=mergeSettings({...blankSettings(),...keep});D.S.practiceHost={name,since:TODAY};D.host={name};D.handoff={open:false};wStep=1;
   renderSetup();renderAll(true);openTab('home');window.scrollTo({top:0});
   api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved')}).catch(e=>toast(e.message));
-  try{sessionStorage.removeItem('psr-welcome-later-pr')}catch(e){}toast('You’re set up as host.');showWelcome()}
+  try{sessionStorage.removeItem('psr-welcome-later-pr')}catch(e){}toast('In real life, the PSR Reunion Board gets an email to accept or deny you first. In practice, you’re approved right away.');showWelcome()}
 async function practiceExit(){if(!practicing)return;if(isTrial()){practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}prShow();signOut();return}practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}
   showLoading(true,'Closing practice…');setDirty=false;prShow();document.body.classList.remove('previewing');$('welcomeModal').hidden=true;
   $('handoffBox').hidden=true;delete $('handoffBox').dataset.step;if(previewing)setPreview(false);
@@ -1960,11 +1960,7 @@ function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
   let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
   eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&regState()==='open'&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
   wk.hidden=true;   // the schedule isn't shown on the sign-up page anymore (it can go in a later email)
-  // Prices by age, so families see them before they start
-  const pc=$('priceCard'),gs=(S.groups||[]).filter(g=>String(g.label||'').trim());pc.hidden=!gs.length;
-  if(gs.length){const two=gs.some(g=>+g.early!==+g.late)&&!!S.earlyBird,ebOn=two&&TODAY<=S.earlyBird,pr=n=>+n?money0(n):'Free';
-    pc.innerHTML=`<h2>Prices</h2>${two?`<p class="small muted" style="margin:0 0 8px">${ebOn?'Early-bird prices through '+esc(niceDate(S.earlyBird))+'.':'Early-bird pricing has ended.'}</p>`:''}
-      <table class="ptab"><thead><tr><th>Age group</th>${two?'<th class="m">Early-bird</th><th class="m">After</th>':'<th class="m">Price</th>'}</tr></thead><tbody>${gs.map(g=>`<tr><td><b>${esc(g.label)}</b>${g.ages?`<br><span class="small muted">${esc(g.ages)}</span>`:''}</td>${two?`<td class="m${ebOn?'':' past'}">${pr(g.early)}</td><td class="m">${pr(g.late)}</td>`:`<td class="m">${pr(g.late)}</td>`}</tr>`).join('')}</tbody></table>`}}
+}
 // Schedule text: a day on its own line (or "Day:"), then one event per line under it. "Friday: Meet and greet" also works.
 const WKDAY=/^(mon|tues|wednes|thurs|fri|satur|sun)day\b/i;
 function parseSched(txt){const out=[];let cur=null;
@@ -1993,7 +1989,7 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
     :regMsg(st);
 }
 // Preview opens at the part of the page the host is working on in Setup, and Back to Setup returns to that step.
-const PV_TARGET={3:'hotelCard',4:'priceCard',5:'addonFields'};
+const PV_TARGET={3:'hotelCard',4:'peopleList',5:'addonFields'};
 function setPreview(on){previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
   openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0});
   if(previewing){const id=PV_TARGET[wStep],el=id&&$(id);if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash');setTimeout(()=>box.classList.remove('pvflash'),2600)},60)}}
@@ -2408,8 +2404,8 @@ function renderAlertRows(){const box=$('alertRows');if(!box)return;const l=alert
   box.innerHTML=l.map((v,i)=>`<div class="alert-row"><input type="email" data-alert="${i}" value="${esc(v)}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${i+1}"><button class="trash" type="button" data-alertdel="${i}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`).join('')}
 // PSR Reunion Board email: hosts only see it. The board (board PIN) or the tech PIN can change it.
 function renderBoardRows(){const box=$('boardBox');if(!box)return;const b=D.board||'portersanfordreid@gmail.com',can=LIVE&&(isCommittee()||isTech());
-  box.innerHTML=can?`<label class="f">PSR Reunion Board email<input id="boardIn" data-bd type="email" value="${esc(b)}" autocomplete="off"></label><div class="row" style="margin-top:8px"><button class="btn sm" type="button" id="boardSave" data-bd>Save board email</button></div><p class="tip" style="margin-top:10px!important">New-host notices go here. Only the PSR Reunion Board can change this. If it changes, the old address gets a notice.</p>`
-    :`<div class="f"><span>PSR Reunion Board email</span><div style="padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)"><b>${esc(b)}</b></div></div><p class="tip" style="margin-top:10px!important">This is the PSR Reunion Board, not your hosting committee. After the reunion, when the next host signs up, the board is told who it is. Only the board can change this email.</p>`}
+  box.innerHTML=can?`<label class="f">PSR Reunion Board email<input id="boardIn" data-bd type="email" value="${esc(b)}" autocomplete="off"></label><div class="row" style="margin-top:8px"><button class="btn sm" type="button" id="boardSave" data-bd>Save board email</button></div><p class="tip" style="margin-top:10px!important">When someone asks to host the next reunion, this email gets a request to accept or deny. Only the PSR Reunion Board can change this email. If it changes, the old address gets a notice.</p>`
+    :`<div class="f"><span>PSR Reunion Board email</span><div style="padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)"><b>${esc(b)}</b></div></div><p class="tip" style="margin-top:10px!important">When someone asks to host the next reunion, this email gets a request to accept or deny. Only the PSR Reunion Board can change this email.</p>`}
 function readAlertRows(){D.S.alertEmails=[...document.querySelectorAll('[data-alert]')].map(i=>i.value.trim()).filter(Boolean).join(', ')}
 function setupExtras(){const S=D.S;
   const ro=$('sRegOpenTxt');if(ro)ro.textContent=S.regOpen?'Open':'Closed';
@@ -2446,12 +2442,12 @@ function exEmail(style){const S=D.S,G='#1c5a34',MUTED='#5b6660',LINE='#e3e6e1',G
     <tr><td style="padding:2px 18px 14px"><table role="presentation" width="100%"><tr>${when.length?`<td style="vertical-align:top;padding-right:8px">${lab('When')}<b>${esc(when[0])}</b>${when[1]?`<br><span style="color:${MUTED}">${esc(when.slice(1).join(' · '))}</span>`:''}</td>`:''}${S.hotelName?`<td style="vertical-align:top">${lab('Where')}<b>${esc(S.hotelName)}</b>${S.hotelCity?`<br><span style="color:${MUTED}">${esc(S.hotelCity)}</span>`:''}</td>`:''}</tr></table>
     <div style="margin-top:12px;background:#fbf3d9;border-radius:8px;padding:9px 12px;font-size:13px;color:#5a4a12">Show this at check-in. <b>No ticket? No problem.</b> Just tell us your name.</div></td></tr></table>`;
   h+=`<p style="margin:22px 0 0">Questions? Just reply to this email.</p><p style="margin:6px 0 0;color:${MUTED}">${esc(senderLine(S))}</p>`;
-  return`<div class="mini" style="margin-bottom:10px">Example email (sample family)</div><div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1f2a24;line-height:1.45;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;max-width:560px">${h}</div>`}
+  return`<div class="spread" style="margin-bottom:6px"><span class="mini">Example</span><button class="btn sm" type="button" id="exClose">Close ✕</button></div><p class="small" style="margin:0 0 10px;color:var(--ink)">The name at the bottom fills in from the hosting family in step 1.</p><div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1f2a24;line-height:1.45;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;max-width:560px">${h}</div>`}
 
 function phoneFmt(p){p=String(p||'').trim();const d=p.replace(/\D/g,'').replace(/^1(?=\d{10}$)/,'');return d.length===10?`(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`:p}
 // Name on the emails: what the host typed, or else "Hosted by …" from step 1.
-function senderLine(S){S=S||D.S;return String(S.senderName||'').trim()||hostLine(S.host)||'PSR Host Family Committee'}
-function preparedBy(S){const n=String(S.senderName||'').trim();if(n)return 'Prepared by the '+n.replace(/^the\s+/i,'');const h=String(S.host||'').trim().replace(/^hosted by\s+/i,'');return h?'Prepared by '+h:'Prepared by the PSR Host Family Committee'}
+function senderLine(S){S=S||D.S;return hostLine(S.host)||'PSR Host Family Committee'}
+function preparedBy(S){const h=String(S.host||'').trim().replace(/^hosted by\s+/i,'');return h?'Prepared by '+h:'Prepared by the PSR Host Family Committee'}
 // "July 16–18, 2027" (or "July 30 – August 1, 2027") from the two calendar dates.
 function whenText(a,b){const ok=v=>/^\d{4}-\d\d-\d\d$/.test(v||'');if(!ok(a)&&!ok(b))return '';const d=v=>new Date(v+'T12:00:00'),M=v=>d(v).toLocaleDateString('en-US',{month:'long'}),Dn=v=>d(v).getDate(),Y=v=>d(v).getFullYear();
   if(!ok(a)||!ok(b)||a===b){const v=ok(a)?a:b;return M(v)+' '+Dn(v)+', '+Y(v)}
@@ -2503,7 +2499,8 @@ $('tab-setup').addEventListener('click',e=>{
   if(e.target.closest('#schedEx')){const bx=$('schedExBox');bx.hidden=false;schedEx();return}
   if(e.target.closest('#schedExClose')){$('schedExBox').hidden=true;return}
   if(e.target.closest('#ebEx')){const bx=$('ebExBox'),b=$('ebEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';if(!bx.hidden)bx.innerHTML=ebExample();return}
-  if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':exEmail(st);e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
+  if(e.target.closest('#exBtn')){const bx=$('exBox');bx.hidden=false;bx.innerHTML=exEmail($('sEmailStyle').value);return}
+  if(e.target.closest('#exClose')){$('exBox').hidden=true;return}
   const b=e.target.closest('[data-adel]');if(!b)return;
   if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
   D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
