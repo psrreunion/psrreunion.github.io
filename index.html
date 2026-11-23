@@ -932,7 +932,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (c)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1459,11 +1459,9 @@ let prWaitT=null;
 function practiceWait(name,to){const box=$('handoffBox');delete box.dataset.step;clearInterval(prWaitT);
   box.innerHTML=`<h2>Thank you, ${esc(name.split(' ')[0])}!</h2><p>Your request was sent to the PSR Reunion Board.</p><p class="tip" style="text-align:left;margin:14px auto 0!important;max-width:560px"><b>Practice:</b> the request email went to <b>${esc(to||'your email')}</b>. Open it and click <b>Accept</b> or <b>Deny</b>. This page moves on by itself.</p><p class="small muted" style="margin-top:12px">Waiting for an answer…</p>`;
   prWaitT=setInterval(async()=>{if(!practicing){clearInterval(prWaitT);return}let j;try{j=await api('practiceStatus')}catch(e){return}
-    if(j.status==='accepted'){clearInterval(prWaitT);PRNEWHOST=name;
-      $('rsTitle').textContent='You’re approved! Create your PIN';$('resetModal').querySelector('.wcount').textContent='Welcome, new host';$('rsPin').closest('label').firstChild.textContent='Create a PIN';$('rsPin2').closest('label').firstChild.textContent='Type the same PIN again';$('rsGo').textContent='Create my PIN';
-      $('rsPin').value='';$('rsPin2').value='';$('rsErr').hidden=true;$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
+    if(j.status==='accepted'&&!box.dataset.ok){box.dataset.ok='1';box.innerHTML=`<h2>You’re approved!</h2><p>Check your email and click <b>Create my PIN</b>.</p><p class="small muted" style="margin-top:12px">This page moves on by itself after you create your PIN.</p>`}
+    if(j.status==='pinmade'){clearInterval(prWaitT);delete box.dataset.ok;practiceSignedUp(name)}
     else if(j.status==='denied'){clearInterval(prWaitT);box.innerHTML=`<h2>Your request wasn’t approved</h2><p>In practice, the board said no. You can try again.</p><button class="btn primary big" type="button" id="prAgain">Try again</button>`;$('prAgain').onclick=()=>renderHandoff()}},5000)}
-let PRNEWHOST='';
 function renderHandoff(){const h=D.handoff||{},yr=h.year||'',next=h.nextYear||'',box=$('handoffBox');delete box.dataset.step;
   if(h.pending&&!practicing){box.innerHTML=`<h2>The ${esc(yr)} reunion is over. Thank you!</h2><p>Thank you to every family who came, and to everyone who helped make it happen.</p><p class="hq">A family has asked to host the next reunion.</p><p>The PSR Reunion Board is reviewing it. Please check back soon.</p>`;return}
   box.innerHTML=`<h2>The ${esc(yr)} reunion is over. Thank you!</h2>
@@ -1498,15 +1496,30 @@ $('forgotForm').addEventListener('submit',e=>{e.preventDefault();const em=$('for
   if(!okEmail(em)){er.textContent='Please type your email address.';er.hidden=false;return}
   busy($('forgotGo'),'Sending…',async()=>{await api('forgotPin',{email:em});$('forgotForm').hidden=true;$('adminLink').hidden=false;
     toast('If that email matches the host’s email, a link is on its way. Check your inbox.')}).catch(x=>{er.textContent=x.message;er.hidden=false})});
-const NEWHOSTQ=/^#newhost=/i.test(location.hash||'');
-const RESETQ=(()=>{const m=(location.hash||'').match(/^#(?:resetpin|newhost)=([a-z0-9]+)/i);return m?m[1]:''})();
-if(RESETQ){if(NEWHOSTQ){$('rsTitle').textContent='You’re approved! Create your PIN';$('resetModal').querySelector('.wcount').textContent='Welcome, new host';$('rsPin').closest('label').firstChild.textContent='Create a PIN';$('rsPin2').closest('label').firstChild.textContent='Type the same PIN again';$('rsGo').textContent='Create my PIN'}
-  $('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
-$('rsCancel').addEventListener('click',()=>{$('resetModal').hidden=true;if(PRNEWHOST){PRNEWHOST='';renderHandoff();return}try{history.replaceState(null,'','#')}catch(e){}});
+const PRPINQ=((location.hash||'').match(/^#prpin=([a-z0-9-]+\.[a-z0-9]+)/i)||[])[1]||'';   // practice: create-PIN link from the practice email
+const NEWHOSTQ=/^#newhost=/i.test(location.hash||'')||!!PRPINQ;
+const RESETQ=PRPINQ||(()=>{const m=(location.hash||'').match(/^#(?:resetpin|newhost)=([a-z0-9]+)/i);return m?m[1]:''})();
+function openNewHostPin(practiceLabel){$('rsTitle').textContent='You’re approved! Create your PIN';$('resetModal').querySelector('.wcount').textContent=practiceLabel?'Practice · Welcome, new host':'Welcome, new host';$('rsPin').closest('label').firstChild.textContent='Create a PIN';$('rsPin2').closest('label').firstChild.textContent='Type the same PIN again';$('rsGo').textContent='Create my PIN';
+  $('rsPin').value='';$('rsPin2').value='';$('rsErr').hidden=true;$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
+let PRTOK=PRPINQ,PRHERE=false;   // PRHERE: the practice page itself is showing the PIN box
+if(PRPINQ){
+  // Practice: if the practice page is open in another tab of this browser, the PIN box opens there instead.
+  let acked=false;const onAck=e=>{if(e.key==='psr-prpin-ack'&&e.newValue===PRPINQ)acked=true};window.addEventListener('storage',onAck);
+  try{localStorage.setItem('psr-prpin',PRPINQ+'|'+Date.now())}catch(e){}
+  setTimeout(()=>{window.removeEventListener('storage',onAck);
+    if(acked){const m=document.querySelector('main.wrap');if(m)m.innerHTML='<div class="panel confirm" style="margin-top:30px"><p class="mini">Practice</p><h2>Go back to your practice page</h2><p>The “Create your PIN” box is open there. You can close this tab.</p></div>';try{history.replaceState(null,'','#')}catch(_){}}
+    else openNewHostPin(true)},1500)}
+else if(RESETQ){if(NEWHOSTQ)openNewHostPin(false);else{$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}}
+window.addEventListener('storage',e=>{if(e.key!=='psr-prpin'||!e.newValue||!practicing||!prWaitT)return;const tok=e.newValue.split('|')[0];
+  try{localStorage.setItem('psr-prpin-ack',tok)}catch(_){}PRTOK=tok;PRHERE=true;openNewHostPin(true);try{window.focus()}catch(_){}});
+$('rsCancel').addEventListener('click',()=>{$('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(e){}});
 $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin').value.trim(),er=$('rsErr');er.hidden=true;
   const bad=pinRule(p);if(bad){er.textContent=bad;er.hidden=false;return}
   if(p!==$('rsPin2').value.trim()){er.textContent='The two PINs don’t match. Please type them again.';er.hidden=false;return}
-  if(practicing&&PRNEWHOST){$('resetModal').hidden=true;const n=PRNEWHOST;PRNEWHOST='';practiceSignedUp(n);return}   // practice: the PIN isn't saved
+  if(PRTOK){busy($('rsGo'),'Saving…',async()=>{try{await api('practicePin',{token:PRTOK,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
+    $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
+    if(PRHERE){PRTOK='';PRHERE=false;toast('Your PIN is created.');return}   // the practice page moves on when it sees the PIN was made
+    const m=document.querySelector('main.wrap');if(m)m.innerHTML='<div class="panel confirm" style="margin-top:30px"><p class="mini">Practice</p><h2>Your PIN is created</h2><p>Go back to your practice page. It moves on by itself. You can close this tab.</p></div>'}).catch(()=>{});return}
   busy($('rsGo'),'Saving…',async()=>{try{await api('resetPin',{token:RESETQ,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
     if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Signing in…');
