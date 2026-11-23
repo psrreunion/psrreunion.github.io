@@ -931,7 +931,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (l)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (m)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -972,7 +972,7 @@ input[type=date]{cursor:pointer}
           <label class="f">Reunion weekend schedule (optional)<textarea id="sSchedule" data-k="schedule" rows="8" placeholder="Friday - Meet and greet, 6–9 PM&#10;Saturday - Picnic, 12–3 PM&#10;Saturday - Banquet, 6 PM&#10;Sunday - Church and farewell"></textarea></label>
           <div id="schedExBox" class="card wk-card side-ex" hidden style="padding:18px"></div>
           </div>
-          <p class="tip">Type each day and what’s happening, one line at a time, like “Friday - Meet and greet, 6–9 PM.” Click <b>See example</b> to see a made-up schedule laid out the way families will see it, and <b>Hide example</b> to put it away. To see your own schedule, use the button at the bottom of this page. If you leave this blank, families won’t see a schedule.</p>
+          <p class="tip">Type each day and what’s happening, one line at a time, like “Friday - Meet and greet, 6–9 PM.” Click <b>See example</b> to see how it will look.</p>
           <div><button class="btn sm" type="button" id="schedEx">See example</button></div>
           <div class="pvnote"><p><b>Want to see how it looks?</b> When you’ve finished filling in this page, click the button below. It shows you what families will see. This is only a look. Nothing is sent to anyone, and you can come right back here.</p><button class="btn pvstep" type="button" data-pvstep="2">See how it looks to families →</button></div>
       </div>
@@ -2492,14 +2492,15 @@ $('tab-setup').addEventListener('click',e=>{
   if(e.target.closest('#boardSave')){const v=$('boardIn').value.trim();busy($('boardSave'),'Saving…',async()=>{try{const j=await api('saveBoard',{emails:v});D.board=j.board;renderBoardRows();toast('Board email saved.')}catch(x){toast(x.message)}});return}
   const ad=e.target.closest('[data-alertdel]');if(ad){ad.closest('.alert-row').remove();readAlertRows();renderAlertRows();persistSettings();return}
   if(e.target.closest('#alertAdd')){const box=$('alertRows');box.hidden=false;const n=box.querySelectorAll('[data-alert]').length;box.insertAdjacentHTML('beforeend',`<div class="alert-row"><input type="email" data-alert="${n}" placeholder="name@gmail.com" autocomplete="off" aria-label="Alert email ${n+1}"><button class="trash" type="button" data-alertdel="${n}" aria-label="Remove this email">${TRASH}<span>Remove</span></button></div>`);box.querySelector(`[data-alert="${n}"]`).focus();return}
-  if(e.target.closest('#schedEx')){const bx=$('schedExBox'),b=$('schedEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';if(!bx.hidden)schedEx();return}
+  if(e.target.closest('#schedEx')){const bx=$('schedExBox');bx.hidden=false;schedEx();return}
+  if(e.target.closest('#schedExClose')){$('schedExBox').hidden=true;return}
   if(e.target.closest('#ebEx')){const bx=$('ebExBox'),b=$('ebEx');bx.hidden=!bx.hidden;b.textContent=bx.hidden?'See example':'Hide example';if(!bx.hidden)bx.innerHTML=ebExample();return}
   if(e.target.closest('#exBtn')){const bx=$('exBox'),st=$('sEmailStyle').value;bx.hidden=!bx.hidden;bx.innerHTML=bx.hidden?'':exEmail(st);e.target.closest('#exBtn').textContent=bx.hidden?'See example':'Hide example';return}
   const b=e.target.closest('[data-adel]');if(!b)return;
   if(!b.classList.contains('armed')){$('setAddons').querySelectorAll('.trash.armed').forEach(x=>{x.classList.remove('armed');x.lastChild.textContent='Remove'});b.classList.add('armed');b.lastChild.textContent='Tap again to remove';setTimeout(()=>{if(b.isConnected&&b.classList.contains('armed')){b.classList.remove('armed');b.lastChild.textContent='Remove'}},4000);return}
   D.S.addons.splice(+b.dataset.adel,1);persistSettings();renderSetup();renderAll(true);toast('Extra removed.')});
 // Always the made-up sample, never what the host typed (the button at the bottom of the step shows theirs).
-function schedEx(){$('schedExBox').innerHTML='<div class="mini" style="margin-bottom:8px">Example (a made-up schedule)</div>'+schedHTML(parseSched($('sSchedule').placeholder))}
+function schedEx(){$('schedExBox').innerHTML='<div class="spread" style="margin-bottom:8px"><span class="mini">Example</span><button class="btn sm" type="button" id="schedExClose">Close ✕</button></div>'+schedHTML(parseSched($('sSchedule').placeholder))}
 function ebExample(){const S=D.S,d=S.earlyBird?niceDate(S.earlyBird):'June 30';
   return`<div class="mini" style="margin:4px 0 8px">What families see at the top of the page in the last 2 weeks</div><div class="eb-banner" style="margin:0"><span><b>Only 5 days left for early-bird pricing!</b><br><span class="small">Early-bird ends ${esc(d)}.</span></span><span class="btn">Register now</span></div>`}
 $('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
