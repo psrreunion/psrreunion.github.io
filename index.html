@@ -34,6 +34,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
 #loadingScreen .spin{width:46px;height:46px;border-radius:50%;border:5px solid rgba(0,0,0,.12);border-top-color:currentColor;animation:psrspin 1s linear infinite}
 @keyframes psrspin{to{transform:rotate(360deg)}}
 .optl{margin-left:6px;font:600 12px var(--f-body);color:var(--muted)}
+.startbox{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:6px 0 18px;padding:18px 20px;border:2px solid var(--gold);border-radius:14px;background:var(--gold-bg,#fbf3d6)}.startbox b{font-size:19px}
 .pvnote{margin-top:22px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}.pvnote p{margin:0 0 12px}
 .pvflash{box-shadow:0 0 0 4px var(--gold),0 6px 18px rgba(0,0,0,.12)!important;transition:box-shadow .4s}
 @media print{#loadingScreen{display:none!important}}
@@ -658,7 +659,7 @@ input[type=date]{cursor:pointer}
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
 </div></div>
 <div class="adminbar" id="adminBar" hidden><div class="wrap">
-  <span><b>Committee view.</b> Family members only see the Register page.</span>
+  <span><b id="viewName">Host view.</b> Families only see the Register page.</span>
   <span class="row" style="gap:8px"><a class="btn sm ghost" id="sheetLink" href="#" target="_blank" rel="noopener" hidden>Open Sheet</a><button class="btn sm ghost" id="testBtn" type="button" aria-pressed="false">Test mode <span class="sw"><i></i></span> <b>Off</b></button><button class="btn sm ghost" id="refreshBtn" type="button">Refresh</button><button class="btn sm ghost" id="signOut" type="button">Sign out</button></span>
 </div></div>
 
@@ -682,6 +683,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-home" hidden>
   <div class="panel home">
     <h2 id="homeHi">Host home page</h2>
+    <div class="startbox" id="startBox" hidden><div><div class="mini">Start here</div><b id="startTitle">Set up your reunion</b><p id="startText" style="margin:4px 0 0">It takes 10 short steps. Each step tells you what to type.</p></div><button class="btn primary big" type="button" id="startGo">Get started →</button></div>
     <p class="home-sub">What would you like to do? Click one of the big buttons.</p>
     <div class="hgrid">
       <button class="hbtn" type="button" data-home="pay"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5v5M18 9.5v5"/></svg><b>Record a payment</b><span>Cash, Zelle, Cash App or a check</span></button>
@@ -924,7 +926,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (d)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 22, 2026 (e)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1512,7 +1514,7 @@ function practiceSignedUp(name){prStage='setup';document.body.classList.remove('
   const keep={checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear};D.S=mergeSettings({...blankSettings(),...keep});D.S.practiceHost={name,since:TODAY};D.host={name};D.handoff={open:false};wStep=1;
   renderSetup();renderAll(true);openTab('home');window.scrollTo({top:0});
   api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved')}).catch(e=>toast(e.message));
-  toast('You’re set up as host.');showWelcome()}
+  try{sessionStorage.removeItem('psr-welcome-later-pr')}catch(e){}toast('You’re set up as host.');showWelcome()}
 async function practiceExit(){if(!practicing)return;practicing=false;prStage='';try{localStorage.removeItem('psr-practicing')}catch(e){}
   showLoading(true,'Closing practice…');setDirty=false;prShow();document.body.classList.remove('previewing');$('welcomeModal').hidden=true;
   $('handoffBox').hidden=true;delete $('handoffBox').dataset.step;if(previewing)setPreview(false);
@@ -1570,6 +1572,7 @@ function showWelcome(){if(isAdmin()&&!isCommittee()&&D.S.setupDone&&!(practicing
   const at=+D.S.setupStep||0;
   if(at>1&&at<=10){$('wmTitle').textContent='Welcome back! Pick up where you left off';$('wmText').textContent='You stopped at step '+at+'. Everything you saved is still there.';$('wmGo').textContent='Continue at step '+at+' →';$('wmGo').dataset.step=at}
   else{$('wmTitle').textContent='Let’s set up your reunion registration';$('wmText').textContent='It takes 10 short steps. Each step tells you what to type, and you can stop and come back at any time.';$('wmGo').textContent='Get started →';$('wmGo').dataset.step=1}try{if(sessionStorage.getItem('psr-welcome-later'+(practicing?'-pr':'')))return}catch(e){}$('welcomeModal').hidden=false;$('wmGo').focus()}
+$('startGo').addEventListener('click',()=>{openTab('setup');goStep(+$('startGo').dataset.step||1)});
 $('wmGo').addEventListener('click',()=>{$('welcomeModal').hidden=true;openTab('setup');goStep(+$('wmGo').dataset.step||1)});
 $('wmLater').addEventListener('click',()=>{$('welcomeModal').hidden=true;try{sessionStorage.setItem('psr-welcome-later'+(practicing?'-pr':''),'1')}catch(e){}});
 /* ---------- Setup, one step at a time ---------- */
@@ -2867,7 +2870,9 @@ function applyMode(){const adm=isAdmin();
   document.querySelectorAll('#tab-setup input:not([data-bd]),#tab-setup select,#tab-setup textarea,#tab-setup button:not([data-wnav]):not([data-wgo]):not([data-bd])').forEach(el=>{if(ro&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!ro&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
   ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
   const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the PSR Reunion Board PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
-  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;
+  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
+  {const sb=$('startBox');if(sb){const at=+D.S.setupStep||0,show=LIVE&&isAdmin()&&!isCommittee()&&!D.S.setupDone&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing);sb.hidden=!show;
+    if(show){$('startTitle').textContent=at>1&&at<=10?'Pick up where you left off':'Set up your reunion';$('startText').textContent=at>1&&at<=10?'You stopped at step '+at+' of 10. Everything you saved is still there.':'It takes 10 short steps. Each step tells you what to type.';$('startGo').textContent=at>1&&at<=10?'Continue at step '+at+' →':'Get started →';$('startGo').dataset.step=at>1&&at<=10?at:1}}}
   const ctp=$('ctOpen');if(ctp&&ro)ctp.hidden=true;
 }
 $('testBtn').addEventListener('click',()=>setTest(!isTest()));
