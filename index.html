@@ -932,7 +932,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (f)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (g)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1278,7 +1278,7 @@ async function loadAll(again){
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
-  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';D.tryEnds=j.tryEnds||'';if(j.tryouts)D.tryouts=j.tryouts;if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
+  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';D.tryEnds=j.tryEnds||'';D.prHostName=j.prHostName||'';if(j.tryouts)D.tryouts=j.tryouts;if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
   D.emails=j.emails||[];D.board=j.board||'';D.contacts=j.contacts||[];D.isTestData=!!j.test;
   if(practicing){if(!D.S.practiceHost&&!setDirty){D.S=mergeSettings({...blankSettings(),checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear});prStage='handoff';const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}else{prStage='setup';D.handoff={open:false}}}
   D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
@@ -1545,7 +1545,8 @@ async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
   if(!loaded){try{await loadAll()}catch(e){toast(e.message)}}
   renderSetup();renderPeople();renderAddonFields();showLoading(false);
-  if(prStage==='handoff'){document.body.classList.add('previewing');delete $('handoffBox').dataset.step;openTab('register');renderAll(true)}
+  if(prStage==='handoff'&&D.prHostName){showLoading(false);practiceSignedUp(D.prHostName)}   // signed in with the PIN made in practice: they're already the approved host
+  else if(prStage==='handoff'){document.body.classList.add('previewing');delete $('handoffBox').dataset.step;openTab('register');renderAll(true)}
   else{renderAll(true);openTab('home');showWelcome()}
   window.scrollTo({top:0})}
 function practiceSignedUp(name){prStage='setup';document.body.classList.remove('previewing');
