@@ -932,7 +932,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (e)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (f)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1523,7 +1523,7 @@ $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin
   if(PRTOK){busy($('rsGo'),'Saving…',async()=>{try{await api('practicePin',{token:PRTOK,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
     if(PRHERE){PRTOK='';PRHERE=false;toast('Your PIN is created.');return}   // the practice page moves on when it sees the PIN was made
-    infoBox('Practice','Your PIN is created','If your practice page is open in another tab, go back to it. You can close this tab.')}).catch(()=>{});return}
+    infoBox('Practice','Your PIN is created','You can sign in with it now: click “Hosting committee sign-in” at the bottom of the page. If your practice page is open in another tab, you can go back to it instead.')}).catch(()=>{});return}
   busy($('rsGo'),'Saving…',async()=>{try{await api('resetPin',{token:RESETQ,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
     if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Signing in…');
@@ -1539,7 +1539,7 @@ function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep
   b.groups=d.groups.map(g=>({...g,early:0,late:0}));b.addons=d.addons.map(a=>({...a,price:0,on:false}));
   return {...b,regOpen:false,setupDone:false,setupStep:0,showTest:true,askFood:false,earlyBanner:true}}
 function showTryEnded(){showLoading(false);[...document.body.children].forEach(el=>{if(el.tagName!=='SCRIPT'&&el.tagName!=='MAIN')el.hidden=true});const m=document.querySelector('main.wrap');if(m)m.innerHTML='<div class="panel confirm" style="margin-top:40px"><h2>This practice link has ended</h2><p>Thank you for trying the PSR reunion page! If you’d like to try it again, ask the person who sent you the link for a new one.</p></div>'}
-function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing;$('prExit').textContent=isTrial()?'Sign out':'Exit practice';$('prMsg').innerHTML=isTrial()?'<b>Your tryout.</b> This is practice only. Nothing is real.'+(D.tryEnds?' It ends '+niceDate(D.tryEnds)+'.':''):'<b>Practice as a new host.</b> Your real reunion isn’t touched.'}
+function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing;$('prExit').textContent=isTrial()?'Sign out':'Exit practice';$('prMsg').innerHTML=isTrial()&&D.tryEnds?'<b>Your tryout.</b> This is practice only. Nothing is real.'+(D.tryEnds?' It ends '+niceDate(D.tryEnds)+'.':''):'<b>Practice as a new host.</b> Your real reunion isn’t touched.'}
 // Practice runs against its own practice sheet. It remembers where you were, even after signing out or closing the page.
 async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
