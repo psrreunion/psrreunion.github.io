@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (i)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (j)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1580,7 +1580,8 @@ window.addEventListener('popstate',()=>{if(!practicing)return;try{history.pushSt
   if(prStage==='setup'&&$('tab-setup')&&!$('tab-setup').hidden&&wStep>1)goStep(wStep-1);else toast('To leave practice, click Exit practice at the top.')});
 $('prExit').addEventListener('click',practiceExit);
 /* ---------- Shortcuts: go straight to the right spot, with a Back to Home button ---------- */
-function showBack(on){$('backBar').hidden=!on;if(!on&&typeof backTo!=='undefined'){backTo='home';$('backHome').textContent='← Back to Home';$('backHome').classList.remove('gold')}}
+function pvClear(){document.querySelectorAll('.pvflash').forEach(x=>x.classList.remove('pvflash'))}
+function showBack(on){$('backBar').hidden=!on;if(!on)pvClear();if(!on&&typeof backTo!=='undefined'){backTo='home';$('backHome').textContent='← Back to Home';$('backHome').classList.remove('gold')}}
 function spot(el,focus){if(!el)return;setTimeout(()=>{const y=el.getBoundingClientRect().top+window.scrollY-($('backBar').offsetHeight||0)-(document.body.classList.contains('practicing')?70:0)-12;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});if(focus)setTimeout(()=>focus.focus({preventScroll:true}),350)},30)}
 function setFilter(boxId,f,attr){const b=$(boxId);if(!b)return;b.querySelectorAll('.filter').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.f===f)))}
 function jump(k){
@@ -1601,7 +1602,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-swho]');if
   if(setDirty&&!isReadOnly())saveSettingsNow(false);
   jump(k==='payments'?'who':k==='expenses'?'spent':'ledger');backTo='setup';$('backHome').textContent='← Back to Setup';$('backHome').classList.add('gold');
   const tgt=k==='payments'?$('regRows').closest('.panel'):k==='expenses'?$('expRows').closest('.panel'):$('report').closest('.panel');
-  if(tgt){setTimeout(()=>{tgt.classList.add('pvflash');setTimeout(()=>tgt.classList.remove('pvflash'),2600)},350)}});
+  if(tgt){setTimeout(()=>tgt.classList.add('pvflash'),350)}});
 /* ---------- Home screen and first-time welcome ---------- */
 document.addEventListener('click',e=>{const b=e.target.closest('[data-home]');if(!b)return;const k=b.dataset.home;
   if(k==='home'){showBack(false);openTab('home');window.scrollTo({top:0});return}
@@ -2026,7 +2027,7 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
 // Preview opens at the part of the page the host is working on in Setup, and Back to Setup returns to that step.
 const PV_TARGET={3:'hotelCard',4:'hEarly',5:'addonFields'};let pvOverride='';
 // Step 3 (ages & prices) preview: show Who's coming with the age list open so the host sees each price, plus the early-bird notes.
-function pvFlash(x,ms){if(!x)return;x.classList.add('pvflash');setTimeout(()=>x.classList.remove('pvflash'),ms||4000)}
+function pvFlash(x){if(x)x.classList.add('pvflash')}
 function pvShut(){document.querySelectorAll('#peopleList select.pvopen').forEach(s=>{s.size=0;s.classList.remove('pvopen')})}
 function pvPrices(){const box=$('peopleList').closest('.panel'),sel=$('peopleList').querySelector('select[data-pf="group"]');
   setTimeout(()=>{if(!box)return;const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});
@@ -2034,11 +2035,11 @@ function pvPrices(){const box=$('peopleList').closest('.panel'),sel=$('peopleLis
     if(sel){sel.size=sel.options.length;sel.classList.add('pvopen')}},60)}
 document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))pvShut()});
 document.addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))setTimeout(pvShut,150)});
-function setPreview(on){pvShut();previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
+function setPreview(on){pvShut();pvClear();previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
   openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0});
   if(previewing){const id=pvOverride||PV_TARGET[wStep],el=id&&$(id);pvOverride='';
     if(id==='hEarly'){pvPrices()}
-    else if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash');setTimeout(()=>box.classList.remove('pvflash'),2600)},60)}}
+    else if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash')},60)}}
   else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
 $('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
 
