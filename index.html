@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 23, 2026 (j)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (a)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1460,8 +1460,8 @@ function pinRule(p){if(!/^\d+$/.test(p))return'Use numbers only for your PIN.';i
   if(/^(\d)\1+$/.test(p)||'01234567890'.includes(p)||'09876543210'.includes(p))return'That PIN is too easy to guess. Please pick a different one.';return''}
 // Practice: the request really goes by email (to you, or to a tester). The page waits for Accept or Deny.
 let prWaitT=null;
-function practiceWait(name,to){const box=$('handoffBox');delete box.dataset.step;clearInterval(prWaitT);
-  box.innerHTML=`<h2>Thank you, ${esc(name.split(' ')[0])}!</h2><p>Your request was sent to the PSR Reunion Board.</p><p class="tip" style="text-align:left;margin:14px auto 0!important;max-width:560px"><b>Practice:</b> the request email went to <b>${esc(to||'your email')}</b>. Open it and click <b>Accept</b> or <b>Deny</b>.</p><p class="small muted" style="margin-top:12px">Waiting for an answer…</p>`;
+function practiceWait(name,to,email){const box=$('handoffBox');delete box.dataset.step;clearInterval(prWaitT);
+  box.innerHTML=`<h2>Thank you, ${esc(name.split(' ')[0])}!</h2><p>Your request to host the next reunion was sent to the PSR Reunion Board.</p><p>When they approve it, you’ll get an email${email?` at <b>${esc(email)}</b>`:''} with a link to create your PIN and get started.</p><p class="tip" style="text-align:left;margin:14px auto 0!important;max-width:560px"><b>Practice only:</b> you’re playing the Board too. The request went to <b>${esc(to||'your email')}</b>. Open it and click <b>Accept</b> or <b>Deny</b>. A real host never sees this note.</p><p class="small muted" style="margin-top:12px">Waiting for an answer…</p>`;
   prWaitT=setInterval(async()=>{if(!practicing){clearInterval(prWaitT);return}let j;try{j=await api('practiceStatus')}catch(e){return}
     if(j.status==='accepted'&&!box.dataset.ok){box.dataset.ok='1';box.innerHTML=`<h2>You’re approved!</h2><p>Check your email and click <b>Create my PIN</b>.</p>`}
     if(j.status==='pinmade'){clearInterval(prWaitT);delete box.dataset.ok;practiceSignedUp(name)}
@@ -1487,7 +1487,7 @@ document.addEventListener('submit',e=>{if(e.target.id!=='hoForm')return;e.preven
   const name=v('hoName'),email=v('hoEmail'),year=(D.handoff&&D.handoff.nextYear)||'';
   if(name.split(' ').length<2)return err('Please type your first and last name.');
   if(!okEmail(email))return err('Please type your email address.');
-  if(practicing){busy($('hoGo'),'Sending…',async()=>{let j;try{j=await api('practiceRequest',{name,email})}catch(x){return err(x.message)}practiceWait(name,j.sentTo)}).catch(()=>{});return}
+  if(practicing){busy($('hoGo'),'Sending…',async()=>{let j;try{j=await api('practiceRequest',{name,email})}catch(x){return err(x.message)}practiceWait(name,j.sentTo,email)}).catch(()=>{});return}
   if(PRPUB)return err('This is the practice copy of the page that families see, so signing up as host doesn’t work here. To practice that part, sign in and click Practice as a new host.');
   busy($('hoGo'),'Sending…',async()=>{
     try{await api('newHost',{name,email})}catch(x){return err(x.message)}
