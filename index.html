@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (a)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (b)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1293,16 +1293,17 @@ async function refreshLive(){if(!LIVE)return;if(isAdmin())await loadAll();else a
 async function busy(btn,label,fn){const t=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent=label}
   try{return await fn()}catch(e){toast(e.message||'Something went wrong.');throw e}finally{if(btn){btn.disabled=false;btn.textContent=t}}}
 let setT,setDirty=false;
-function setSaveState(st){setDirty=st==='dirty'||(st==='error'&&setDirty);setTimeout(()=>{try{wLabel()}catch(e){}},0);document.querySelectorAll('#tab-setup .savebar').forEach(b=>b.classList.toggle('dirty',setDirty));const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+let setGen=0,savingNow=0;
+function setSaveState(st){if(st==='dirty')setGen++;setDirty=st==='dirty'||(st==='error'&&setDirty);setTimeout(()=>{try{wLabel()}catch(e){}},0);document.querySelectorAll('#tab-setup .savebar').forEach(b=>b.classList.toggle('dirty',setDirty));const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
   const msg={dirty:'You have unsaved changes. Click Save changes.',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save changes to try again.'}[st];
   document.querySelectorAll('[data-savestate]').forEach(e=>{e.textContent=msg;e.className='savestate '+st});
   document.querySelectorAll('[data-savenow]').forEach(b=>{b.disabled=st==='saving';b.textContent=st==='saving'?'Saving…':'Save changes'})}
 function saveSettingsNow(manual){clearTimeout(setT);
   if(!LIVE){save();setSaveState('saved');if(manual)toast('Settings saved.');return Promise.resolve()}
-  setSaveState('saving');
-  return api('saveSettings',D.S).then(()=>{setDirty=false;setSaveState('saved');toast('Settings saved.')}).catch(e=>{setSaveState('error');toast(e.message)})}
+  const g=setGen;setSaveState('saving');savingNow++;
+  return api('saveSettings',D.S).then(()=>{savingNow--;if(setGen!==g){setSaveState('dirty');saveSettingsNow(false);return}setDirty=false;setSaveState('saved');toast('Settings saved.')}).catch(e=>{savingNow--;setDirty=true;setSaveState('error');toast(e.message)})}
 function persistSettings(){setSaveState('dirty')}
-window.addEventListener('beforeunload',e=>{if(setDirty){e.preventDefault();e.returnValue=''}});
+window.addEventListener('beforeunload',e=>{if(setDirty||savingNow){e.preventDefault();e.returnValue=''}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-savenow]'))saveSettingsNow(true)});
 
 function readUpload(file,maxDim){return new Promise((ok,no)=>{
@@ -1643,7 +1644,7 @@ function goStep(n){showStep(n);const t=$('tab-setup');if(t&&t.scrollIntoView)t.s
 $('wBack').addEventListener('click',()=>{$('reqWarn').hidden=true;goStep(wStep-1)});
 $('wNext').addEventListener('click',async()=>{if(!isReadOnly()&&!stepOK(wStep))return;
   if(wStep===10&&!D.S.setupDone&&!isReadOnly()){D.S.setupDone=true;persistSettings()}
-  if(!D.S.setupDone&&!isReadOnly()&&wStep<10&&(+D.S.setupStep||0)<wStep+1){D.S.setupStep=wStep+1;persistSettings()}if(setDirty&&!isReadOnly()){await saveSettingsNow(false);if(setDirty)return}goStep(wStep+1)});
+  if(!D.S.setupDone&&!isReadOnly()&&wStep<10&&(+D.S.setupStep||0)<wStep+1){D.S.setupStep=wStep+1;persistSettings()}if(setDirty&&!isReadOnly())saveSettingsNow(false);goStep(wStep+1)});   // save in the background so the next step opens right away
 // Boxes that must be filled in before the host can move past a step (or open registration).
 const REQ={1:[['sTheme','theme','Theme'],['sStart','startDay','First day of the reunion'],['sLastDay','lastDay','Last day of the reunion'],['sHost','host','Hosting family']],
   3:[['sHotel','hotelName','Hotel name'],['sStreet','hotelStreet','Street address'],['sCity','hotelCity','City, state and zip code'],['sRate','roomRate','Room rate']],
