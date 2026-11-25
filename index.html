@@ -31,6 +31,7 @@ html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body)}
 #loadingScreen{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;color:var(--ink);font:600 20px/1.4 var(--f-body);text-align:center;padding:16px}
 #loadingScreen[hidden]{display:none}
+input[type=email]{padding-right:44px!important}
 #loadingScreen .spin{width:46px;height:46px;border-radius:50%;border:5px solid rgba(0,0,0,.12);border-top-color:currentColor;animation:psrspin 1s linear infinite}
 @keyframes psrspin{to{transform:rotate(360deg)}}
 .optl{margin-left:6px;font:600 12px var(--f-body);color:var(--muted)}
@@ -146,6 +147,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 .summary{position:static}
 .person{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,190px) auto;gap:8px;align-items:center}
 .person .food{grid-column:1/3;font-size:15px;color:var(--ink-2)}
+.person .allergy{grid-column:1/3;display:block}.person .allergy input{width:100%}
 .eb-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:linear-gradient(90deg,#f7d774,#e8b923);color:#3a2c00;border-radius:14px;padding:14px 18px;margin:0 0 18px;box-shadow:0 4px 14px rgba(160,120,0,.25)}
 .eb-banner b{font-size:19px}.eb-banner .btn{background:#1c5a34;color:#fff;border-color:#1c5a34}
 .side-col{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);align-self:start;display:flex;flex-direction:column;gap:18px;min-width:0}
@@ -153,7 +155,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 .wk-row{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:9px 0;border-top:1px solid var(--line)}.wk-row:first-of-type{border-top:0}
 .wk-items{display:grid;gap:4px}.wk-day{background:var(--green);color:#fff;border-radius:999px;padding:3px 11px;font-size:13px;font-weight:700;white-space:nowrap}
 .firsts li{padding:6px 0;border-top:1px solid var(--line);list-style:none}.firsts li:first-child{border-top:0}.firsts ol{padding:0;margin:0}
-@media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}.person .food{grid-column:1/2}}
+@media (max-width:480px){.person{grid-template-columns:1fr auto}.person select{grid-column:1/2}.person .x{grid-row:1/3;grid-column:2}.person .food{grid-column:1/2}.person .allergy{grid-column:1/3}}
 .x{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);width:36px;height:36px;border-radius:9px;cursor:pointer;font-size:18px;line-height:1}
 .x:hover{color:var(--bad);border-color:var(--bad)}
 .sizes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
@@ -658,7 +660,7 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span id="prMsg"><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink" hidden>Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button><button class="btn" type="button" id="pvHome" hidden>Go to Host home</button></span></div></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families will see. It’s only a look, so nothing can be typed or picked here.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button><button class="btn" type="button" id="pvHome" hidden>Go to Host home</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -713,6 +715,7 @@ input[type=date]{cursor:pointer}
   <div class="panel confirm" id="regClosed" hidden></div>
   <div class="panel hotel" id="hotelClosed" hidden style="max-width:560px;margin:16px auto 0"></div>
   <div id="ebBanner"></div>
+  <div class="tip" id="hostRegNote" hidden style="margin-bottom:16px!important"></div>
   <div class="reg-grid" id="regWrap">
     <form id="regForm" class="stack" novalidate>
       <div class="draftnote" id="draftNote" hidden><span>Welcome back! We saved what you started.</span><button class="btn sm" type="button" id="startOver">Start over</button></div>
@@ -935,7 +938,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (i)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (a)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1157,6 +1160,10 @@ const catName=c=>c==='Hotel catering & bar'?'Catering':c==='Venue & deposits'?'H
 const CATS=['Hotel catering & bar','Venue & deposits','Activities','T-shirts & merchandise','Printing & postage','Food & hospitality','Supplies & decor','Card processing fees'];
 const SIZES=['S','M','L','XL','2XL','3XL','4XL'];
 const FOODS=['','Vegetarian','Vegan','No pork','Diabetic','Gluten-free','Food allergy'];
+// A food allergy is saved as "Food allergy: peanuts", so the details travel with it everywhere (sheet, emails, reports, check-in list).
+const foodKind=f=>String(f||'').split(':')[0].trim();
+const allergyOf=p=>p.allergy!==undefined?p.allergy:(String(p.food||'').split(':').slice(1).join(':').trim());
+function foodRows(all){return FOODS.filter(Boolean).map(f=>{const ps=all.filter(p=>foodKind(p.food)===f),det=f==='Food allergy'?ps.map(p=>allergyOf(p)).filter(Boolean):[];return[f+(det.length?' ('+det.join('; ')+')':''),ps.length]}).filter(x=>x[1]>0)}
 const KEY='psr-hub-demo-v6';
 /* Paste the Google Apps Script web app URL between the quotes to turn on live mode. Empty = demo mode. */
 const API_URL='https://script.google.com/macros/s/AKfycbzTASef4ORM_agnhpPL8pmICfaLBE_KUrqY11McfRjPnM-sxNQzsdcGfDjd5DkTMPbd/exec';
@@ -1579,7 +1586,7 @@ async function practiceExit(){if(!practicing)return;if(isTrial()){practicing=fal
 $('practiceGo').addEventListener('click',()=>{practiceStart();try{history.pushState({pr:1},'',location.href)}catch(e){}});
 let wipeArm=0;$('practiceWipe').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-wipeArm>4000){wipeArm=Date.now();b.textContent='Tap again to erase the practice';setTimeout(()=>{if(Date.now()-wipeArm>=4000)b.textContent='Start practice over'},4100);return}
-  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');prCacheDrop();toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
+  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');prCacheDrop();clearDraft();toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
 $('prLink').addEventListener('click',e=>copy(location.origin+location.pathname+'#practice',e.target));
 function renderTryouts(){const box=$('tryList');if(!box)return;const l=(D.tryouts||[]).filter(t=>t.live);
   box.innerHTML=l.length?'<div class="mini" style="margin-bottom:6px">Practice links sent</div>'+l.map(t=>`<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><span><b>${esc(t.name)}</b> · ${esc(t.email)} · works until ${esc(niceDate(t.expires))}</span><button class="btn sm" type="button" data-tryend="${esc(t.id)}">Stop early</button></div>`).join(''):''}
@@ -1763,12 +1770,12 @@ function renderCommit(){const S=D.S,min=+S.caterMin||0,depPSR=+S.depPSR||0,dep=d
 let F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};
 const DRAFT='psr-reg-draft',DRAFT_DAYS=7,DF=['rFirst','rLast','rEmail','rPhone','rCity','rState','rPayer','rDonation'];
 let draftT;
-function saveDraft(){clearTimeout(draftT);draftT=setTimeout(()=>{try{
+function saveDraft(){clearTimeout(draftT);if(PIN||practicing||previewing)return;draftT=setTimeout(()=>{try{
   const v={};DF.forEach(i=>v[i]=$(i).value);
   const any=DF.some(i=>i!=='rDonation'&&v[i])||F.people.some(p=>p.name)||+v.rDonation>0;
   if(!any)return;localStorage.setItem(DRAFT,JSON.stringify({ts:Date.now(),v,F}))}catch(e){}},400)}
 function clearDraft(){clearTimeout(draftT);try{localStorage.removeItem(DRAFT)}catch(e){}$('draftNote').hidden=true}
-function loadDraft(){try{const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d)return;
+function loadDraft(){try{if(PIN){localStorage.removeItem(DRAFT);return}const d=JSON.parse(localStorage.getItem(DRAFT)||'null');if(!d)return;
   if(Date.now()-d.ts>DRAFT_DAYS*864e5){localStorage.removeItem(DRAFT);return}
   F=d.F;F.shirts=sh(F.shirts||{});F.addons=F.addons||{};if(!F.people||!F.people.length)F.people=[{name:'',group:''}];
   DF.forEach(i=>{if(d.v[i]!=null)$(i).value=d.v[i]});markDon();$('draftNote').hidden=false}catch(e){}}
@@ -1778,7 +1785,7 @@ function renderPeople(){
     <input aria-label="Full name, person ${i+1}" placeholder="Full name" data-pi="${i}" data-pf="name" value="${esc(p.name)}">
     <select aria-label="Age group, person ${i+1}" data-pi="${i}" data-pf="group">${groupOptions(p.group)}</select>
     <button type="button" class="x" data-rm="${i}" aria-label="Remove person ${i+1}"${F.people.length<2?' disabled style="opacity:.35;cursor:default"':''}>×</button>
-    ${D.S.askFood!==false?`<select class="food" aria-label="Food needs, person ${i+1}" data-pi="${i}" data-pf="food">${FOODS.map(f=>`<option value="${f}"${(p.food||'')===f?' selected':''}>${f||'Food needs: none'}</option>`).join('')}</select>`:''}</div>`).join('');
+    ${D.S.askFood!==false?`<select class="food" aria-label="Food needs, person ${i+1}" data-pi="${i}" data-pf="food">${FOODS.map(f=>`<option value="${f}"${foodKind(p.food)===f?' selected':''}>${f||'Food needs: none'}</option>`).join('')}</select>${foodKind(p.food)==='Food allergy'?`<label class="allergy"><span class="sr">What are they allergic to? Person ${i+1}</span><input data-pi="${i}" data-pf="allergy" placeholder="What are they allergic to? (for example, peanuts)" value="${esc(allergyOf(p))}"></label>`:''}`:''}</div>`).join('');
 }
 function renderAddonFields(){
   const on=D.S.addons.filter(a=>a.on);$('addonPanel').hidden=!on.length;
@@ -1813,14 +1820,18 @@ function liveFormat(el){
 }
 $('regForm').addEventListener('input',e=>{
   const el=e.target;liveFormat(el);
-  if(el.dataset.pi!==undefined){F.people[+el.dataset.pi][el.dataset.pf]=el.value}
+  if(el.dataset.pf==='allergy'){const q=F.people[+el.dataset.pi];q.allergy=el.value;q.food='Food allergy'+(el.value.trim()?': '+el.value.trim():'')}
+  else if(el.dataset.pi!==undefined&&el.dataset.pf!=='food'){F.people[+el.dataset.pi][el.dataset.pf]=el.value}
   else if(el.dataset.size){F.shirts[el.dataset.size]=Math.max(0,parseInt(el.value)||0)}
   else if(el.dataset.addon){F.addons[el.dataset.addon]=Math.max(0,parseInt(el.value)||0)}
   renderSummary();
 });
 $('regForm').addEventListener('input',saveDraft);
 $('regForm').addEventListener('change',saveDraft);
-$('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='food'){F.people[+e.target.dataset.pi].food=e.target.value;saveDraft&&saveDraft();return}if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
+$('regForm').addEventListener('change',e=>{if(e.target.dataset.pf==='food'){const i=+e.target.dataset.pi,q=F.people[i],v=e.target.value;
+    if(v==='Food allergy'){const a=allergyOf(q);q.allergy=a;q.food='Food allergy'+(a?': '+a:'');renderPeople();const box=$('peopleList').querySelector(`[data-pf="allergy"][data-pi="${i}"]`);if(box)box.focus()}
+    else{q.food=v;delete q.allergy;if(e.target.parentNode.querySelector('.allergy'))renderPeople()}
+    saveDraft&&saveDraft();return}if(e.target.dataset.pf==='group'){F.people[+e.target.dataset.pi].group=e.target.value;renderSummary()}});
 $('peopleList').addEventListener('click',e=>{const b=e.target.closest('[data-rm]');if(!b||F.people.length<2)return;F.people.splice(+b.dataset.rm,1);renderPeople();renderSummary()});
 $('addPerson').addEventListener('click',()=>{F.people.push({name:'',group:''});renderPeople();renderSummary();const ins=$('peopleList').querySelectorAll('input');ins[ins.length-1].focus()});
 function markDon(){const v=String(+$('rDonation').value||'');document.querySelectorAll('[data-don]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.don===v)))}
@@ -2005,7 +2016,13 @@ function regMsg(st){const S=D.S;
   if(st==='ended')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration has ended</h2><p style="margin-top:8px">Thank you, family. ${S.lastDay&&todayISO()>S.lastDay?'We hope to see you at the next reunion!':'We’ll see you at the reunion!'}</p>`;
   if(st==='full')return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration is full</h2><p style="margin-top:8px">Every seat has been taken. If you have questions, reply to any reunion email and the host will get back to you.</p>`;
   return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration opens ${S.regOpensOn&&todayISO()<=S.regOpensOn?niceDate(S.regOpensOn):'soon'}</h2><p style="margin-top:8px">Check back soon. The hosting committee will email the family as soon as you can sign up.</p>`}
-function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
+// Host only: on the Register page before registration is open, explain why families can't sign up yet and why the early-bird reminder isn't showing.
+function renderHostRegNote(){const n=$('hostRegNote');if(!n)return;
+  const show=LIVE&&isAdmin()&&!isCommittee()&&!previewing&&!(D.handoff&&D.handoff.open)&&!document.body.classList.contains('previewing')&&regState()==='soon';
+  n.hidden=!show;if(!show)return;
+  n.innerHTML=`<b>Registration isn’t open yet.</b> Families can’t sign up, and the gold early-bird reminder you saw in the preview won’t show until it’s open. You can still sign up a family yourself here. <button class="btn sm" type="button" id="hostRegOpen" style="margin-left:6px">Open registration →</button>`;
+  $('hostRegOpen').onclick=()=>{openTab('setup');goStep(10)}}
+function renderExtrasReg(){try{renderHostRegNote()}catch(e){}const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
   let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
   eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&(regState()==='open'||previewing)&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span></div>`:'';
   wk.hidden=true;   // the schedule isn't shown on the sign-up page anymore (it can go in a later email)
@@ -2029,7 +2046,7 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
   if(ho){$('regClosed').hidden=true;$('hotelClosed').hidden=true;$('regWrap').hidden=true;$('ebBanner').innerHTML='';if(!hb.dataset.step)renderHandoff();return}
   const st=regState();
   // Preview always shows the sign-up form, so the host can check it before registration opens.
-  if(previewing)$('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. Nothing you do here is sent.':'<b>Preview.</b> This is how the page will look to families once you open registration. Nothing you do here is sent.';
+  if(previewing)$('pvMsg').innerHTML=st==='open'?'<b>Preview.</b> This is what families see. It’s only a look, so you can’t type or pick anything here.':'<b>Preview.</b> This is how the page will look to families once you open registration. It’s only a look, so you can’t type or pick anything here.';
   const closed=previewing?(pvNow&&st!=='open'):LIVE&&!isAdmin()&&!isTest()&&(!D.loaded||st!=='open'),box=$('regClosed');
   if(!$('confirm').hidden){box.hidden=true;$('hotelClosed').hidden=true;return}
   box.hidden=!closed;$('regWrap').hidden=closed;$('hotelClosed').hidden=!(closed&&D.loaded&&!D.loadErr&&!!D.S.hotelName&&st==='soon');
@@ -2041,14 +2058,20 @@ function gateReg(){renderExtrasReg();const hb=$('handoffBox'),ho=handoffShown();
 const PV_TARGET={3:'hotelCard',4:'hEarly',5:'addonFields'};let pvOverride='';
 // Step 3 (ages & prices) preview: show Who's coming with the age list open so the host sees each price, plus the early-bird notes.
 function pvFlash(x){if(x)x.classList.add('pvflash')}
-function pvShut(){document.querySelectorAll('#peopleList select.pvopen').forEach(s=>{s.size=0;s.classList.remove('pvopen')})}
+function pvShut(){document.querySelectorAll('#peopleList select.pvopen').forEach(s=>{const was=s.value;s.size=0;s.classList.remove('pvopen');s.value=was})}
 function pvPrices(){const box=$('peopleList').closest('.panel'),sel=$('peopleList').querySelector('select[data-pf="group"]');
   setTimeout(()=>{if(!box)return;const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});
     pvFlash(box);pvFlash(document.querySelector('#summary .pill-note'));pvFlash($('hEarly'));pvFlash($('ebBanner').firstElementChild);
-    if(sel){sel.size=sel.options.length;sel.classList.add('pvopen')}},60)}
+    if(sel){const was=sel.value;sel.size=sel.options.length;sel.classList.add('pvopen');sel.value=was;if(sel.value!==was)sel.selectedIndex=0}},60)}
 document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))pvShut()});
 document.addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))setTimeout(pvShut,150)});
-function setPreview(on){pvShut();pvClear();previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;$('pvHome').hidden=!(previewing&&wStep===11);
+let pvStash=null;
+function pvBlankForm(on){try{
+  if(on){if(pvStash)return;const v={};DF.forEach(i=>v[i]=$(i).value);pvStash={F:JSON.parse(JSON.stringify(F)),v,note:$('draftNote').hidden};
+    F={people:[{name:'',group:''}],shirts:sh({}),addons:{},donation:0};DF.forEach(i=>$(i).value=i==='rDonation'?'':'');$('draftNote').hidden=true}
+  else{if(!pvStash)return;F=pvStash.F;DF.forEach(i=>$(i).value=pvStash.v[i]||'');$('draftNote').hidden=pvStash.note;pvStash=null}
+  F.shirts=sh(F.shirts||{});renderPeople();renderAddonFields();renderSummary();try{markDon()}catch(e){}}catch(e){}}
+function setPreview(on){pvShut();pvClear();pvBlankForm(!!on);previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;try{$('regWrap').inert=previewing}catch(e){}document.body.classList.toggle('pvlook',previewing);$('pvHome').hidden=!(previewing&&wStep===11);
   openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0});
   if(previewing){const id=pvOverride||PV_TARGET[wStep],el=id&&$(id);pvOverride='';
     if(id==='hEarly'){pvPrices()}
@@ -2070,7 +2093,7 @@ function summaryHTML(){
   const groups=S.groups.map(g=>[g.label,all.filter(p=>p.group===g.id).length]);
   const shirts=SIZES.map(z=>[z,sum(D.regs,r=>(r.shirts||{})[z])]).filter(x=>x[1]>0);
   const extras=(S.addons||[]).filter(a=>!a.sized).map(a=>[a.label,sum(D.regs,r=>(r.addons||{})[a.id])]).filter(x=>x[1]>0);
-  const foods=FOODS.filter(Boolean).map(f=>[f,all.filter(p=>p.food===f).length]).filter(x=>x[1]>0);
+  const foods=foodRows(all);
   const byVia={};D.pays.forEach(p=>{const k=p.via||p.method||'Other';byVia[k]=(byVia[k]||0)+(+p.amount||0)});
   const contrib=isViewer()?0:sum(D.contribs||[],c=>c.amount);
   const cats=CATS.map(c=>{const sp=sum(D.exps.filter(x=>x.category===c),x=>x.amount),b=+S.budgets[c]||0;return[catName(c),b,sp]}).filter(x=>x[1]||x[2]);
@@ -2133,7 +2156,7 @@ function reportHTML(){
   const groups=S.groups.map(g=>[`${g.label}${g.ages?` (${g.ages})`:''}`,all.filter(p=>p.group===g.id).length]);
   const shirts=SIZES.map(z=>[z,sum(D.regs,r=>(r.shirts||{})[z])]).filter(x=>x[1]>0);
   const extras=(S.addons||[]).filter(a=>!a.sized).map(a=>[a.label,sum(D.regs,r=>(r.addons||{})[a.id])]).filter(x=>x[1]>0);
-  const foods=FOODS.filter(Boolean).map(f=>[f,all.filter(p=>p.food===f).length]).filter(x=>x[1]>0);
+  const foods=foodRows(all);
   const ci=ciLocalStats();
   const start=startBal(),opIn=Lg.op,endNow=Lg.end,proj=endNow+Lg.owed,schStart=startSchol(),schDon=Lg.schol-(Lg.oSchol||0);
   // spec: one letter per column. l = words, c = a count (centered), m = money (lined up on the right). w = column widths.
@@ -2195,7 +2218,7 @@ function reportHTML(){
   <div class="ft"><span>${e(preparedBy(S))}</span><span>${e(title)} · Financial report · ${today}</span></div>
   </body></html>`}
 document.addEventListener('click',e=>{if(e.target.closest('#printReport'))printHTML(reportHTML())});
-document.addEventListener('click',e=>{if(e.target.closest('#ciPrintList'))printHTML(checkinListHTML())});
+document.addEventListener('click',e=>{if(e.target.closest('#ciPrintList')){if(!D.regs.length){toast('No one has registered yet, so there’s nothing to print.');return}printHTML(checkinListHTML())}});
 // Thank-you landing for families coming back from Zeffy (set Zeffy's "Redirect to your own thank-you page" to the site address + #paid).
 const PAIDQ=/^#paid/.test(location.hash||'');
 function showPaidPage(){if(!PAIDQ)return;$('regWrap').hidden=true;$('regClosed').hidden=true;const c=$('confirm');c.hidden=false;
@@ -2842,7 +2865,7 @@ function renderWhosHere(){const el=$('ciAdmin'),st=ciLocalStats(),regN=D.regs.re
       if(whoFilter==='here'&&!n)return false;if(whoFilter==='not'&&n===r.people.length)return false;
       return!q||norm([regName(r),r.code,...r.people.map(p=>p.name)].join(' ')).includes(q)})
     .map(r=>`<div class="ci-hrow"><div><b>${esc(regName(r))}</b><span class="sub mono">${esc(r.code)}</span></div><div>${r.people.map(p=>{const k=r.code+'|'+p.name;return here.has(k)?`<span class="ci-person here">✓ ${esc(p.name)} <span class="muted small">(${esc(dayOf[k]||'')})</span></span>`:`<span class="ci-person not">○ ${esc(p.name)}</span>`}).join('')}</div></div>`).join('');
-  el.innerHTML=`<div class="panel"><div class="panel-head"><div><h2>Who’s here</h2><p class="muted small">Everyone checks families in with the helper link, including you. This page shows who has arrived.</p></div><button class="btn sm" type="button" id="ciPrintList"${D.regs.length?'':' disabled'}>Print a paper check-in list</button></div>
+  el.innerHTML=`<div class="panel"><div class="panel-head"><div><h2>Who’s here</h2><p class="muted small">Everyone checks families in with the helper link, including you. This page shows who has arrived.</p></div><button class="btn sm" type="button" id="ciPrintList">Print a paper check-in list</button></div>
     <div class="ci-kpis" style="margin-bottom:16px"><div><b>${regN}</b><span>Registered</span></div><div><b>${st.total}</b><span>Checked in</span></div><div><b>${Math.max(0,regN-st.total)}</b><span>Not here yet</span></div><div><b>${st.Friday}</b><span>Arrived Friday</span></div><div><b>${st.Saturday}</b><span>Arrived Saturday</span></div></div>
     <div class="spread" style="gap:12px;flex-wrap:wrap;margin-bottom:6px"><label class="f" style="flex:1 1 260px">Look up a name<input id="whoQ" type="search" value="${esc(whoQ)}" placeholder="Name or confirmation #" autocomplete="off"></label>
       <div class="filters" id="whoFilters">${[['all','Everyone'],['here','Here'],['not','Not here yet']].map(([k,l])=>`<button class="filter" data-wf="${k}" aria-pressed="${whoFilter===k}">${l}</button>`).join('')}</div></div>
