@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (b)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (d)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1275,8 +1275,17 @@ async function loadPublic(){const j=await api('public');D.S=mergeSettings(j.sett
   // Practice family link before the practice host has signed up: show what families see after a reunion ("Is your family hosting the next reunion?")
   if(PRPUB&&!(j.settings&&j.settings.practiceHost)){D.S=mergeSettings(blankSettings());const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}
   D.loaded=true}
-async function loadAll(again){
-  const j=await api('all');
+// Practice opens instantly from a copy saved in this browser last time, then quietly updates from Google.
+function prKey(){let h=7;for(const c of String(PIN||''))h=(h*31+c.charCodeAt(0))|0;return 'psr-prcache-'+h}
+function prCacheGet(){try{return JSON.parse(localStorage.getItem(prKey())||'null')}catch(e){return null}}
+function prCachePut(j){try{localStorage.setItem(prKey(),JSON.stringify(j))}catch(e){}}
+// While you're on Host home, quietly fetch the practice copy ahead of time so even the first practice opens instantly.
+let prFetching=false;
+function prPrefetch(){if(prFetching||practicing||!LIVE||!PIN||prCacheGet())return;prFetching=true;
+  fetch(API_URL,{method:'POST',body:JSON.stringify({action:'all',pin:PIN,practice:true,data:{}})}).then(r=>r.json()).then(j=>{if(j&&j.ok!==false&&j.practice&&!practicing&&!prCacheGet())prCachePut(j)}).catch(()=>{}).finally(()=>{prFetching=false})}
+function prCacheDrop(){try{Object.keys(localStorage).filter(k=>k.startsWith('psr-prcache-')).forEach(k=>localStorage.removeItem(k))}catch(e){}}
+async function loadAll(again,cached){
+  const j=cached||await api('all');if(!cached&&practicing&&j.practice!==false)prCachePut(j);
   if(!again&&testOn&&j.role==='tech'&&!j.test&&!inPractice()){D.role='tech';return loadAll(true)}   // signed in with the tech PIN and Test mode was on
   if(!setDirty)D.S=mergeSettings(j.settings);
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
@@ -1301,7 +1310,7 @@ function setSaveState(st){if(st==='dirty')setGen++;setDirty=st==='dirty'||(st===
 function saveSettingsNow(manual){clearTimeout(setT);
   if(!LIVE){save();setSaveState('saved');if(manual)toast('Settings saved.');return Promise.resolve()}
   const g=setGen;setSaveState('saving');savingNow++;
-  return api('saveSettings',D.S).then(()=>{savingNow--;if(setGen!==g){setSaveState('dirty');saveSettingsNow(false);return}setDirty=false;setSaveState('saved');toast('Settings saved.')}).catch(e=>{savingNow--;setDirty=true;setSaveState('error');toast(e.message)})}
+  return api('saveSettings',D.S).then(()=>{savingNow--;if(setGen!==g){setSaveState('dirty');saveSettingsNow(false);return}setDirty=false;setSaveState('saved');if(practicing){const c=prCacheGet();if(c){c.settings=D.S;prCachePut(c)}}toast('Settings saved.')}).catch(e=>{savingNow--;setDirty=true;setSaveState('error');toast(e.message)})}
 function persistSettings(){setSaveState('dirty')}
 window.addEventListener('beforeunload',e=>{if(setDirty||savingNow){e.preventDefault();e.returnValue=''}});
 document.addEventListener('click',e=>{if(e.target.closest('[data-savenow]'))saveSettingsNow(true)});
@@ -1548,11 +1557,19 @@ function prShow(){document.body.classList.toggle('practicing',practicing);$('prB
 // Practice runs against its own practice sheet. It remembers where you were, even after signing out or closing the page.
 async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
-  if(!loaded){try{await loadAll()}catch(e){toast(e.message)}}
+  let fromCache=false;
+  if(!loaded){const c=prCacheGet();if(c){try{await loadAll(false,c);fromCache=true}catch(e){}}
+    if(!fromCache){try{await loadAll()}catch(e){toast(e.message)}}}
+  prEnter();
+  if(fromCache){const stage=prStage,me=++prGen;api('all').then(j=>{if(!practicing||me!==prGen)return;loadAll(false,j);prCachePut(j);
+    if(prStage!==stage){prEnter(true);return}
+    if(!setDirty)renderSetup();renderPeople();renderAddonFields();renderAll(true)}).catch(()=>{})}}
+let prGen=0;
+function prEnter(quiet){
   renderSetup();renderPeople();renderAddonFields();showLoading(false);
   if(prStage==='handoff'&&D.prHostName){showLoading(false);practiceSignedUp(D.prHostName)}   // signed in with the PIN made in practice: they're already the approved host
   else if(prStage==='handoff'){document.body.classList.add('previewing');delete $('handoffBox').dataset.step;openTab('register');renderAll(true)}
-  else{renderAll(true);openTab('home');showWelcome()}
+  else{renderAll(true);openTab('home');if(!quiet)showWelcome()}
   window.scrollTo({top:0})}
 function practiceSignedUp(name){prStage='setup';document.body.classList.remove('previewing');
   const keep={checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear};D.S=mergeSettings({...blankSettings(),...keep});D.S.practiceHost={name,since:TODAY};D.host={name};D.handoff={open:false};wStep=1;
@@ -1567,7 +1584,7 @@ async function practiceExit(){if(!practicing)return;if(isTrial()){practicing=fal
 $('practiceGo').addEventListener('click',()=>{practiceStart();try{history.pushState({pr:1},'',location.href)}catch(e){}});
 let wipeArm=0;$('practiceWipe').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-wipeArm>4000){wipeArm=Date.now();b.textContent='Tap again to erase the practice';setTimeout(()=>{if(Date.now()-wipeArm>=4000)b.textContent='Start practice over'},4100);return}
-  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
+  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');prCacheDrop();prPrefetch();toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
 $('prLink').addEventListener('click',e=>copy(location.origin+location.pathname+'#practice',e.target));
 function renderTryouts(){const box=$('tryList');if(!box)return;const l=(D.tryouts||[]).filter(t=>t.live);
   box.innerHTML=l.length?'<div class="mini" style="margin-bottom:6px">Practice links sent</div>'+l.map(t=>`<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><span><b>${esc(t.name)}</b> · ${esc(t.email)} · works until ${esc(niceDate(t.expires))}</span><button class="btn sm" type="button" data-tryend="${esc(t.id)}">Stop early</button></div>`).join(''):''}
@@ -2939,7 +2956,7 @@ function applyMode(){const adm=isAdmin();
   document.querySelectorAll('#tab-setup input:not([data-bd]),#tab-setup select,#tab-setup textarea,#tab-setup button:not([data-wnav]):not([data-wgo]):not([data-bd])').forEach(el=>{if(ro&&!el.disabled){el.disabled=true;el.dataset.vd='1'}else if(!ro&&el.dataset.vd){el.disabled=false;delete el.dataset.vd}});
   ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
   const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the PSR Reunion Board PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
-  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb)pb.hidden=!isTech()||practicing;if(isTech())renderTryouts();{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
+  const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb){pb.hidden=!isTech()||practicing;if(!pb.hidden)prPrefetch()}if(isTech())renderTryouts();{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
   {const sb=$('startBox');if(sb){const at=+D.S.setupStep||0,show=LIVE&&isAdmin()&&!isCommittee()&&!D.S.setupDone&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing);sb.hidden=!show;
     if(show){$('startTitle').textContent=at>1&&at<=10?'Pick up where you left off':'Set up your reunion';$('startText').textContent=at>1&&at<=10?'You stopped at step '+dn(at)+' of 9. Everything you saved is still there.':'It takes 9 short steps. Each step tells you what to type.';$('startGo').textContent=at>1&&at<=10?'Continue at step '+dn(at)+' →':'Get started →';$('startGo').dataset.step=at>1&&at<=10?at:1}}}
   const ctp=$('ctOpen');if(ctp&&ro)ctp.hidden=true;
