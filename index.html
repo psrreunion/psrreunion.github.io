@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (f)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (g)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1520,24 +1520,19 @@ function infoBox(mini,title,text){let m=$('infoModal');if(!m){m=document.createE
 function openNewHostPin(practiceLabel){$('rsTitle').textContent='You’re approved! Create your PIN';$('resetModal').querySelector('.wcount').textContent=practiceLabel?'Practice · Welcome, new host':'Welcome, new host';$('rsPin').closest('label').firstChild.textContent='Create a PIN';$('rsPin2').closest('label').firstChild.textContent='Type the same PIN again';$('rsGo').textContent='Create my PIN';
   $('rsPin').value='';$('rsPin2').value='';$('rsErr').hidden=true;$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}
 let PRTOK=PRPINQ,PRHERE=false;   // PRHERE: the practice page itself is showing the PIN box
-if(PRPINQ){
-  // Practice: if the practice page is open in another tab of this browser, the PIN box opens there instead.
-  let acked=false;const onAck=e=>{if(e.key==='psr-prpin-ack'&&e.newValue===PRPINQ)acked=true};window.addEventListener('storage',onAck);
-  try{localStorage.setItem('psr-prpin',PRPINQ+'|'+Date.now())}catch(e){}
-  setTimeout(()=>{window.removeEventListener('storage',onAck);
-    if(acked){infoBox('Practice','Go back to your practice tab','Click your practice tab at the top of your browser. The “Create your PIN” box is waiting there. You can close this tab.');try{history.replaceState(null,'','#')}catch(_){}}
-    else openNewHostPin(true)},1500)}
+if(PRPINQ){openNewHostPin(true)}
 else if(RESETQ){if(NEWHOSTQ)openNewHostPin(false);else{$('resetModal').hidden=false;setTimeout(()=>$('rsPin').focus(),100)}}
-window.addEventListener('storage',e=>{if(e.key!=='psr-prpin'||!e.newValue||!practicing||!prWaitT)return;const tok=e.newValue.split('|')[0];
-  try{localStorage.setItem('psr-prpin-ack',tok)}catch(_){}PRTOK=tok;PRHERE=true;openNewHostPin(true);try{window.focus()}catch(_){}});
 $('rsCancel').addEventListener('click',()=>{$('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(e){}});
 $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin').value.trim(),er=$('rsErr');er.hidden=true;
   const bad=pinRule(p);if(bad){er.textContent=bad;er.hidden=false;return}
   if(p!==$('rsPin2').value.trim()){er.textContent='The two PINs don’t match. Please type them again.';er.hidden=false;return}
   if(PRTOK){busy($('rsGo'),'Saving…',async()=>{try{await api('practicePin',{token:PRTOK,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
-    if(PRHERE){PRTOK='';PRHERE=false;toast('Your PIN is created.');return}   // the practice page moves on when it sees the PIN was made
-    infoBox('Practice','Your PIN is created','You can sign in with it now: click “Hosting committee sign-in” at the bottom of the page. If your practice page is open in another tab, you can go back to it instead.')}).catch(()=>{});return}
+    // Signed in right here with the new PIN, straight into practice as the new host (no going back to another tab).
+    PRTOK='';PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later');localStorage.setItem('psr-practicing','1')}catch(_){}
+    showLoading(true,'Signing in…');practicing=true;
+    try{await loadAll()}catch(x){practicing=false;showLoading(false);PIN='';infoBox('Practice','Your PIN is created','Sign in with it: click “Hosting committee sign-in” at the bottom of the page.');return}
+    practicing=false;await practiceStart(true);toast('Your PIN is created. Welcome!')}).catch(()=>{});return}
   busy($('rsGo'),'Saving…',async()=>{try{await api('resetPin',{token:RESETQ,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
     if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Signing in…');
@@ -1558,7 +1553,7 @@ function prShow(){document.body.classList.toggle('practicing',practicing);$('prB
 async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
   let fromCache=false;
-  if(!loaded){const c=prCacheGet();if(c){try{await loadAll(false,c);fromCache=true}catch(e){}}
+  if(!loaded){const c=prCacheGet()||(isTech()?{ok:true,practice:true,role:D.role,settings:{},regs:[],pays:[],exps:[],contribs:[],log:[],emails:[],contacts:[],checkins:[],alerts:[],board:D.board,handoff:{open:false},tryouts:D.tryouts,host:null,tryEnds:D.tryEnds,prHostName:D.prHostName}:null);if(c){try{await loadAll(false,c);fromCache=true}catch(e){}}
     if(!fromCache){try{await loadAll()}catch(e){toast(e.message)}}}
   prEnter();
   if(fromCache){const stage=prStage,me=++prGen;api('all').then(j=>{if(!practicing||me!==prGen)return;loadAll(false,j);prCachePut(j);
@@ -1584,7 +1579,7 @@ async function practiceExit(){if(!practicing)return;if(isTrial()){practicing=fal
 $('practiceGo').addEventListener('click',()=>{practiceStart();try{history.pushState({pr:1},'',location.href)}catch(e){}});
 let wipeArm=0;$('practiceWipe').addEventListener('click',e=>{const b=e.target;
   if(Date.now()-wipeArm>4000){wipeArm=Date.now();b.textContent='Tap again to erase the practice';setTimeout(()=>{if(Date.now()-wipeArm>=4000)b.textContent='Start practice over'},4100);return}
-  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');prCacheDrop();prPrefetch();toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
+  wipeArm=0;busy(b,'Erasing…',async()=>{await api('clearPractice');prCacheDrop();toast('Practice erased. The next practice starts fresh.')}).then(()=>b.textContent='Start practice over').catch(()=>{b.textContent='Start practice over'})});
 $('prLink').addEventListener('click',e=>copy(location.origin+location.pathname+'#practice',e.target));
 function renderTryouts(){const box=$('tryList');if(!box)return;const l=(D.tryouts||[]).filter(t=>t.live);
   box.innerHTML=l.length?'<div class="mini" style="margin-bottom:6px">Practice links sent</div>'+l.map(t=>`<div class="spread" style="padding:8px 0;border-top:1px solid var(--line)"><span><b>${esc(t.name)}</b> · ${esc(t.email)} · works until ${esc(niceDate(t.expires))}</span><button class="btn sm" type="button" data-tryend="${esc(t.id)}">Stop early</button></div>`).join(''):''}
