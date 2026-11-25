@@ -464,7 +464,10 @@ input[data-money]::-webkit-inner-spin-button,input[data-money]::-webkit-outer-sp
 .req{display:inline;margin-left:6px;font:600 12px var(--f-body);color:var(--red);letter-spacing:.02em}
 .opt{display:inline-block;vertical-align:middle;margin-left:10px;font:700 12.5px var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--ok);background:var(--ok-bg);border:1px solid #b9dcc4;border-radius:999px;padding:3px 10px;position:relative;top:-2px}
 #tab-register .panel-head p{color:var(--note-ink)}
-.pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#1c5a34;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+/* Preview: a charcoal message bar (so it doesn't blend into the green banner) and the way back floating at the bottom right */
+.pvfloat{display:none;position:fixed;right:24px;bottom:24px;z-index:31;gap:10px;flex-wrap:wrap;justify-content:flex-end}body.pvlook .pvfloat{display:flex}.pvfloat .btn{box-shadow:0 6px 20px rgba(0,0,0,.28);font-size:17px;padding:14px 22px}
+@media(max-width:640px){.pvfloat{right:16px;bottom:16px;left:16px}.pvfloat .btn{flex:1}}
+.pvbar{position:fixed;left:0;right:0;top:0;z-index:30;background:#2b2b2b;color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .pvbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;font-size:16px}
 .pvbar .btn{background:#e3b318;border-color:#e3b318;color:#2a2100;font-size:16px;min-height:44px}
 .pvseg{display:inline-flex;border:1.5px solid rgba(255,255,255,.6);border-radius:10px;overflow:hidden}.pvseg button{background:transparent;color:#fff;border:0;padding:10px 16px;font:600 15px var(--f-body);cursor:pointer}.pvseg button+button{border-left:1.5px solid rgba(255,255,255,.6)}.pvseg button[aria-pressed=true]{background:#fff;color:var(--green)}.pvseg button:not([aria-pressed=true]):hover{background:rgba(255,255,255,.12)}
@@ -638,7 +641,7 @@ input[type=date]{cursor:pointer}
 <div class="wmodal" id="welcomeModal" hidden><div class="wbox" role="dialog" aria-modal="true" aria-labelledby="wmTitle">
   <div class="wcount">Welcome, host</div>
   <h2 id="wmTitle">Let’s set up your reunion registration</h2>
-  <p id="wmText">It takes 9 short steps. Each step tells you what to type, and you can stop and come back at any time.</p>
+  <p id="wmText">It takes 8 short steps. Each step tells you what to type, and you can stop and come back at any time.</p>
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="wmGo">Get started →</button><button class="btn big" type="button" id="wmLater">Not now</button></div>
 </div></div>
 <div class="wmodal" id="nudgeModal" hidden><div class="wbox" role="dialog" aria-modal="true" aria-labelledby="nmTitle">
@@ -660,7 +663,8 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span id="prMsg"><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink" hidden>Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families will see. It’s only a look, so nothing can be typed or picked here.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button><button class="btn" type="button" id="pvHome" hidden>Go to Host home</button></span></div></div>
+<div class="pvfloat" id="pvFloat"><button class="btn" type="button" id="pvHome" hidden>Go to Host home</button><button class="btn gold" type="button" id="pvBack">← Back to Setup</button></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families will see. It’s only a look, so nothing can be typed or picked here.</span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -690,7 +694,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-home" hidden>
   <div class="panel home">
     <h2 id="homeHi">Host home page</h2>
-    <div class="startbox" id="startBox" hidden><div><div class="mini">Start here</div><b id="startTitle">Set up your reunion</b><p id="startText" style="margin:4px 0 0">It takes 9 short steps. Each step tells you what to type.</p></div><button class="btn primary big" type="button" id="startGo">Get started →</button></div>
+    <div class="startbox" id="startBox" hidden><div><div class="mini">Start here</div><b id="startTitle">Set up your reunion</b><p id="startText" style="margin:4px 0 0">It takes 8 short steps. Each step tells you what to type.</p></div><button class="btn primary big" type="button" id="startGo">Get started →</button></div>
     <p class="home-sub">What would you like to do? Click one of the big buttons.</p>
     <div class="hgrid">
       <button class="hbtn" type="button" data-home="pay"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9.5v5M18 9.5v5"/></svg><b>Record a payment</b><span>Cash, Zelle, Cash App or a check</span></button>
@@ -938,7 +942,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (a)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (c)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -951,12 +955,12 @@ input[type=date]{cursor:pointer}
       <button class="wnav" type="button" data-wgo="6" data-wnav><span class="wnum">6</span><span>Emails</span></button>
       <button class="wnav" type="button" data-wgo="7" data-wnav><span class="wnum">7</span><span>Money you already have</span></button>
       <button class="wnav" type="button" data-wgo="8" data-wnav><span class="wnum">8</span><span>Costs and budget</span></button>
-      <button class="wnav" type="button" data-wgo="9" data-wnav><span class="wnum">9</span><span>Check-in helpers</span></button>
+      <button class="wnav" type="button" data-wgo="9" data-wnav hidden><span class="wnum">9</span><span>Check-in helpers</span></button>
       <button class="wnav" type="button" data-wgo="10" data-wnav><span class="wnum">10</span><span>Open registration</span></button>
     </nav>
     <div class="wmain panel">
     <div class="wstep" data-step="1" hidden>
-      <div class="whead"><div class="wcount">Step 1 of 9</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p></div>
+      <div class="whead"><div class="wcount">Step 1 of 8</div><h2>About your reunion</h2><p>Tell families about this year’s reunion: the family reunion name, the number, the theme and the dates.</p></div>
       <div class="stack">
             <label class="f"><span>Family reunion name</span><input id="sFamily" data-k="family"><span class="ex">For example: Johnson-Carter Family Reunion</span></label>
           <label class="f" style="max-width:320px"><span>Reunion number <span class="optl">(optional)</span></span><input id="sEdition" data-k="edition"><span class="ex">For example: 54th</span></label>
@@ -985,7 +989,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="3" hidden>
-      <div class="whead"><div class="wcount">Step 2 of 9</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p></div>
+      <div class="whead"><div class="wcount">Step 2 of 8</div><h2>Hotel</h2><p>Tell families where to stay. Families book and pay for their own rooms.</p></div>
       <div class="stack">
           <label class="f"><span>Hotel name <span class="req">(required)</span></span><input id="sHotel" data-k="hotelName"></label>
           <label class="f"><span>Street address <span class="req">(required)</span></span><input id="sStreet" data-k="hotelStreet"></label>
@@ -1003,7 +1007,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="4" hidden>
-      <div class="whead"><div class="wcount">Step 3 of 9</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p></div>
+      <div class="whead"><div class="wcount">Step 3 of 8</div><h2>Ages and prices</h2><p>Set the age range and price for each group. Click any box to change it.</p></div>
       <div class="stack">
           <div class="set-groups" id="setGroups"></div>
           <label class="f" style="max-width:320px">Early-bird prices end on<input id="sEarly" data-k="earlyBird" type="date"></label>
@@ -1019,7 +1023,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="5" hidden>
-      <div class="whead"><div class="wcount">Step 4 of 9</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p></div>
+      <div class="whead"><div class="wcount">Step 4 of 8</div><h2>Extras<span class="opt">Optional</span></h2><p>Choose the items families can add when they register, such as t-shirts or boxed lunches.</p></div>
       <div class="stack">
           <div class="set-groups" id="setAddons"></div>
           <div><button class="btn sm" id="addAddon" type="button">+ Add an extra</button></div>
@@ -1029,7 +1033,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="6" hidden>
-      <div class="whead"><div class="wcount">Step 5 of 9</div><h2>Emails</h2><p>Emails to families are sent for you automatically. Type the email where you want families’ replies and any alerts to come. Then pick the thank-you email families get.</p></div>
+      <div class="whead"><div class="wcount">Step 5 of 8</div><h2>Emails</h2><p>Emails to families are sent for you automatically. Type the email where you want families’ replies and any alerts to come. Then pick the thank-you email families get.</p></div>
       <div class="stack">
         <div class="sched-pair ex-pair">
           <div class="stack">
@@ -1047,7 +1051,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="7" hidden>
-      <div class="whead"><div class="wcount">Step 6 of 9</div><h2>Money you already have</h2><p>Enter how much is already in the reunion account and the scholarship fund.</p></div>
+      <div class="whead"><div class="wcount">Step 6 of 8</div><h2>Money you already have</h2><p>Enter how much is already in the reunion account and the scholarship fund.</p></div>
       <div class="stack">
           <div class="fields">
       <p class="tip" id="balTestTip" hidden style="grid-column:1/-1">Starting balances count as $0 in Test mode, so they’re hidden here. Turn Test mode off to see or change them.</p>
@@ -1067,7 +1071,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="8" hidden>
-      <div class="whead"><div class="wcount">Step 7 of 9</div><h2>Costs and budget</h2><p>Enter what your venue or caterer charges, then plan what you expect to spend.</p></div>
+      <div class="whead"><div class="wcount">Step 7 of 8</div><h2>Costs and budget</h2><p>Enter what your venue or caterer charges, then plan what you expect to spend.</p></div>
       <div class="stack">
           <div class="fields">
       <label class="f">Catering cost<input data-money id="sCater" data-k="caterMin" type="number" step="1"></label>
@@ -1084,7 +1088,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="9" hidden>
-      <div class="whead"><div class="wcount">Step 8 of 9</div><h2>Check-in helpers</h2><p>Helpers use a link to check families in at the reunion. There’s nothing to type on this step.</p></div>
+      <div class="whead"><div class="wcount">Step – </div><h2>Check-in helpers</h2><p>Helpers use a link to check families in at the reunion. There’s nothing to type on this step.</p></div>
       <div class="stack">
           <label class="f">This year’s helper link<input id="sCiLink" readonly placeholder="Made automatically. Refresh the page if it’s blank." autocomplete="off" style="font-family:var(--f-mono);font-size:15px"></label>
           <p class="tip" id="ciStatus" hidden style="border-left-color:var(--bad);background:var(--bad-bg);color:var(--bad)!important"></p>
@@ -1093,7 +1097,7 @@ input[type=date]{cursor:pointer}
       </div>
     </div>
     <div class="wstep" data-step="10" hidden>
-      <div class="whead"><div class="wcount">Step 9 of 9</div><h2>Open registration</h2><p>This is the last step. Choose when families can register.</p></div>
+      <div class="whead"><div class="wcount">Step 8 of 8</div><h2>Open registration</h2><p>This is the last step. Choose when families can register.</p></div>
       <div class="stack">
           <div class="regrange"><span>Registration is open from</span><label class="f"><span class="sr">Opens on</span><input id="sRegOpensOn" data-k="regOpensOn" type="date" aria-label="Registration opens on"></label><span>to</span><label class="f"><span class="sr">Closes on</span><input id="sRegClosesOn" data-k="regClosesOn" type="date" aria-label="Registration closes on"></label></div>
           <label class="toggle"><input type="checkbox" role="switch" id="sRegOpen" data-k="regOpen"><span>Registration: <span class="st" id="sRegOpenTxt">Closed</span></span></label>
@@ -1113,6 +1117,7 @@ input[type=date]{cursor:pointer}
         <p>Click <b>Setup</b> at the top of the page. Then click the step you need in the list on the left, such as Hotel or Ages and prices. You don’t have to go through every step again.</p>
         <div class="minitabs" aria-hidden="true"><span>Home</span><span>Register</span><span>Overview</span><span>Payments</span><span>Expenses</span><span>Ledger</span><span>Check-in</span><span>Records</span><span class="ring">Setup</span><span class="miniarrow">← Click here</span></div>
       </div>
+      <p class="tip"><b>On the first day of the reunion,</b> send the check-in link to your helpers. You’ll find it on the <b>Who’s here</b> card on your Host home page, or on the <b>Check-in</b> tab.</p>
       <div class="later whatsnext">
         <h3>What’s next</h3>
         <p>The tabs at the top of the page do the rest:</p>
@@ -1637,21 +1642,22 @@ function nudgeInfo(){const S=D.S;if(!LIVE||S.regOpen||!isAdmin()||isCommittee()|
   if(days>(eb?60:120))return null;
   const nice=new Date(ref+'T12:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   return eb?`Early-bird pricing ends ${nice}, only ${days} day${days===1?'':'s'} away. Families need time to sign up before prices go up.`:`The reunion is ${days} days away (the last day is ${nice}). Families need time to sign up.`}
-function showNudge(){const t=nudgeInfo();if(!t)return;try{if(sessionStorage.getItem('psr-nudge-later'))return}catch(e){}$('nmText').textContent=t+' When you’re ready, open registration in Setup, step 9.';$('nudgeModal').hidden=false}
+function showNudge(){const t=nudgeInfo();if(!t)return;try{if(sessionStorage.getItem('psr-nudge-later'))return}catch(e){}$('nmText').textContent=t+' When you’re ready, open registration in Setup, step 8.';$('nudgeModal').hidden=false}
 $('nmGo').addEventListener('click',()=>{$('nudgeModal').hidden=true;openTab('setup');goStep(10)});
 $('nmLater').addEventListener('click',()=>{$('nudgeModal').hidden=true;try{sessionStorage.setItem('psr-nudge-later','1')}catch(e){}});
 function showWelcome(){if(isAdmin()&&!isCommittee()&&D.S.setupDone&&!(practicing&&prStage!=='setup')){showNudge();return}
   if(!isAdmin()||isCommittee()||D.S.setupDone||(practicing&&prStage!=='setup'))return;
   const at=+D.S.setupStep||0;
   if(at>1&&at<=10){$('wmTitle').textContent='Welcome back! Pick up where you left off';$('wmText').textContent='You stopped at step '+dn(at)+'. Everything you saved is still there.';$('wmGo').textContent='Continue at step '+dn(at)+' →';$('wmGo').dataset.step=at}
-  else{$('wmTitle').textContent='Let’s set up your reunion registration';$('wmText').textContent='It takes 9 short steps. Each step tells you what to type, and you can stop and come back at any time.';$('wmGo').textContent='Get started →';$('wmGo').dataset.step=1}try{if(sessionStorage.getItem('psr-welcome-later'+(practicing?'-pr':'')))return}catch(e){}$('welcomeModal').hidden=false;$('wmGo').focus()}
+  else{$('wmTitle').textContent='Let’s set up your reunion registration';$('wmText').textContent='It takes 8 short steps. Each step tells you what to type, and you can stop and come back at any time.';$('wmGo').textContent='Get started →';$('wmGo').dataset.step=1}try{if(sessionStorage.getItem('psr-welcome-later'+(practicing?'-pr':'')))return}catch(e){}$('welcomeModal').hidden=false;$('wmGo').focus()}
 $('startGo').addEventListener('click',()=>{openTab('setup');goStep(+$('startGo').dataset.step||1)});
 $('wmGo').addEventListener('click',()=>{$('welcomeModal').hidden=true;openTab('setup');goStep(+$('wmGo').dataset.step||1)});
 $('wmLater').addEventListener('click',()=>{$('welcomeModal').hidden=true;try{sessionStorage.setItem('psr-welcome-later'+(practicing?'-pr':''),'1')}catch(e){}});
 /* ---------- Setup, one step at a time ---------- */
 let wStep=1;try{wStep=+sessionStorage.getItem('psr-wstep')||1}catch(e){}
 // The weekend schedule step (2) is turned off: it's skipped, and the steps shown are numbered 1 to 9.
-const SKIP_STEPS=[2];const dn=k=>k-SKIP_STEPS.filter(x=>x<k).length;
+const SKIP_STEPS=[2,9];   // 2 (weekend schedule) and 9 (check-in helpers) are no longer setup steps
+const dn=k=>k-SKIP_STEPS.filter(x=>x<k).length;
 function showStep(n){if(SKIP_STEPS.includes(n))n=n>wStep?n+1:n-1;wStep=Math.max(1,Math.min(11,n));{const rw=$('reqWarn');if(rw)rw.hidden=true}try{sessionStorage.setItem('psr-wstep',wStep)}catch(e){}
   document.querySelectorAll('#tab-setup .wstep').forEach(el=>el.hidden=+el.dataset.step!==wStep);
   document.querySelectorAll('#tab-setup .wnav').forEach(b=>{const k=+b.dataset.wgo;if(k===wStep)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');b.classList.toggle('done',k<wStep||wStep===11);b.querySelector('.wnum').textContent=(k<wStep||wStep===11)?'✓':String(dn(k))});
@@ -2968,8 +2974,8 @@ function renderStartBox(){const sb=$('startBox');if(!sb)return;const S=D.S,at=+S
   done=!!S.setupDone,show=who&&(!done||!S.regOpen);sb.hidden=!show;if(!show)return;
   let title,text,btn,step;
   if(done){title='Setup is done';text='When you’re ready for families to sign up, turn on registration.';btn='Open registration →';step=10}
-  else if(at>1&&at<=10){title='Pick up where you left off';text='You stopped at step '+dn(at)+' of 9. Everything you saved is still there.';btn='Continue at step '+dn(at)+' →';step=at}
-  else{title='Set up your reunion';text='It takes 9 short steps. Each step tells you what to type.';btn='Get started →';step=1}
+  else if(at>1&&at<=10){title='Pick up where you left off';text='You stopped at step '+dn(at)+' of 8. Everything you saved is still there.';btn='Continue at step '+dn(at)+' →';step=at}
+  else{title='Set up your reunion';text='It takes 8 short steps. Each step tells you what to type.';btn='Get started →';step=1}
   $('startTitle').textContent=title;$('startText').textContent=text;$('startGo').textContent=btn;$('startGo').dataset.step=step}
 function applyMode(){const adm=isAdmin();
   $('demoStrip').hidden=LIVE;$('demoPayPanel').hidden=LIVE;$('demoCardPanel').hidden=LIVE;
