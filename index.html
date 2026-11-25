@@ -935,7 +935,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (g)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (h)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1530,12 +1530,12 @@ $('resetForm').addEventListener('submit',e=>{e.preventDefault();const p=$('rsPin
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
     // Signed in right here with the new PIN, straight into practice as the new host (no going back to another tab).
     PRTOK='';PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later');localStorage.setItem('psr-practicing','1')}catch(_){}
-    showLoading(true,'Signing in…');practicing=true;
+    showLoading(true,'Your PIN is saved. Opening your page…');practicing=true;
     try{await loadAll()}catch(x){practicing=false;showLoading(false);PIN='';infoBox('Practice','Your PIN is created','Sign in with it: click “Hosting committee sign-in” at the bottom of the page.');return}
     practicing=false;await practiceStart(true);toast('Your PIN is created. Welcome!')}).catch(()=>{});return}
   busy($('rsGo'),'Saving…',async()=>{try{await api('resetPin',{token:RESETQ,pin:p})}catch(x){er.textContent=x.message;er.hidden=false;return}
     $('resetModal').hidden=true;try{history.replaceState(null,'','#')}catch(_){}
-    if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Signing in…');
+    if(NEWHOSTQ){PIN=p;try{sessionStorage.setItem('psr-pin',p);sessionStorage.removeItem('psr-welcome-later')}catch(_){}showLoading(true,'Your PIN is saved. Opening your page…');
       try{await loadAll()}catch(x){showLoading(false);toast(x.message);return}
       showLoading(false);renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');window.scrollTo({top:0});toast('Your PIN is saved. Welcome!');showWelcome();return}
     toast('Your new PIN is saved. Sign in with it now.');$('adminLink').click()}).catch(()=>{})});
@@ -2971,7 +2971,7 @@ $('adminLink').addEventListener('click',()=>{$('pinForm').hidden=false;$('adminL
 $('pinCancel').addEventListener('click',()=>{$('pinForm').hidden=true;$('adminLink').hidden=false;$('pinIn').value=''});
 $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn').value.trim(),er=$('pinErr');
   if(!pin){er.textContent='Enter the committee PIN.';er.hidden=false;return}
-  busy($('pinGo'),'Checking…',async()=>{PIN=pin;showLoading(true,'Signing in…');
+  busy($('pinGo'),'Checking…',async()=>{PIN=pin;showLoading(true,'Checking your PIN…');
     let wasPr=false;try{wasPr=localStorage.getItem('psr-practicing')==='1'}catch(_){}
     practicing=wasPr;   // ask for the practice records right away, so the page loads once, not twice
     try{await loadAll()}catch(err){practicing=false;showLoading(false);PIN='';er.textContent=/no longer works|wrong tries/i.test(err.message)?err.message:/sign in|PIN/i.test(err.message)?'That PIN is not right.':err.message;er.hidden=false;return}
