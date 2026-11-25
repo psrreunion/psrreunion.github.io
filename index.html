@@ -658,7 +658,7 @@ input[type=date]{cursor:pointer}
   <div class="row" style="gap:12px;flex-wrap:wrap;margin-top:18px"><button class="btn primary big" type="button" id="omYes" disabled>Yes, open registration</button><button class="btn" type="button" id="omNo">Not yet</button></div>
 </div></div>
 <div class="pvbar prbar" id="prBar" hidden><div class="wrap"><span id="prMsg"><b>Practice as a new host.</b> Your real reunion isn’t touched.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn ghostlite" type="button" id="prLink" hidden>Copy family sign-up link</button><button class="btn" type="button" id="prExit">Exit practice</button></span></div></div>
-<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button></span></div></div>
+<div class="pvbar" id="pvBar" hidden><div class="wrap"><span id="pvMsg"><b>Preview.</b> This is what families see. Nothing you do here is sent.</span><span class="row" style="gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="pvBack">← Back to Setup</button><button class="btn" type="button" id="pvHome" hidden>Go to Host home</button></span></div></div>
 <div class="teststrip" id="testStrip" hidden><div class="wrap">
   <span><b>TEST MODE IS ON.</b> Only you can see this. Everything you do saves to the separate test sheet, not the real one. Emails still go out, marked [TEST].</span>
   <span class="row" style="gap:8px"><button class="btn sm" id="testClear" type="button" hidden>Clear test data</button><button class="btn sm" id="testOff" type="button">Turn off test mode</button></span>
@@ -935,8 +935,8 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (h)</p>
-  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button><button class="btn primary" type="button" data-savenow>Save changes</button></div>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 24, 2026 (i)</p>
+  <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
       <p class="wlist-note">Click any step to go straight to it.</p>
@@ -1054,7 +1054,7 @@ input[type=date]{cursor:pointer}
           <p class="tip">If you’re not sure, leave it blank. You can change these numbers later.</p>
           <div class="panel" style="background:var(--surface-2);box-shadow:none">
             <h3 style="font-size:17px;margin:0 0 6px">Where you’ll keep track of money</h3>
-            <p class="muted" style="margin:0 0 10px">After setup, these pages at the top keep track of the money for you.</p>
+            <p class="muted" style="margin:0 0 10px">After setup, use the cards on your Host home page (<b>Record a payment</b>, <b>Add a receipt</b>, <b>See the money</b>), or the tabs across the top (<b>Payments</b>, <b>Expenses</b> and <b>Ledger</b>).</p>
             <div class="stack" style="gap:10px">
               <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center"><span><b>Payments:</b> money families pay you</span><button class="btn sm" type="button" data-swho="payments">Show me →</button></div>
               <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center"><span><b>Expenses:</b> what you spend. Add a receipt when you have one, so the records are complete for the next host and the board.</span><button class="btn sm" type="button" data-swho="expenses">Show me →</button></div>
@@ -1304,7 +1304,7 @@ async function busy(btn,label,fn){const t=btn?btn.textContent:'';if(btn){btn.dis
 let setT,setDirty=false;
 let setGen=0,savingNow=0;
 function setSaveState(st){if(st==='dirty')setGen++;setDirty=st==='dirty'||(st==='error'&&setDirty);setTimeout(()=>{try{wLabel()}catch(e){}},0);document.querySelectorAll('#tab-setup .savebar').forEach(b=>b.classList.toggle('dirty',setDirty));const t=new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
-  const msg={dirty:'You have unsaved changes. Click Save changes.',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save changes to try again.'}[st];
+  const msg={dirty:'You have unsaved changes. Click Save and continue at the bottom.',saving:'Saving…',saved:'All changes saved · '+t,error:'Couldn’t save. Click Save and continue at the bottom to try again.'}[st];
   document.querySelectorAll('[data-savestate]').forEach(e=>{e.textContent=msg;e.className='savestate '+st});
   document.querySelectorAll('[data-savenow]').forEach(b=>{b.disabled=st==='saving';b.textContent=st==='saving'?'Saving…':'Save changes'})}
 function saveSettingsNow(manual){clearTimeout(setT);
@@ -1694,7 +1694,7 @@ const TABS=['home','register','overview','payments','expenses','ledger','checkin
 function openTab(t){if(t==='checkin'&&LIVE&&(!isAdmin()||CIHELP)){/* helper check-in screen */}else if(!TABS.includes(t)||!isAdmin())t='register';
   document.body.classList.toggle('ci-only',t==='checkin'&&(!isAdmin()||CIHELP));if(t==='records')renderRecords();
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.tab===t)));
-  TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='home'||t==='register')showBack(false);if(t==='checkin')renderCheckin();
+  TABS.forEach(x=>$('tab-'+x).hidden=x!==t);if(t==='home')try{renderStartBox()}catch(e){}if(t==='home'||t==='register')showBack(false);if(t==='checkin')renderCheckin();
   if(!PAYQ&&!CIHELP&&!PRPUB)try{history.replaceState(null,'','#'+t)}catch(e){}
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{showBack(false);openTab(b.dataset.tab);window.scrollTo({top:0})}));
@@ -2007,7 +2007,7 @@ function regMsg(st){const S=D.S;
   return`<div class="eyebrow" style="color:var(--green-2)">Registration</div><h2 style="margin-top:6px">Registration opens ${S.regOpensOn&&todayISO()<=S.regOpensOn?niceDate(S.regOpensOn):'soon'}</h2><p style="margin-top:8px">Check back soon. The hosting committee will email the family as soon as you can sign up.</p>`}
 function renderExtrasReg(){const S=D.S,eb=$('ebBanner'),wk=$('weekendCard');
   let days=S.earlyBird?Math.ceil((new Date(S.earlyBird+'T23:59:59')-new Date())/864e5):-1;
-  eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&(regState()==='open'||previewing)&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span><a class="btn" href="#register" onclick="document.getElementById('regForm').scrollIntoView({behavior:'smooth'});return false">Register now</a></div>`:'';
+  eb.innerHTML=S.earlyBanner!==false&&days>=0&&days<=14&&(regState()==='open'||previewing)&&$('confirm').hidden?`<div class="eb-banner"><span><b>${days===0?'Last day':'Only '+days+' day'+(days===1?'':'s')+' left'} for early-bird pricing!</b><br><span class="small">Early-bird ends ${niceDate(S.earlyBird)}.</span></span></div>`:'';
   wk.hidden=true;   // the schedule isn't shown on the sign-up page anymore (it can go in a later email)
 }
 // Schedule text: a day on its own line (or "Day:"), then one event per line under it. "Friday: Meet and greet" also works.
@@ -2048,13 +2048,13 @@ function pvPrices(){const box=$('peopleList').closest('.panel'),sel=$('peopleLis
     if(sel){sel.size=sel.options.length;sel.classList.add('pvopen')}},60)}
 document.addEventListener('change',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))pvShut()});
 document.addEventListener('focusout',e=>{if(e.target.classList&&e.target.classList.contains('pvopen'))setTimeout(pvShut,150)});
-function setPreview(on){pvShut();pvClear();previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;
+function setPreview(on){pvShut();pvClear();previewing=!!on;pvNow=false;document.body.classList.toggle('previewing',previewing);$('pvBar').hidden=!previewing;$('pvHome').hidden=!(previewing&&wStep===11);
   openTab(previewing?'register':'setup');gateReg();window.scrollTo({top:0});
   if(previewing){const id=pvOverride||PV_TARGET[wStep],el=id&&$(id);pvOverride='';
     if(id==='hEarly'){pvPrices()}
     else if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash')},60)}}
   else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
-$('previewReg').addEventListener('click',()=>setPreview(true));$('pvBack').addEventListener('click',()=>setPreview(false));
+$('previewReg').addEventListener('click',()=>setPreview(true));$('pvHome').addEventListener('click',()=>{setPreview(false);openTab('home');window.scrollTo({top:0})});$('pvBack').addEventListener('click',()=>setPreview(false));
 
 $('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
@@ -2567,7 +2567,7 @@ $('tab-setup').addEventListener('click',e=>{
 // Always the made-up sample, never what the host typed (the button at the bottom of the step shows theirs).
 function schedEx(){$('schedExBox').innerHTML='<div class="spread" style="margin-bottom:8px"><span class="mini">Example</span><button class="btn sm" type="button" id="schedExClose">Close ✕</button></div>'+schedHTML(parseSched($('sSchedule').placeholder))}
 function ebExample(){const S=D.S,d=S.earlyBird?niceDate(S.earlyBird):'June 30';
-  return`<div class="mini" style="margin:4px 0 8px">What families see at the top of the page in the last 2 weeks</div><div class="eb-banner" style="margin:0"><span><b>Only 5 days left for early-bird pricing!</b><br><span class="small">Early-bird ends ${esc(d)}.</span></span><span class="btn">Register now</span></div>`}
+  return`<div class="mini" style="margin:4px 0 8px">What families see at the top of the page in the last 2 weeks</div><div class="eb-banner" style="margin:0"><span><b>Only 5 days left for early-bird pricing!</b><br><span class="small">Early-bird ends ${esc(d)}.</span></span></div>`}
 $('addAddon').addEventListener('click',()=>{D.S.addons.push({id:'x'+Date.now().toString(36),label:'New extra',price:0,on:true});persistSettings();renderSetup();renderAll(true);
   const ins=$('setAddons').querySelectorAll('[data-af="label"]');const l=ins[ins.length-1];l.focus();l.select()});
 $('resetDemo').addEventListener('click',()=>{if(LIVE)return;D=seedData();try{localStorage.removeItem(KEY)}catch(e){};resetForm();renderSetup();renderAll(true);
@@ -2939,6 +2939,15 @@ function renderAll(settingsChanged){
   renderHotel();renderCommit();renderSummary();renderOverview();renderPayments();renderExpenses();renderLedger();renderCheckin();renderAlerts();renderRemind();if(!$('tab-records').hidden)renderRecords();prShow();
   applyMode();gateReg();
 }
+// Host home "Start here" box: set up (or pick up) the steps; once setup is done, a nudge to open registration until it's open.
+function renderStartBox(){const sb=$('startBox');if(!sb)return;const S=D.S,at=+S.setupStep||0,
+  who=LIVE&&isAdmin()&&!isCommittee()&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing),
+  done=!!S.setupDone,show=who&&(!done||!S.regOpen);sb.hidden=!show;if(!show)return;
+  let title,text,btn,step;
+  if(done){title='Setup is done';text='When you’re ready for families to sign up, turn on registration.';btn='Open registration →';step=10}
+  else if(at>1&&at<=10){title='Pick up where you left off';text='You stopped at step '+dn(at)+' of 9. Everything you saved is still there.';btn='Continue at step '+dn(at)+' →';step=at}
+  else{title='Set up your reunion';text='It takes 9 short steps. Each step tells you what to type.';btn='Get started →';step=1}
+  $('startTitle').textContent=title;$('startText').textContent=text;$('startGo').textContent=btn;$('startGo').dataset.step=step}
 function applyMode(){const adm=isAdmin();
   $('demoStrip').hidden=LIVE;$('demoPayPanel').hidden=LIVE;$('demoCardPanel').hidden=LIVE;
   $('tabsNav').hidden=LIVE&&!adm;$('adminBar').hidden=!(LIVE&&adm);$('foot').hidden=!LIVE||adm;
@@ -2952,8 +2961,7 @@ function applyMode(){const adm=isAdmin();
   ['sBegin','sSchol'].forEach(id=>{const l=$(id)&&$(id).closest('label');if(l)l.hidden=v});
   const vn=$('setupViewNote');if(vn){vn.hidden=!ro;vn.innerHTML=co?'<b>View only.</b> You’re signed in with the PSR Reunion Board PIN. You can look at everything and print the full report on the Ledger page, but nothing can be changed.':'<b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can\'t be saved with the test PIN.'}
   const hh=$('homeHi');if(hh)hh.textContent=co?'PSR Reunion Board home page':'Host home page';const pb=$('practiceBox');if(pb){pb.hidden=!isTech()||practicing;if(!pb.hidden)prPrefetch()}if(isTech())renderTryouts();{const vn=$('viewName');if(vn)vn.textContent=co?'PSR Reunion Board view.':isTech()&&!practicing?'Tech view.':'Host view.'}
-  {const sb=$('startBox');if(sb){const at=+D.S.setupStep||0,show=LIVE&&isAdmin()&&!isCommittee()&&!D.S.setupDone&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing);sb.hidden=!show;
-    if(show){$('startTitle').textContent=at>1&&at<=10?'Pick up where you left off':'Set up your reunion';$('startText').textContent=at>1&&at<=10?'You stopped at step '+dn(at)+' of 9. Everything you saved is still there.':'It takes 9 short steps. Each step tells you what to type.';$('startGo').textContent=at>1&&at<=10?'Continue at step '+dn(at)+' →':'Get started →';$('startGo').dataset.step=at>1&&at<=10?at:1}}}
+  renderStartBox();
   const ctp=$('ctOpen');if(ctp&&ro)ctp.hidden=true;
 }
 $('testBtn').addEventListener('click',()=>setTest(!isTest()));
