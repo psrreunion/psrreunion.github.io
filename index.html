@@ -704,11 +704,19 @@ input[type=date]{cursor:pointer}
       <button class="hbtn" type="button" data-home="setup"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg><b>Set up the reunion</b><span>Dates, hotel, prices and more</span></button>
       <button class="hbtn" type="button" data-home="overview"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><b>See the money</b><span>Totals and budget</span></button>
     </div>
+    <div class="practice" id="regTryBox" hidden style="margin-top:18px">
+      <div><h3>Register for the reunion</h3><p>See it the way families will. This is practice only. Nothing is real or charged. Registrations show up here in your practice: Overview, Payments and See who’s registered.</p></div>
+      <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn primary big" type="button" id="regTryOpen">Open it myself</button></div>
+      <div class="trybox"><h3 style="font-size:17px;margin:0 0 4px">Invite someone to register</h3>
+        <p style="margin:0 0 10px">Type their name and email, and we’ll email them a link to register for this practice reunion.</p>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end"><label class="f" style="flex:1 1 200px">Their name<input id="rtName" autocomplete="off"></label><label class="f" style="flex:1 1 240px">Their email<input id="rtEmail" type="email" autocomplete="off"></label><button class="btn primary" type="button" id="rtGo">Send invite</button></div>
+        <p class="small" id="rtMsg" hidden style="margin-top:8px"></p></div>
+    </div>
     <div class="practice" id="practiceBox" hidden>
       <div><h3>Practice as a new host</h3><p>Shows exactly what a new host sees: the “hosting next?” message, the short sign-up, the welcome and the setup steps. Practice saves to its own practice sheet, so your real reunion records are never touched. If you stop partway, it picks up where you left off.</p></div>
       <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn primary big" type="button" id="practiceGo">Practice as a new host</button><button class="btn" type="button" id="practiceWipe">Start practice over</button></div>
-      <div class="trybox"><h3 style="font-size:17px;margin:0 0 4px">Invite someone to try it</h3>
-        <p style="margin:0 0 10px">The link expires in 10 days. Type their name and email, and we’ll email them a link and a PIN to try the page.</p>
+      <div class="trybox"><h3 style="font-size:17px;margin:0 0 4px">Invite someone to be the new host</h3>
+        <p style="margin:0 0 10px">The link expires in 10 days. Type their name and email, and we’ll email them a link to their own practice page. Once they turn on registration there, they can also invite someone to register for the reunion.</p>
         <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end"><label class="f" style="flex:1 1 200px">Their name<input id="tryName" autocomplete="off"></label><label class="f" style="flex:1 1 240px">Their email<input id="tryEmail" type="email" autocomplete="off"></label><button class="btn primary" type="button" id="tryGo">Send invite</button></div>
         <div id="tryList" style="margin-top:12px"></div></div>
     </div>
@@ -942,7 +950,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (c)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (d)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1249,7 +1257,7 @@ const mergeSettings=x=>{const d=defaults();return{...d,...(x||{}),budgets:{...d.
 const save=()=>{if(LIVE)return;try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){try{const c=JSON.parse(JSON.stringify(D));c.exps.forEach(x=>delete x.img);localStorage.setItem(KEY,JSON.stringify(c))}catch(_){}}};
 
 /* ---------- live data (Google Sheet) ---------- */
-let PIN='';try{PIN=sessionStorage.getItem('psr-pin')||''}catch(e){}
+let PIN='';try{PIN=/[#&]try=/i.test(location.hash||'')?'':(sessionStorage.getItem('psr-pin')||'')}catch(e){}   // the practice page families see is never signed in, even when opened from the host's tab
 const isAdmin=()=>!LIVE||!!PIN;
 let testOn=false;try{testOn=localStorage.getItem('psr-test-mode')==='1'}catch(e){}
 let practicing=false,prStage='',prSnap=null;try{practicing=localStorage.getItem('psr-practicing')==='1'&&!!PIN}catch(e){}
@@ -1303,7 +1311,7 @@ async function loadAll(again,cached){
   D.regs=(j.regs||[]).map(r=>({...r,donation:+r.donation||0,people:r.people||[],shirts:sh(r.shirts||{}),addons:r.addons||{}}));
   D.pays=(j.pays||[]).map(p=>({...p,id:+p.id,amount:+p.amount||0,fee:+p.fee||0,code:p.code||null}));
   D.exps=(j.exps||[]).map(e=>({...e,id:+e.id,amount:+e.amount||0}));
-  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';D.tryEnds=j.tryEnds||'';D.prHostName=j.prHostName||'';if(j.tryouts)D.tryouts=j.tryouts;if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
+  D.contribs=(j.contribs||[]).map(c=>({...c,id:+c.id,amount:+c.amount||0}));D.role=j.role||'';D.tryEnds=j.tryEnds||'';D.prHostName=j.prHostName||'';D.prLink=j.prLink||'';if(j.tryouts)D.tryouts=j.tryouts;if(j.handoff)D.handoff=j.handoff;D.host=j.host||null;
   D.emails=j.emails||[];D.board=j.board||'';D.contacts=j.contacts||[];D.isTestData=!!j.test;
   if(practicing){if(!D.S.practiceHost&&!setDirty){D.S=mergeSettings({...blankSettings(),checkinCode:D.S.checkinCode,checkinCodeYear:D.S.checkinCodeYear});prStage='handoff';const yr=String(new Date().getFullYear());D.handoff={open:true,year:yr,nextYear:String(+yr+1)}}else{prStage='setup';D.handoff={open:false}}}
   D.feed=(j.log||[]).map(l=>({d:l.date,t:l.time,k:l.kind,x:l.text}));D.sheetUrl=j.sheetUrl||'';
@@ -1484,9 +1492,9 @@ function pinRule(p){if(!/^\d+$/.test(p))return'Use numbers only for your PIN.';i
 let prWaitT=null;
 function practiceWait(name,to,email){const box=$('handoffBox');delete box.dataset.step;clearInterval(prWaitT);
   box.innerHTML=`<h2>Thank you, ${esc(name.split(' ')[0])}!</h2><p>Your request to host the next reunion was sent to the PSR Reunion Board.</p><p>When they approve it, you’ll get an email${email?` at <b>${esc(email)}</b>`:''} with a link to create your PIN and get started.</p><p class="small muted" style="margin-top:12px">Waiting for an answer…</p>`;
-  prWaitT=setInterval(async()=>{if(!practicing){clearInterval(prWaitT);return}let j;try{j=await api('practiceStatus')}catch(e){return}
+  prWaitT=setInterval(async()=>{if(!practicing&&!PRPUB){clearInterval(prWaitT);return}let j;try{j=await api('practiceStatus')}catch(e){return}
     if(j.status==='accepted'&&!box.dataset.ok){box.dataset.ok='1';box.innerHTML=`<h2>You’re approved!</h2><p>Check your email and click <b>Create my PIN</b>.</p>`}
-    if(j.status==='pinmade'){clearInterval(prWaitT);delete box.dataset.ok;practiceSignedUp(name)}
+    if(j.status==='pinmade'){clearInterval(prWaitT);delete box.dataset.ok;if(PRPUB){box.innerHTML=`<h2>You’re all set!</h2><p>Your practice opened in the page from your email. You can close this one.</p>`;return}practiceSignedUp(name)}
     else if(j.status==='denied'){clearInterval(prWaitT);box.innerHTML=`<h2>Your request wasn’t approved</h2><p>In practice, the board said no. You can try again.</p><button class="btn primary big" type="button" id="prAgain">Try again</button>`;$('prAgain').onclick=()=>renderHandoff()}},5000)}
 function renderHandoff(){const h=D.handoff||{},yr=h.year||'',next=h.nextYear||'',box=$('handoffBox');delete box.dataset.step;
   if(h.pending&&!practicing){box.innerHTML=`<h2>The ${esc(yr)} reunion is over. Thank you!</h2><p>Thank you to every family who came, and to everyone who helped make it happen.</p><p class="hq">A family has asked to host the next reunion.</p><p>The PSR Reunion Board is reviewing it. Please check back soon.</p>`;return}
@@ -1509,8 +1517,7 @@ document.addEventListener('submit',e=>{if(e.target.id!=='hoForm')return;e.preven
   const name=v('hoName'),email=v('hoEmail'),year=(D.handoff&&D.handoff.nextYear)||'';
   if(name.split(' ').length<2)return err('Please type your first and last name.');
   if(!okEmail(email))return err('Please type your email address.');
-  if(practicing){busy($('hoGo'),'Sending…',async()=>{let j;try{j=await api('practiceRequest',{name,email})}catch(x){return err(x.message)}practiceWait(name,j.sentTo,email)}).catch(()=>{});return}
-  if(PRPUB)return err('This is the practice copy of the page that families see, so signing up as host doesn’t work here. To practice that part, sign in and click Practice as a new host.');
+  if(practicing||PRPUB){busy($('hoGo'),'Sending…',async()=>{let j;try{j=await api('practiceRequest',{name,email})}catch(x){return err(x.message)}practiceWait(name,j.sentTo,email)}).catch(()=>{});return}
   busy($('hoGo'),'Sending…',async()=>{
     try{await api('newHost',{name,email})}catch(x){return err(x.message)}
     D.handoff={...(D.handoff||{}),pending:true};const box=$('handoffBox');delete box.dataset.step;
@@ -1560,7 +1567,7 @@ function blankSettings(){const d=defaults(),b=JSON.parse(JSON.stringify(d)),keep
   b.groups=d.groups.map(g=>({...g,early:0,late:0}));b.addons=d.addons.map(a=>({...a,price:0,on:false}));
   return {...b,regOpen:false,setupDone:false,setupStep:0,showTest:true,askFood:false,earlyBanner:true}}
 function showTryEnded(){showLoading(false);[...document.body.children].forEach(el=>{if(el.tagName!=='SCRIPT'&&el.tagName!=='MAIN')el.hidden=true});const m=document.querySelector('main.wrap');if(m)m.innerHTML='<div class="panel confirm" style="margin-top:40px"><h2>This practice link has ended</h2><p>Thank you for trying the PSR reunion page! If you’d like to try it again, ask the person who sent you the link for a new one.</p></div>'}
-function prShow(){document.body.classList.toggle('practicing',practicing);$('prBar').hidden=!practicing;$('prExit').textContent=isTrial()?'Sign out':'Exit practice';$('prMsg').innerHTML=isTrial()&&D.tryEnds?'<b>Your tryout.</b> This is practice only. Nothing is real.'+(D.tryEnds?' It ends '+niceDate(D.tryEnds)+'.':''):'<b>Practice as a new host.</b> Your real reunion isn’t touched.'}
+function prShow(){document.body.classList.toggle('practicing',practicing||PRPUB);$('prBar').hidden=!(practicing||PRPUB);if(PRPUB&&!practicing){$('prMsg').innerHTML='<b>Practice.</b> Nothing is real and nothing is charged.';$('prExit').hidden=true;return}$('prExit').hidden=false;$('prExit').textContent=isTrial()?'Sign out':'Exit practice';$('prMsg').innerHTML=isTrial()&&D.tryEnds?'<b>Your tryout.</b> This is practice only. Nothing is real.'+(D.tryEnds?' It ends '+niceDate(D.tryEnds)+'.':''):'<b>Practice as a new host.</b> Your real reunion isn’t touched.'}
 // Practice runs against its own practice sheet. It remembers where you were, even after signing out or closing the page.
 async function practiceStart(loaded){if(practicing)return;
   practicing=true;try{localStorage.setItem('psr-practicing','1')}catch(e){}showLoading(true,'Opening practice…');$('testStrip').hidden=true;$('testBtn').hidden=true;prShow();setDirty=false;wStep=1;
@@ -1904,7 +1911,8 @@ function showReview(r){const L=regLines(r),t=regTotal(r);
   window.scrollTo({top:0});
 }
 const zeffyEmbed=u=>String(u).replace(/zeffy\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?(?!embed\/)/,'zeffy.com/embed/');
-function payBlock(t){const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.test(u||'');
+function payBlock(t){if(inPractice())return`<div class="paysoon"><b>Practice: nothing is charged.</b><p class="small" style="margin-top:4px">For the real reunion, families pay online here. The host records the payment, and it shows up on the host’s pages.</p></div>`;
+  const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.test(u||'');
   if(!ok)return`<div class="paysoon"><b>Online payment opens soon.</b><p class="small" style="margin-top:4px">Your spot is saved. We'll email you as soon as you can pay online.</p></div>`;
   return`<div class="paycard">
       <div id="paySteps1"><h3>How to pay</h3>
@@ -2083,7 +2091,12 @@ function setPreview(on){pvShut();pvClear();pvBlankForm(!!on);previewing=!!on;pvN
     if(id==='hEarly'){pvPrices()}
     else if(el&&el.offsetParent){const box=el.closest('.panel')||el;setTimeout(()=>{const y=box.getBoundingClientRect().top+window.scrollY-($('pvBar').offsetHeight+16);window.scrollTo({top:y,behavior:'smooth'});box.classList.add('pvflash')},60)}}
   else{const st=document.querySelector('#tab-setup .wstep:not([hidden])');if(st)setTimeout(()=>st.scrollIntoView({block:'start'}),30)}}
-$('previewReg').addEventListener('click',()=>setPreview(true));$('pvHome').addEventListener('click',()=>{setPreview(false);openTab('home');window.scrollTo({top:0})});$('pvBack').addEventListener('click',()=>setPreview(false));
+$('previewReg').addEventListener('click',()=>setPreview(true));
+$('regTryOpen').addEventListener('click',()=>{if(D.prLink)window.open(D.prLink,'_blank')});
+$('rtGo').addEventListener('click',()=>{const n=$('rtName').value.trim(),e=$('rtEmail').value.trim(),m=$('rtMsg');m.hidden=true;
+  if(n.length<2){m.textContent='Please type their name.';m.hidden=false;return}if(!okEmail(e)){m.textContent='Please type their email address.';m.hidden=false;return}
+  busy($('rtGo'),'Sending…',async()=>{try{await api('regInvite',{name:n,email:e})}catch(x){m.textContent=x.message;m.hidden=false;return}
+    $('rtName').value='';$('rtEmail').value='';m.textContent='Sent! '+n+' will get an email with a link to register.';m.hidden=false}).catch(()=>{})});$('pvHome').addEventListener('click',()=>{setPreview(false);openTab('home');window.scrollTo({top:0})});$('pvBack').addEventListener('click',()=>setPreview(false));
 
 $('regForm').addEventListener('submit',e=>{if(previewing){e.preventDefault();e.stopImmediatePropagation();toast('This is only a preview. Nothing was sent.')}},true);
 $('startOver').addEventListener('click',()=>{clearDraft();resetForm();toast('Cleared. You can start fresh.');window.scrollTo({top:0})});
@@ -2969,7 +2982,8 @@ function renderAll(settingsChanged){
   applyMode();gateReg();
 }
 // Host home "Start here" box: set up (or pick up) the steps; once setup is done, a nudge to open registration until it's open.
-function renderStartBox(){const sb=$('startBox');if(!sb)return;const S=D.S,at=+S.setupStep||0,
+function renderRegTry(){const b=$('regTryBox');if(!b)return;b.hidden=!(practicing&&LIVE&&isAdmin()&&prStage==='setup'&&D.S.regOpen&&D.prLink)}
+function renderStartBox(){try{renderRegTry()}catch(e){}const sb=$('startBox');if(!sb)return;const S=D.S,at=+S.setupStep||0,
   who=LIVE&&isAdmin()&&!isCommittee()&&!(D.handoff&&D.handoff.open)&&(!practicing||prStage==='setup')&&(!isTech()||practicing),
   done=!!S.setupDone,show=who&&(!done||!S.regOpen);sb.hidden=!show;if(!show)return;
   let title,text,btn,step;
@@ -3020,7 +3034,7 @@ $('pinForm').addEventListener('submit',e=>{e.preventDefault();const pin=$('pinIn
     renderSetup();renderPeople();renderAddonFields();renderAll();openTab('home');showLoading(false);window.scrollTo({top:0});toast('Signed in.');showWelcome()}).catch(()=>showLoading(false));
 });
 loadDraft();renderSetup();renderPeople();renderAddonFields();renderAll();
-openTab(PAYQ||PAIDQ||PRPUB?'register':CIHELP?'checkin':(location.hash||'').slice(1));showPayPage();showPaidPage();
+openTab(PAYQ||PAIDQ||PRPUB?'register':CIHELP?'checkin':(location.hash||'').slice(1));if(PRPUB)try{prShow()}catch(e){}showPayPage();showPaidPage();
 if(!LIVE)showLoading(false);
 if(LIVE){
   if(location.hash==='#committee'&&!isAdmin())$('adminLink').click();
