@@ -166,6 +166,8 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--green-2)}
 .addon:first-child{border-top:0;padding-top:0}
 .addon.sized{grid-template-columns:1fr}
 .price-tag{font:600 13px var(--f-mono);color:var(--green-2)}
+/* Extras on the registration page: bigger names and prices so they're easy to read */
+.addon h3{font-size:21px;margin:0 0 2px}.addon .price-tag{font-size:18px}
 .quick{display:flex;gap:6px;flex-wrap:wrap}
 .lines{display:flex;flex-direction:column;gap:8px;margin-block:14px;font-size:14px}
 .line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
@@ -933,12 +935,12 @@ input[type=date]{cursor:pointer}
   <div class="panel ci" id="ciBox"></div>
 </section>
 <section role="tabpanel" id="tab-records" hidden>
-  <p class="tip" style="margin-bottom:18px!important">These lists are for looking and downloading. The only thing you can change here is the <b>No emails</b> box. <b>Download as Excel</b> saves a file that opens in Excel or Google Sheets.</p>
+  <p class="tip" style="margin-bottom:18px!important">These lists are for looking and downloading. The only thing you can change here is the <b>Stop emails</b> box. <b>Download as Excel</b> saves a file that opens in Excel or Google Sheets.</p>
   <div class="panel">
     <div class="panel-head"><div><h2>Contacts</h2><p class="muted small" id="recContSub"></p></div><span class="row" style="gap:10px;flex-wrap:wrap"><span id="impBox"><label class="btn sm" id="impBtn" for="impFile">Add contacts from a Zeffy file</label><input type="file" id="impFile" accept=".xlsx,.xls,.csv" hidden></span><button class="btn sm" type="button" id="dlContacts">Download as Excel</button></span></div>
     <label class="f" style="margin-bottom:12px">Look up a contact<input id="recSearch" type="search" placeholder="Name, email, city or confirmation #" autocomplete="off"></label>
-    <div class="tw"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Conf. #</th><th style="text-align:center">No emails</th></tr></thead><tbody id="recContRows"></tbody></table></div>
-    <p class="muted small" style="margin-top:10px">Tick <b>No emails</b> when someone asks to stop getting reunion emails. Group emails skip them. They still get their own receipts.</p>
+    <div class="tw"><table><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>City</th><th>Conf. #</th><th style="text-align:center">Stop emails</th></tr></thead><tbody id="recContRows"></tbody></table></div>
+    <p class="muted small" style="margin-top:10px">If someone asks to stop getting reunion emails, check <b>Stop emails</b> next to their name. They won’t get emails sent to the whole family, like news and reminders. They’ll still get the confirmation and receipt for their own registration.</p>
   </div>
   <div class="panel">
     <div class="panel-head"><div><h2>Emails sent and received</h2><p class="muted small" id="recMailSub"></p></div>
@@ -950,7 +952,7 @@ input[type=date]{cursor:pointer}
 <section role="tabpanel" id="tab-setup" hidden>
   <p class="panel" id="setupViewNote" hidden><b>View only.</b> This is where the hosting committee sets prices, dates, the hotel, extras and the budget. Changes can't be saved with the test PIN.</p>
   <p class="tip setup-intro">Set up your reunion one step at a time. Click the button at the bottom of each step to keep going. You can come back and change anything later.</p>
-  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (d)</p>
+  <p class="small muted" style="margin:-8px 0 0;opacity:.75">Page version: Nov 25, 2026 (h)</p>
   <div class="savebar"><span class="savestate saved" data-savestate>All changes saved</span><span class="wprog" aria-hidden="true"><i id="wBar"></i></span><button class="btn" type="button" id="previewReg" hidden>Preview registration page</button></div>
   <div class="wiz">
     <nav class="wlist" aria-label="Setup steps">
@@ -1911,7 +1913,7 @@ function showReview(r){const L=regLines(r),t=regTotal(r);
   window.scrollTo({top:0});
 }
 const zeffyEmbed=u=>String(u).replace(/zeffy\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?(?!embed\/)/,'zeffy.com/embed/');
-function payBlock(t){if(inPractice())return`<div class="paysoon"><b>Practice: nothing is charged.</b><p class="small" style="margin-top:4px">For the real reunion, families pay online here. The host records the payment, and it shows up on the host’s pages.</p></div>`;
+function payBlock(t){
   const u=D.S.zeffyUrl,ok=/^https:\/\/(www\.)?zeffy\.com\//i.test(u||'');
   if(!ok)return`<div class="paysoon"><b>Online payment opens soon.</b><p class="small" style="margin-top:4px">Your spot is saved. We'll email you as soon as you can pay online.</p></div>`;
   return`<div class="paycard">
@@ -2934,7 +2936,7 @@ function renderRecords(){const el=$('recContRows');if(!el)return;const all=conta
   const list=all.filter(c=>!q||norm([c.first,c.last,c.email,c.city,c.state,c.code].join(' ')).includes(q));
   $('recContSub').textContent=`${all.length} ${all.length===1?'contact':'contacts'}. Families who register are added by themselves, and the list carries over to the next host.`;
   const ro=isReadOnly();
-  el.innerHTML=list.map((c,i)=>`<tr><td>${esc(c.first)} ${esc(c.last)}</td><td>${esc(c.email||'')}</td><td class="mono">${esc(c.phone||'')}</td><td>${esc(c.city||'')}${c.state?', '+esc(c.state):''}</td><td class="mono">${esc(c.code||'')}</td><td style="text-align:center"><input type="checkbox" class="optbox" data-opt="${all.indexOf(c)}" aria-label="No emails for ${esc(c.first)} ${esc(c.last)}"${c.optOut==='Yes'?' checked':''}${ro?' disabled':''}></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No contacts yet.</td></tr>';
+  el.innerHTML=list.map((c,i)=>`<tr><td>${esc(c.first)} ${esc(c.last)}</td><td>${esc(c.email||'')}</td><td class="mono">${esc(c.phone||'')}</td><td>${esc(c.city||'')}${c.state?', '+esc(c.state):''}</td><td class="mono">${esc(c.code||'')}</td><td style="text-align:center"><input type="checkbox" class="optbox" data-opt="${all.indexOf(c)}" aria-label="Stop emails for ${esc(c.first)} ${esc(c.last)}"${c.optOut==='Yes'?' checked':''}${ro?' disabled':''}></td></tr>`).join('')||'<tr><td colspan="6" class="empty">No contacts yet.</td></tr>';
   REC_LIST=all;
   const em=(D.emails||[]).filter(m=>mailFilter==='all'||m.direction===mailFilter);
   $('recMailSub').textContent=`${(D.emails||[]).length} emails. Every email the system sends, and every reply that comes back.`;
@@ -2951,7 +2953,7 @@ function downloadCSV(name,head,rows){const q=v=>{v=String(v??'');if(/^[=+@-]/.te
   const csv='\ufeff'+[head,...rows].map(r=>r.map(q).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=name+'.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);toast('Downloaded '+name+'.csv')}
 const fileTag=()=>(D.S.edition?D.S.edition+' ':'')+(D.S.family||'Reunion');
-$('dlContacts').addEventListener('click',()=>downloadCSV(fileTag()+' contacts',['First name','Last name','Email','Phone','Street address','City','State','Zip code','Confirmation #','No emails','Came from'],
+$('dlContacts').addEventListener('click',()=>downloadCSV(fileTag()+' contacts',['First name','Last name','Email','Phone','Street address','City','State','Zip code','Confirmation #','Stop emails','Came from'],
   contactsList().map(c=>[c.first,c.last,c.email,c.phone,c.address,c.city,c.state,c.zip,c.code,c.optOut||'',c.source||''])));
 $('dlEmails').addEventListener('click',()=>downloadCSV(fileTag()+' emails',['Date','Time','Sent or received','To / From','Email','Confirmation #','Subject','Message (first lines)'],
   (D.emails||[]).map(m=>[m.date,m.time,m.direction,m.who,m.email,m.code,m.subject,m.note])));
